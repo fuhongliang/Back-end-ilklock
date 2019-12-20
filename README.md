@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # ilock
 
 
@@ -31,3 +32,6 @@ $ npm stop
 
 
 [egg]: https://eggjs.org
+=======
+# Back-end-ilklock
+>>>>>>> 5299457f1e999283f187bbbfdaa7ef5b52ccf9c4
