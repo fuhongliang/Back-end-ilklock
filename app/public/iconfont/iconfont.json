@@ -1,0 +1,58 @@
+{
+  "id": "1574728",
+  "name": "ilock",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "4452094",
+      "name": "人员管理",
+      "font_class": "rrenyuanguanli-",
+      "unicode": "e69f",
+      "unicode_decimal": 59039
+    },
+    {
+      "icon_id": "7270294",
+      "name": "酒店管理后台-开锁记录",
+      "font_class": "jiudianguanlihoutai-kaisuojilu",
+      "unicode": "e626",
+      "unicode_decimal": 58918
+    },
+    {
+      "icon_id": "8159859",
+      "name": "申请开班",
+      "font_class": "shenqingkaiban",
+      "unicode": "e639",
+      "unicode_decimal": 58937
+    },
+    {
+      "icon_id": "8159889",
+      "name": "区域管理",
+      "font_class": "quyuguanli",
+      "unicode": "e644",
+      "unicode_decimal": 58948
+    },
+    {
+      "icon_id": "8314480",
+      "name": "日志 操作记录",
+      "font_class": "wulianwang-",
+      "unicode": "e60a",
+      "unicode_decimal": 58890
+    },
+    {
+      "icon_id": "9747397",
+      "name": "北京警务_查询_开锁技工查询",
+      "font_class": "beijingjingwu_chaxun_kaisuojigongchaxun",
+      "unicode": "e632",
+      "unicode_decimal": 58930
+    },
+    {
+      "icon_id": "10358337",
+      "name": "角色管理",
+      "font_class": "jiaoseguanli",
+      "unicode": "e6b7",
+      "unicode_decimal": 59063
+    }
+  ]
+}
