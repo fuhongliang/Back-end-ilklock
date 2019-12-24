@@ -1,5 +1,5 @@
 'use strict';
-
+const assert = require('assert');
 module.exports = (app,options) => {
   return async function(ctx, next) {
 
@@ -12,8 +12,10 @@ module.exports = (app,options) => {
       }
 
     } else {
-      const { access_token } = ctx.request.body;
-      let user = await app.cache.get(access_token + '-user');
+      const { access_token, user_id } = ctx.request.body;
+      assert(access_token,'参数access_token不能为空');
+      assert(user_id,'参数user_id不能为空');
+      let user = await app.cache.get(access_token + '-user-' + user_id);
       if (!user){
         ctx.body = {
           code: -1,

@@ -34,12 +34,12 @@ module.exports = app => {
       is_checked: {
         type: INTEGER(1),
         allowNull: false,
-        defaultValue: '0'
+        defaultValue: 0
       },
       is_delete: {
         type: INTEGER(1),
         allowNull: false,
-        defaultValue: '0'
+        defaultValue: 0
       }
     },
     {

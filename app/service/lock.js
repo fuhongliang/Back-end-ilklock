@@ -2,28 +2,31 @@
 
 const path = require('path');
 const Service = require(path.join(process.cwd(),'app/service/baseService'));
+const assert = require('assert');
 
 class LockService extends Service{
 
   async getLockByNo(lock_no){
-    const { ctx } = this;
-    const { access_token } = ctx.request.body;
+    const { ctx, app } = this;
+    const { access_token, user_id } = ctx.request.body;
     const { Lock, Region } = ctx.model;
-    const user = app.cache.get(access_token + '-user');
+    const user = app.cache.get(access_token + '-user-' + user_id);
 
-    let lock = Lock.findOne({
+    let lock = await Lock.findOne({
       where: {
         lock_no: lock_no,
         mch_id: user.mch_id,
-        is_delete: 0
+        is_delete: 0,
+        is_check: 1
       },
       include:[
         {
           model: Region,
+          as: 'area',
           where: {
             is_delete: 0
           },
-          attributes: [['name', 'region_name']],
+          attributes: ['name'],
         }
       ],
     });
@@ -41,11 +44,74 @@ class LockService extends Service{
     }
   }
 
+  async getAreaLock(){
+    const { ctx, app } = this;
+    const { id, access_token, user_id } = ctx.request.body;
+    assert(id,'区域id不能为空');
+    const { Lock } = app.model;
+    const user = app.cache.get(access_token + '-user-' + user_id);
+    return Lock.findAll({
+      where: {
+        region_id: id,
+        mch_id: user.mch_id,
+        is_delete: 0,
+        is_check: 1,
+      },
+      attributes: [ 'id', 'name' ],
+    });
+    // return list;
+  }
+
   async create(){
-    const { ctx } = this;
-    const { Lock } = ctx.model;
-    const { lock_no, agent_id, lock_name, mch_id } = ctx.request.body;
-    let res = await Lock.create({ lock_no, agent_id, lock_name, mch_id });
+    const { ctx, app } = this;
+    const { Lock, Region } = ctx.model;
+
+
+    const createRule = {
+      lock_no: { type: 'string', require: true },
+      lock_name: { type: 'string', require: true },
+      region_id: { type: 'int', require: true },
+    };
+
+    let err = app.validator.validate(createRule,ctx.request.body);
+    if (err){
+      return {
+        code: 1,
+        msg: '参数不符合规定',
+      }
+    }
+
+    const { lock_no, region_id, name: lock_name, access_token, user_id } = ctx.request.body;
+    const user = app.cache.get(access_token + '-user-' + user_id);
+
+    let exist_area = await Region.findOne({
+      where: {
+        mch_id: user.mch_id,
+        id: region_id,
+        is_delete: 0,
+      }
+    });
+
+    if (!exist_area){
+      return {
+        code: 1,
+        msg: '区域不存在'
+      }
+    }
+    let ck_area =  await Region.findOne({
+      where: {
+        parent_id: region_id,
+        is_delete: 0,
+      }
+    });
+    if (ck_area){
+      return {
+        code: 1,
+        msg: '当前区域存在子区域,请将锁放在子区域内'
+      }
+    }
+
+    let res = await Lock.create({ lock_no, region_id, lock_name, mch_id: user.mch_id });
     if (res){
       return {
         code: 0,
@@ -58,9 +124,9 @@ class LockService extends Service{
     }
   }
 
-  async modify(id,data){
+  async modify(options,data){
     const { Lock } = this.ctx.model;
-    const res = await Lock.update(data,{ id });
+    const res = await Lock.update(data,{ where: options });
     if (res){
       return {
         code: 0,

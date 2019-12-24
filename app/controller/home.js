@@ -41,18 +41,21 @@ class HomeController extends Controller {
   async test(){
     const { ctx, app } = this;
     const { Admin,User,WechatApp } = ctx.model;
+    const { lock } = ctx.service;
 
-    const { id , page = 1, page_size = 10 } = ctx.request.body;
+    const { id = 1 , page = 1, page_size = 10 } = ctx.request.body;
+    const user = await User.findOne();
     // assert(id,'参数id不能为空');
-    // const data = await ctx.service.record.getOperateRecordById(id,{ page: parseInt(page), page_size: parseInt(page_size)});
-    let data = Array();
-    data[0] = '哈哈哈哈';
+    // let data = Array();
+
     ctx.body = {
       utl: ctx.path,
       reg: '/dd/api'.search(/^\/api/),
       json: JSON.stringify({id: 11}),
       // id: id
-      data: data[0] ? data[0] : 1
+      data: await lock.modify( 2, { name: '2号锁' } ),
+      cache: app.user,
+      time: new Date().getTime(),
     };
   }
 }

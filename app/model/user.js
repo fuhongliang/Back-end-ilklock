@@ -81,7 +81,9 @@ module.exports = app => {
       // freezeTableName: true,
     });
 
-  User.associate = function(){};
+  User.associate = ()=>{
+    User.belongsTo(app.model.Role,{foreignKey: 'roleid', targetKey: 'id'});
+  };
 
   return User;
 

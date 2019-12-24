@@ -63,7 +63,7 @@ class passportController extends BaseController {
         } else {
           let user = User.findOne({where: {id: account.user_id}});
           let user_key = md5.update('user_info=' + result.session_key + '&' + result.openid).digest('hex');
-          app.cache.set(access_token + '-user',user.toJSON(),60*60*24*7);
+          app.cache.set(access_token + '-user-' + user.id,user.toJSON(),60*60*24*7);
           data.code = 0;
           data.msg = '登录成功';
           data.data = {
@@ -86,7 +86,7 @@ class passportController extends BaseController {
 
     let phones = await app.cache.get(access_token + '-' + phone);
 
-    if (phones.phone != phone || phones.code != code){
+    if (phones.phone !== phone || phones.code !== code){
       return {
         code: 1,
         msg: '验证码错误'
@@ -105,7 +105,7 @@ class passportController extends BaseController {
     let account = await app.cache.get(access_token + '-account');
     let result = await WxAccount.update({user_id: user.id},{where: {openid: account.openid,unionid: account.unionid}});
     if (result){
-      app.cache.set(access_token + '-user',user.toJSON(),60*60*24*7);
+      app.cache.set(access_token + '-user-' + user.id,user.toJSON(),60*60*24*7);
 
       return {
         code: 0,

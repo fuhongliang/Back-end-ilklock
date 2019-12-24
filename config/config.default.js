@@ -23,7 +23,7 @@ module.exports = appInfo => {
   // 中间件配置
   config.auth = {
     enable: true,
-    ignore: ['/web/login', '/api/login'],
+    ignore: ['/web/login', '/api/login', '/api/binding'],
   };
   config.access = {
     enable: true,
@@ -70,6 +70,7 @@ module.exports = appInfo => {
       createdAt: false,
       updatedAt: false
     },
+    operatorsAliases: true
   };
 
   // 配置阿里云短信

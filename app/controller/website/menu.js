@@ -4,18 +4,17 @@ const menuList = [
   {
     name: '区域管理',
     icon: 'icon-quyuguanli1',
-    url: '/agent/locks',
+    url: '/region/locks',
     is_show: true,
-    trig_icon: 'icon-triangle-copy-copy-copy',
     children: [
       {
         name: '锁管理',
-        url: '/agent/locks',
+        url: '/region/locks',
         is_show: true,
       },
       {
         name: '区域设置',
-        url: '/agent/setting',
+        url: '/region/setting',
         is_show: true,
       }
     ],
@@ -49,7 +48,6 @@ const menuList = [
     icon: 'icon-beijingjingwu_chaxun_kaisuojigongchaxun',
     url: '/group/list',
     is_show: true,
-    trig_icon: 'icon-triangle-right',
   }
 ];
 

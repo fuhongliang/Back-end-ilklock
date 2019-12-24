@@ -55,7 +55,7 @@ module.exports = app => {
 
   // 定义关联关系
   Lock.associate = () => {
-    Lock.belongsTo(app.model.Region,{foreignKey: 'region_id', targetKey: 'id'});
+    Lock.belongsTo(app.model.Region,{foreignKey: 'region_id', targetKey: 'id', as: 'area'});
   };
 
 

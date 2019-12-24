@@ -2,7 +2,7 @@
 
 module.exports = app => {
 
-  const { STRING, INTEGER, BIGINT } = app.Sequelize;
+  const { STRING, INTEGER, BIGINT, TEXT } = app.Sequelize;
 
   const Role = app.model.define('Role', {
     id: {
@@ -20,6 +20,10 @@ module.exports = app => {
       type: STRING(25),
       allowNull: false,
       defaultValue: ''
+    },
+    desc: {
+      type: TEXT,
+      allowNull: true,
     },
     addtime: {
       type: BIGINT,

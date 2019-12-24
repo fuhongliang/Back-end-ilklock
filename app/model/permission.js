@@ -19,7 +19,7 @@ module.exports = app => {
       route: {
         type: STRING(255),
         allowNull: false
-      }
+      },
     },
     {
       tableName: 'ilock_permission',

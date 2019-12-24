@@ -15,7 +15,7 @@ module.exports = app => {
       mch_id: {
         type: INTEGER(11),
         allowNull: false,
-        defaultValue: '0'
+        defaultValue: 0
       },
       name: {
         type: STRING(255),
@@ -24,12 +24,13 @@ module.exports = app => {
       },
       parent_id: {
         type: INTEGER(11),
-        allowNull: false
+        allowNull: false,
+        defaultValue: 0
       },
       is_delete: {
         type: INTEGER(1),
         allowNull: false,
-        defaultValue: '0'
+        defaultValue: 0
       }
     },
     {

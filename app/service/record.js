@@ -47,6 +47,7 @@ class RecordService extends Service{
     return data
 
   }
+
 }
 
 module.exports = RecordService;
