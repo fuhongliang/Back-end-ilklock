@@ -1,0 +1,94 @@
+<% extends "layout/main.html" %>
+
+<% block content %>
+<div id="page">
+    <div class="content">
+        <!-- 数据展示 -->
+        <div class="data-page">
+
+            <div class="page-nav">
+                <div class="util-btn">
+                    <button class="tb-btn tb-btn-auth">添加区域</button>
+                </div>
+            </div>
+
+            <!-- 区域 -->
+            <div class="agent table">
+                <div class="tb-header">
+                    <div class="tb-title">区域名称</div>
+                    <div class="tb-operate text-center">操作</div>
+                </div>
+                <div class="tb-body">
+                    <div class="tb-item">
+                        <div class="item">
+                            <div class="tb-title">
+                                <sapn class="text-A9A9A9 iconfont icon-triangle-right"></sapn>
+                                <span class="text-333333">一级区域</span>
+                            </div>
+                            <div class="tb-operate text-center">
+                                <button class="tb-btn tb-btn-edit">编辑</button>
+                                <button class="tb-btn tb-btn-del">删除</button>
+                            </div>
+                        </div>
+                        <div class="child-list">
+                            <div class="tb-item">
+                                <div class="item">
+                                    <div class="tb-title">
+                                        <sapn class="text-A9A9A9 iconfont icon-triangle-right"></sapn>
+                                        <span class="text-333333">er级区域</span>
+                                    </div>
+                                    <div class="tb-operate text-center">
+                                        <button class="tb-btn tb-btn-edit">编辑</button>
+                                        <button class="tb-btn tb-btn-del">删除</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<% endblock %>
+
+<% block script %>
+<script type="text/javascript">
+  let page = new Vue({
+    el: '#page',
+    data: {
+      list_agent: [
+        {
+          name: '一级区域',
+          is_open: false,
+          children: [
+            {
+              name: '二级区域',
+              is_open: false
+            }
+          ],
+        },
+        {
+          name: '一级区域',
+          is_open: false,
+          children: [],
+        },
+      ]
+    },
+    methods: {
+      getAgentClass: function(agent){
+        if (agent.children != null && agent.children.length > 0){
+          if (!agent.is_open){
+            return 'icon-triangle-right';
+          }else{
+            return 'icon-triangle-copy-copy-copy';
+          }
+        }
+        return '';
+      }
+    }
+  });
+</script>
+<% endblock %>

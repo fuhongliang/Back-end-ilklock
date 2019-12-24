@@ -44,7 +44,11 @@ module.exports = app => {
       // freezeTableName: true,
     });
 
-  LockLog.associate = function(){};
+  // 定义关联关系
+  LockLog.associate = () => {
+    LockLog.belongsTo(app.model.Lock,{foreignKey: 'lock_id', targetKey: 'id'});
+  };
+
 
   return LockLog;
 

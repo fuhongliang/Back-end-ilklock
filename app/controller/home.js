@@ -42,13 +42,17 @@ class HomeController extends Controller {
     const { ctx, app } = this;
     const { Admin,User,WechatApp } = ctx.model;
 
-    // let app = await WechatApp.create({appid: 111,appsecret: 'kkk'});
-    app.cache.set('foo',{ foo: 'bar' },100);
-    let foo = await app.cache.get('foo');
+    const { id , page = 1, page_size = 10 } = ctx.request.body;
+    // assert(id,'参数id不能为空');
+    // const data = await ctx.service.record.getOperateRecordById(id,{ page: parseInt(page), page_size: parseInt(page_size)});
+    let data = Array();
+    data[0] = '哈哈哈哈';
     ctx.body = {
-      cache: foo.foo,
-      utl: ctx.request.url,
-      reg: '/dd/api'.search(/^\/api/)
+      utl: ctx.path,
+      reg: '/dd/api'.search(/^\/api/),
+      json: JSON.stringify({id: 11}),
+      // id: id
+      data: data[0] ? data[0] : 1
     };
   }
 }

@@ -3,11 +3,12 @@
 const path = require('path');
 const BaseController = require(path.join(process.cwd(),'app/controller/baseController'));
 
-class PassportController extends BaseController {
-  async login() {
+class RoleController extends BaseController {
+  async list() {
     const { ctx } = this;
-    await ctx.render('passport/login');
+    await ctx.render('role/list');
   }
+
 }
 
-module.exports = PassportController;
+module.exports = RoleController;

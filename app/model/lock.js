@@ -2,7 +2,7 @@
 
 module.exports = app => {
 
-  const { STRING, INTEGER } = app.Sequelize;
+  const { STRING, INTEGER, BIGINT } = app.Sequelize;
 
   const Lock = app.model.define('Lock',
     {
@@ -15,7 +15,7 @@ module.exports = app => {
       mch_id: {
         type: INTEGER(11),
         allowNull: false,
-        defaultValue: '0'
+        defaultValue: 0
       },
       name: {
         type: STRING(255),
@@ -29,12 +29,22 @@ module.exports = app => {
       region_id: {
         type: INTEGER(11),
         allowNull: false,
-        defaultValue: '0'
+        defaultValue: 0
       },
       is_delete: {
         type: INTEGER(1),
         allowNull: false,
-        defaultValue: '0'
+        defaultValue: 0
+      },
+      is_check: {
+        type: INTEGER(1),
+        allowNull: false,
+        defaultValue: 0
+      },
+      addtime: {
+        type: BIGINT,
+        allowNull: false,
+        defaultValue: 0
       }
     },
     {
@@ -43,7 +53,13 @@ module.exports = app => {
       // freezeTableName: true,
     });
 
-  Lock.associate = function(){};
+  // 定义关联关系
+  Lock.associate = () => {
+    Lock.belongsTo(app.model.Region,{foreignKey: 'region_id', targetKey: 'id'});
+  };
+
+
+
 
   return Lock;
 

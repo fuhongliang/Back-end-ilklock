@@ -1,0 +1,13 @@
+访问接口需要额外四个参数
+1.app_key
+2.nonce_str      随机字符串
+3.access_time    当前时间戳
+4.access_sign    签名
+
+签名生成规则: .为字符串拼接
+md5(md5(nonce_str.app_secret).access_time)
+
+提交数据类型为:json
+请求类型全部为:post
+
+为了测试方便 传参中有 is_debug=1  则不验证签名

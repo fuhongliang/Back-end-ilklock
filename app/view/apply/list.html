@@ -1,0 +1,83 @@
+<% extends "layout/main.html" %>
+
+<% block content %>
+<div id="page">
+    <div class="content">
+        <!-- 数据展示 -->
+        <div class="data-page">
+            <!-- 检索 -->
+
+            <!-- table -->
+            <table>
+                <thead>
+                <th class="tb-col-6">区域</th>
+                <th class="tb-col-5">锁名称</th>
+                <th class="tb-col-3">申请时间</th>
+                <th class="tb-col-2 text-center">申请人</th>
+                <th class="tb-col-3 text-center">操作</th>
+                </thead>
+                <tbody>
+                <tr>
+                    <td class="tb-col-6">一级区域名称/二级区域名称</td>
+                    <td class="tb-col-5">XXXXXXXXXX锁名称</td>
+                    <td class="tb-col-3">2019-12-10 12:10</td>
+                    <td class="tb-col-2 text-center">刘燕家</td>
+                    <td class="tb-col-3 text-center">
+                        <button class="tb-btn tb-btn-auth">通过</button>
+                        <button class="tb-btn tb-btn-del">拒绝</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- 分页 -->
+            <div class="paginate">
+                <div class="page-link">上一页</div>
+                <div class="page-link">1</div>
+                <div class="page-link">2</div>
+                <div class="page-link">3</div>
+                <div class="page-link">下一页</div>
+            </div>
+        </div>
+    </div>
+</div>
+<% endblock %>
+
+<% block script %>
+<script type="text/javascript">
+  let page = new Vue({
+    el: '#page',
+    data: {
+      list_agent: [
+        {
+          name: '一级区域',
+          is_open: false,
+          children: [
+            {
+              name: '二级区域',
+              is_open: false
+            }
+          ],
+        },
+        {
+          name: '一级区域',
+          is_open: false,
+          children: [],
+        },
+      ]
+    },
+    methods: {
+      getAgentClass: function(agent){
+        if (agent.children != null && agent.children.length > 0){
+          if (!agent.is_open){
+            return 'icon-triangle-right';
+          }else{
+            return 'icon-triangle-copy-copy-copy';
+          }
+        }
+        return '';
+      }
+    }
+  });
+</script>
+<% endblock %>

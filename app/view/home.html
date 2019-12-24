@@ -1,0 +1,57 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html lang="zh">
+<head>
+    <title>艾乐科后台</title>
+    <% include 'common/head.html' %>
+</head>
+<body>
+<div class="app">
+    <!-- 顶部 -->
+    <% include 'common/top-nav.html' %>
+    <!-- 左边导航栏 -->
+    <% include 'common/left-nav.html' %>
+
+    <!-- 内容 -->
+    <div class="content">
+        <!-- 分类树 -->
+        <div class="tree-list">
+            <div class="tree-item">
+                <div class="item parent-tree-item">一级区域</div>
+                <div class="child-tree-list">
+                    <div class="tree-item">
+                        <div class="item parent-tree-item active">二级区域</div>
+                        <div class="child-tree-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 数据展示 -->
+        <div class="data-page">
+            <table>
+                <thead>
+                    <th class="tb-col-1 text-center">锁状态</th>
+                    <th class="tb-col-5">锁ID</th>
+                    <th class="tb-col-6">锁名称</th>
+                    <th class="tb-col-4 text-center">操作</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="tb-col-1 text-center">开启</td>
+                        <td class="tb-col-5">534353187482462</td>
+                        <td class="tb-col-6">艾乐科智能无源碧锁1</td>
+                        <td class="tb-col-4 text-center">
+                            <div style="padding: .15rem 0;">
+                                <button class="tb-btn tb-btn-auth">授权</button>
+                                <button class="tb-btn tb-btn-edit">编辑区域</button>
+                            </div>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

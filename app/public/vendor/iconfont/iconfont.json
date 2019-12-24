@@ -6,11 +6,39 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "1825236",
+      "name": "三角形",
+      "font_class": "triangle-copy-copy-copy",
+      "unicode": "e60b",
+      "unicode_decimal": 58891
+    },
+    {
       "icon_id": "4452094",
       "name": "人员管理",
       "font_class": "rrenyuanguanli-",
       "unicode": "e69f",
       "unicode_decimal": 59039
+    },
+    {
+      "icon_id": "5229818",
+      "name": "三角形",
+      "font_class": "triangle-right",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "6821753",
+      "name": "消息",
+      "font_class": "xiaoxi",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "7055646",
+      "name": "消息",
+      "font_class": "xiaoxi1",
+      "unicode": "e72c",
+      "unicode_decimal": 59180
     },
     {
       "icon_id": "7270294",
@@ -20,18 +48,18 @@
       "unicode_decimal": 58918
     },
     {
+      "icon_id": "7605590",
+      "name": "退出",
+      "font_class": "tuichu1",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    },
+    {
       "icon_id": "8159859",
       "name": "申请开班",
       "font_class": "shenqingkaiban",
       "unicode": "e639",
       "unicode_decimal": 58937
-    },
-    {
-      "icon_id": "8159889",
-      "name": "区域管理",
-      "font_class": "quyuguanli",
-      "unicode": "e644",
-      "unicode_decimal": 58948
     },
     {
       "icon_id": "8314480",
@@ -46,6 +74,13 @@
       "font_class": "beijingjingwu_chaxun_kaisuojigongchaxun",
       "unicode": "e632",
       "unicode_decimal": 58930
+    },
+    {
+      "icon_id": "9923738",
+      "name": "区域管理",
+      "font_class": "quyuguanli1",
+      "unicode": "e60d",
+      "unicode_decimal": 58893
     },
     {
       "icon_id": "10358337",

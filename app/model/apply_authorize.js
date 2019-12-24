@@ -15,22 +15,22 @@ module.exports = app => {
       mch_id: {
         type: INTEGER(11),
         allowNull: false,
-        defaultValue: '0'
+        defaultValue: 0
       },
       user_id: {
         type: INTEGER(11),
         allowNull: false,
-        defaultValue: '0'
+        defaultValue: 0
       },
       lock_id: {
         type: INTEGER(11),
         allowNull: false,
-        defaultValue: '0'
+        defaultValue: 0
       },
       group_id: {
         type: INTEGER(11),
         allowNull: false,
-        defaultValue: '0'
+        defaultValue: 0
       },
       secret_key: {
         type: TEXT,
@@ -39,7 +39,7 @@ module.exports = app => {
       expiry_time: {
         type: BIGINT,
         allowNull: false,
-        defaultValue: '0'
+        defaultValue: 0
       },
       type: {
         type: INTEGER(1),
@@ -48,12 +48,12 @@ module.exports = app => {
       status: {
         type: INTEGER(2),
         allowNull: false,
-        defaultValue: '0'
+        defaultValue: 0
       },
       is_delete: {
         type: INTEGER(1),
         allowNull: false,
-        defaultValue: '0'
+        defaultValue: 0
       }
     },
     {
@@ -62,7 +62,9 @@ module.exports = app => {
       // freezeTableName: true,
     });
 
-  ApplyAuthorize.associate = function(){};
+  ApplyAuthorize.associate = () => {
+    ApplyAuthorize.belongsTo(app.model.Lock,{foreignKey: 'lock_id', targetKey: 'id'});
+  };
 
   return ApplyAuthorize;
 

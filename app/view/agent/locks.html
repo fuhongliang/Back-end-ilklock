@@ -1,0 +1,88 @@
+<% extends "layout/main.html" %>
+
+<% block content %>
+<div id="page">
+    <div class="content">
+        <!-- 分类树 -->
+        <div class="tree-list">
+            <template>
+                <div class="tree-item" v-for="(agent,index) in list_agent">
+                <div class="item">
+                    <span class="icon iconfont" :class="getAgentClass(agent)"></span>
+                    <span>{{ agent.name }}</span>
+                </div>
+    <!--            <div class="child-list">-->
+    <!--                <div class="tree-item">-->
+    <!--                    <div class="item active">二级区域</div>-->
+    <!--                    <div class="child-list"></div>-->
+    <!--                </div>-->
+    <!--            </div>-->
+            </div>
+            </template>
+        </div>
+
+        <!-- 数据展示 -->
+        <div class="data-page">
+        <table>
+            <thead>
+            <th class="tb-col-1 text-center">锁状态</th>
+            <th class="tb-col-5">锁ID</th>
+            <th class="tb-col-6">锁名称</th>
+            <th class="tb-col-4 text-center">操作</th>
+            </thead>
+            <tbody>
+            <tr>
+                <td class="tb-col-1 text-center">开启</td>
+                <td class="tb-col-5">534353187482462</td>
+                <td class="tb-col-6">艾乐科智能无源碧锁1</td>
+                <td class="tb-col-4 text-center">
+                    <button class="tb-btn tb-btn-auth">授权</button>
+                    <button class="tb-btn tb-btn-edit">编辑区域</button>
+
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    </div>
+</div>
+<% endblock %>
+
+<% block script %>
+<script type="text/javascript">
+    let page = new Vue({
+      el: '#page',
+      data: {
+        list_agent: [
+          {
+            name: '一级区域',
+            is_open: false,
+            children: [
+              {
+                name: '二级区域',
+                is_open: false
+              }
+            ],
+          },
+          {
+            name: '一级区域',
+            is_open: false,
+            children: [],
+          },
+        ]
+      },
+      methods: {
+        getAgentClass: function(agent){
+          if (agent.children != null && agent.children.length > 0){
+            if (!agent.is_open){
+              return 'icon-triangle-right';
+            }else{
+              return 'icon-triangle-copy-copy-copy';
+            }
+          }
+          return '';
+        }
+      }
+    });
+</script>
+<% endblock %>

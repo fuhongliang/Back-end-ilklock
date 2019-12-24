@@ -2,7 +2,7 @@
 
 const Service = require('egg').Service;
 
-class BaseService extends  Service{
+class BaseService extends Service{
 
 }
 

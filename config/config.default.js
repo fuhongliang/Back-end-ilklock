@@ -38,6 +38,17 @@ module.exports = appInfo => {
       '.html': 'nunjucks',
     },
   };
+  config.nunjucks = {
+    tags: {
+      blockStart: '<%',
+      blockEnd: '%>',
+      variableStart: '<$',
+      variableEnd: '$>',
+      commentStart: '<#',
+      commentEnd: '#>'
+    },
+    noCache: true,
+  };
 
   // 鉴权
   config.passportLocal = {
@@ -87,7 +98,7 @@ module.exports = appInfo => {
     preload: false, //啓動項目開啓緩存
     // maxAge: 31536000,
     maxAge: 0, //緩存時間 開發建議設0 跳坑
-    buffer: true, // 是否緩存到内存 默認prod 緩存
+    buffer: false, // 是否緩存到内存 默認prod 緩存
   };
 
   // 缓存

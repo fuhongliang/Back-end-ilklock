@@ -1,0 +1,19 @@
+.paginate{
+    display: flex;
+    margin-top: 1.5rem;
+    justify-content: flex-end;
+    align-items: center;
+}
+.paginate .page-link{
+    background: #FFFFFF;
+    color: #333333;
+    border: 1px solid #CCCCCC;
+    padding: 3px 8px;
+    margin: 0 .5rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.paginate .page-link.active,.paginate .page-link:hover{
+    background: #00CA7C;
+    color: #FFFFFF;
+}

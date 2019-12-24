@@ -1,6 +1,26 @@
-<div class="left-nav">
-    <div>艾乐科后台管理</div>
+<div class="left-nav" id="navLeft">
+    <div class="left-nav-head">艾乐科后台管理</div>
     <div class="list-nav">
-        <div class="nav-item"></div>
+        <div class="nav-item" v-for="(menu,index) in menu_list">
+            <div class="item parent-item" :class="{active: menu.is_active}">
+                <icon class="icon iconfont" :class="menu.icon"></icon>
+                <sapn class="title">{{ menu.name }}</sapn>
+                <icon class="trig iconfont" :class="menu.trig_icon"></icon>
+            </div>
+            <div v-if="menu.children && menu.is_active">
+                <div class="item child-item" :class="{active: child.is_active}" v-for="child in menu.children">
+                    <sapn class="title">{{ child.name }}</sapn>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    let navLeft = new Vue({
+      el: '#navLeft',
+      data: {
+        menu_list: JSON.parse(`<$ helper.getMenu() | safe $>`),
+      },
+    });
+</script>

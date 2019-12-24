@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html lang="zh">
+<head>
+    <title>艾乐科后台</title>
+    <!-- meta -->
+    <meta charset="utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="format-detection" content="email=no"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+
+
+    <!-- css 文件-->
+    <link rel="stylesheet" href="/vendor/iconfont/iconfont.css" />
+    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/css/table.css" />
+    <link rel="stylesheet" href="/css/paginate.css" />
+
+    <!-- js文件 -->
+    <script type="text/javascript" src="/js/main.js"></script>
+    <script type="text/javascript" src="/vendor/jQuery/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/vendor/vue/vue.min.js"></script>
+    <script type="text/javascript" src="/vendor/layui/layer/layer.js"></script>
+</head>
+<body>
+    <div class="app">
+        <!-- 顶部 -->
+        <div class="top-nav">
+
+            <div class="nav message">
+                <icon class="iconfont">&#xe72c;</icon>
+                <span style="margin-left: .05rem;">消息通知</span>
+            </div>
+
+            <div class="nav logout">
+                <icon class="iconfont">&#xe602;</icon>
+                <span style="margin-left: .05rem;">退出登录</span>
+            </div>
+
+            <div class="nav tab-info">
+                <div class="tab-avatar">
+                    <img src="/images/avatar/avatar-01.jpg" />
+                </div>
+                <div class="tab-name">admin</div>
+            </div>
+        </div>
+
+        <!-- 左边 -->
+        <div class="left-nav" id="navLeft">
+            <div class="left-nav-head">艾乐科后台管理</div>
+            <div class="list-nav">
+                <div class="nav-item" v-for="(menu,index) in menu_list">
+                    <div class="item parent-item" :class="{active: menu.is_active}">
+                        <icon class="icon iconfont" :class="menu.icon"></icon>
+                        <sapn class="title">{{ menu.name }}</sapn>
+                        <icon class="trig iconfont" :class="menu.trig_icon"></icon>
+                    </div>
+                    <div v-if="menu.children && menu.is_active">
+                        <div class="item child-item" :class="{active: child.is_active}" v-for="child in menu.children">
+                            <sapn class="title">{{ child.name }}</sapn>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右边内容 -->
+        <% block content %><% endblock %>
+    </div>
+
+    <script type="text/javascript">
+      let navLeft = new Vue({
+        el: '#navLeft',
+        data: {
+          menu_list: JSON.parse(`<$ helper.getMenu() | safe $>`),
+        },
+      });
+    </script>
+    <% block script %><% endblock %>
+
+</body>
+</html>
