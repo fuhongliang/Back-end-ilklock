@@ -82,7 +82,9 @@ module.exports = app => {
     });
 
   User.associate = ()=>{
-    User.belongsTo(app.model.Role,{foreignKey: 'roleid', targetKey: 'id'});
+    User.belongsTo(app.model.Role,{foreignKey: 'roleid', targetKey: 'id', as: 'role'});
+    User.belongsToMany(app.model.Permission,{as: 'up', through: app.model.UserPermission, foreignKey: 'user_id'});
+    app.model.Permission.belongsToMany(User,{as: 'per', through: app.model.UserPermission, foreignKey: 'permission_id'});
   };
 
   return User;

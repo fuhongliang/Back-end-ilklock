@@ -27,7 +27,9 @@ module.exports = app => {
       // freezeTableName: true,
     });
 
-  Permission.associate = function(){};
+  Permission.associate = ()=>{
+    Permission.belongsToMany(app.model.User,{through: app.model.UserPermission, foreignKey: 'permission_id'});
+  };
 
   return Permission;
 

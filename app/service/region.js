@@ -5,16 +5,18 @@ const Service = require(path.join(process.cwd(),'app/service/baseService'));
 
 class RegionService extends Service{
 
-  // async list
-  async allArea(){
-    const { ctx, app } = this;
-    const { access_token } = ctx.request.body;
+  /**
+   * 获取所有区域
+   * @returns {Promise<{msg: string, code: number, data: {list: *}}>}
+   */
+  async allArea(mch_id){
+    const { app } = this;
     const { Region } = app.model;
-    const user = app.cache.get( access_token + '-user');
+
     const list = await Region.findAll({
       where: {
         is_delete: 0,
-        mch_id: user.mch_id
+        mch_id: mch_id
       }
     });
     let new_list = {};
@@ -27,13 +29,11 @@ class RegionService extends Service{
         new_list[item.parent_id].push(item);
       }
     }
-    return {
-      code: 0,
-      msg: 'success',
-      data: {
-        list: new_list
-      }
-    }
+    return new_list
+  }
+
+  async getNonParentArea(){
+
   }
 }
 

@@ -11,7 +11,7 @@
  Target Server Version : 80018
  File Encoding         : 65001
 
- Date: 24/12/2019 09:09:06
+ Date: 25/12/2019 14:44:56
 */
 
 SET NAMES utf8mb4;
@@ -31,7 +31,7 @@ CREATE TABLE `ilock_admin`  (
   `phone` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
   `is_delete` int(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for ilock_aly_sms
@@ -53,16 +53,23 @@ DROP TABLE IF EXISTS `ilock_apply_authorize`;
 CREATE TABLE `ilock_apply_authorize`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `mch_id` int(11) NOT NULL DEFAULT 0 COMMENT '关联企业',
-  `user_id` int(11) NOT NULL DEFAULT 0 COMMENT '申请人/被授权人',
+  `user_id` int(11) NOT NULL DEFAULT 0 COMMENT '申请人/被授权人 user表',
   `lock_id` int(11) NOT NULL DEFAULT 0 COMMENT '锁id',
   `group_id` int(11) NOT NULL DEFAULT 0 COMMENT '分组id',
-  `secret_key` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '开锁指令',
+  `audit_id` int(11) NOT NULL DEFAULT 0 COMMENT '审核人id user表',
+  `secret_key` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '开锁指令',
+  `addtime` bigint(20) NOT NULL DEFAULT 0 COMMENT '申请时间',
   `expiry_time` bigint(20) NOT NULL DEFAULT 0 COMMENT '过期时间',
-  `type` int(1) NOT NULL COMMENT '0用户申请  1管理员主动授权',
+  `type` int(1) NOT NULL DEFAULT 0 COMMENT '0用户申请  1管理员主动授权',
   `status` int(2) NOT NULL DEFAULT 0 COMMENT '-1拒绝 0待处理 1待发放 2指令已发放',
   `is_delete` int(1) NOT NULL DEFAULT 0 COMMENT '1删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of ilock_apply_authorize
+-- ----------------------------
+INSERT INTO `ilock_apply_authorize` VALUES (1, 1, 1, 1, 0, 1, '11111', 1577167003000, 1577167555000, 0, 1, 0);
 
 -- ----------------------------
 -- Table structure for ilock_group
@@ -92,7 +99,13 @@ CREATE TABLE `ilock_lock`  (
   `is_delete` int(1) NOT NULL DEFAULT 0 COMMENT '1删除',
   `addtime` bigint(20) NOT NULL DEFAULT 0 COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of ilock_lock
+-- ----------------------------
+INSERT INTO `ilock_lock` VALUES (1, 1, '1号锁', '12345678', 12, 1, 0, 0);
+INSERT INTO `ilock_lock` VALUES (2, 1, '2号锁', '111222', 16, 0, 0, 0);
 
 -- ----------------------------
 -- Table structure for ilock_lock_log
@@ -124,6 +137,11 @@ CREATE TABLE `ilock_mch`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
+-- Records of ilock_mch
+-- ----------------------------
+INSERT INTO `ilock_mch` VALUES (1, '艾乐科科技有限公司', '符红梁', '18825110997', '广东省珠海市香洲区', 1, 0);
+
+-- ----------------------------
 -- Table structure for ilock_permission
 -- ----------------------------
 DROP TABLE IF EXISTS `ilock_permission`;
@@ -132,7 +150,18 @@ CREATE TABLE `ilock_permission`  (
   `name` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '权限名称',
   `route` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '权限路由',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of ilock_permission
+-- ----------------------------
+INSERT INTO `ilock_permission` VALUES (1, '区域管理', '/region/locks');
+INSERT INTO `ilock_permission` VALUES (2, '区域设置', '/region/setting');
+INSERT INTO `ilock_permission` VALUES (3, '开锁授权', '/apply/list');
+INSERT INTO `ilock_permission` VALUES (4, '查看记录', '/operate-list');
+INSERT INTO `ilock_permission` VALUES (5, '人员管理', '/users');
+INSERT INTO `ilock_permission` VALUES (6, '角色管理', '/role/list');
+INSERT INTO `ilock_permission` VALUES (7, '开锁设置', '/group/list');
 
 -- ----------------------------
 -- Table structure for ilock_permission_role
@@ -144,7 +173,18 @@ CREATE TABLE `ilock_permission_role`  (
   `permissionid` int(11) NOT NULL DEFAULT 0 COMMENT '权限id',
   `is_delete` int(1) NOT NULL DEFAULT 0 COMMENT '1删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of ilock_permission_role
+-- ----------------------------
+INSERT INTO `ilock_permission_role` VALUES (1, 1, 1, 0);
+INSERT INTO `ilock_permission_role` VALUES (2, 1, 2, 0);
+INSERT INTO `ilock_permission_role` VALUES (3, 1, 3, 0);
+INSERT INTO `ilock_permission_role` VALUES (4, 1, 4, 0);
+INSERT INTO `ilock_permission_role` VALUES (5, 1, 5, 0);
+INSERT INTO `ilock_permission_role` VALUES (6, 1, 6, 0);
+INSERT INTO `ilock_permission_role` VALUES (7, 1, 7, 0);
 
 -- ----------------------------
 -- Table structure for ilock_region
@@ -154,10 +194,31 @@ CREATE TABLE `ilock_region`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `mch_id` int(11) NOT NULL DEFAULT 0 COMMENT '关联企业',
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '区域名称',
-  `parent_id` int(11) NOT NULL COMMENT '父级区域id',
+  `parent_id` int(11) NOT NULL DEFAULT 0 COMMENT '父级区域id',
   `is_delete` int(1) NOT NULL DEFAULT 0 COMMENT '1删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 18 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of ilock_region
+-- ----------------------------
+INSERT INTO `ilock_region` VALUES (1, 1, '东区', 0, 0);
+INSERT INTO `ilock_region` VALUES (2, 1, '南区', 0, 0);
+INSERT INTO `ilock_region` VALUES (3, 1, '北区', 0, 0);
+INSERT INTO `ilock_region` VALUES (4, 1, '西区', 0, 0);
+INSERT INTO `ilock_region` VALUES (5, 1, '东区一街', 1, 0);
+INSERT INTO `ilock_region` VALUES (6, 1, '东区二街', 1, 0);
+INSERT INTO `ilock_region` VALUES (7, 1, '东区三街', 1, 0);
+INSERT INTO `ilock_region` VALUES (8, 1, '东区四街', 1, 0);
+INSERT INTO `ilock_region` VALUES (9, 1, '东区一街5巷', 5, 0);
+INSERT INTO `ilock_region` VALUES (10, 1, '东区一街6巷', 5, 0);
+INSERT INTO `ilock_region` VALUES (11, 1, '东区二街3巷', 6, 0);
+INSERT INTO `ilock_region` VALUES (12, 1, '东区二街6巷', 6, 0);
+INSERT INTO `ilock_region` VALUES (13, 1, '东区三街4巷', 7, 0);
+INSERT INTO `ilock_region` VALUES (14, 1, '东区四街1巷', 8, 0);
+INSERT INTO `ilock_region` VALUES (15, 1, '南区二街', 2, 0);
+INSERT INTO `ilock_region` VALUES (16, 1, '西区三街', 4, 0);
+INSERT INTO `ilock_region` VALUES (17, 1, '北区二街', 3, 0);
 
 -- ----------------------------
 -- Table structure for ilock_role
@@ -167,10 +228,17 @@ CREATE TABLE `ilock_role`  (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `mch_id` int(11) NOT NULL DEFAULT 0 COMMENT '关联企业',
   `name` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '角色名称',
+  `desc` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '角色描述',
   `addtime` bigint(20) NOT NULL DEFAULT 0 COMMENT '添加时间',
   `is_delete` int(1) NOT NULL DEFAULT 0 COMMENT '1删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of ilock_role
+-- ----------------------------
+INSERT INTO `ilock_role` VALUES (1, 1, '管理员', '哈哈哈哈', 0, 0);
+INSERT INTO `ilock_role` VALUES (2, 1, '用户', '哈哈哈哈', 0, 0);
 
 -- ----------------------------
 -- Table structure for ilock_user
@@ -194,7 +262,14 @@ CREATE TABLE `ilock_user`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `username`(`username`) USING BTREE,
   INDEX `mch_id`(`mch_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of ilock_user
+-- ----------------------------
+INSERT INTO `ilock_user` VALUES (1, 1, '13728202087', '7c4a8d09ca3762af61e59520943dc26494f8941b', '1008610', 0, 0, '刘燕家', 'lyj', 1, 0, '13728202087', 0, 1);
+INSERT INTO `ilock_user` VALUES (2, 1, '1008611', '7205db181158aa3dfc55d22fe521f447ca2e5777', '1008611', 1, 1, 'hhh', 'hhh', 0, 0, '1008611', 0, 1);
+INSERT INTO `ilock_user` VALUES (3, 1, '10000', '8a12a315082a345f1a9d3ad14b214cd36d310cf8', '10000', 1, 2, 'lll', 'lll', 0, 0, '10000', 0, 1);
 
 -- ----------------------------
 -- Table structure for ilock_wechat_app
@@ -209,6 +284,15 @@ CREATE TABLE `ilock_wechat_app`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
+-- Records of ilock_wechat_app
+-- ----------------------------
+INSERT INTO `ilock_wechat_app` VALUES (1, '111', 'kkk', NULL);
+INSERT INTO `ilock_wechat_app` VALUES (2, '111', 'kkk', NULL);
+INSERT INTO `ilock_wechat_app` VALUES (3, '111', 'kkk', NULL);
+INSERT INTO `ilock_wechat_app` VALUES (4, '111', 'kkk', NULL);
+INSERT INTO `ilock_wechat_app` VALUES (5, '111', 'kkk', NULL);
+
+-- ----------------------------
 -- Table structure for ilock_wx_account
 -- ----------------------------
 DROP TABLE IF EXISTS `ilock_wx_account`;
@@ -221,6 +305,11 @@ CREATE TABLE `ilock_wx_account`  (
   `user_id` int(11) NOT NULL DEFAULT 0 COMMENT '绑定用户信息',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of ilock_wx_account
+-- ----------------------------
+INSERT INTO `ilock_wx_account` VALUES (1, '#', 'https://wx.qlogo.cn/mmopen/vi_32/AbiaTMqpnkIMF7PIKJ5jfg1sZpLbjeUJMnnYDrHkNeeib8ib1qWgSmicSm9MAicwCWFFicc0WM6IpY9TnwxL9zNeXbeg/132', 'oErKB4lQh2G0AbMzo1elxtRGzlK4', 'o3M_Pt62AAF8iboEwnSPbToxY29Y', 1);
 
 -- ----------------------------
 -- Table structure for sequelizemeta

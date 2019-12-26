@@ -28,4 +28,5 @@ module.exports = app => {
   router.post('/api/get_area_locks', controller.wxapi.lock.getAreaLock);
   router.post('/api/add_lock', controller.wxapi.lock.createLock);
   router.post('/api/modify_lock_name', controller.wxapi.lock.createLock);
+  router.post('/api/get_audits', controller.wxapi.apply.getAuditer);
 };

@@ -5,11 +5,14 @@ const BaseController = require(path.join(process.cwd(),'app/controller/baseContr
 
 class IndexController extends BaseController {
   async index(){
-    const { ctx } = this;
+    const { ctx, app } = this;
 
-    const { id = 0 } = ctx.request.body;
-    const records = await ctx.service.record.getOperateRecordById(id,{ page: 1, page_size: 5});
+    const { user_id, access_token } = ctx.request.body;
+    const user = app.cache.get(access_token + '-user-' + user_id);
+    const records = await ctx.service.record.getOperateRecordById(user.id,{ page: 1, page_size: 5});
   }
+
+  // async get
 }
 
 module.exports = IndexController;

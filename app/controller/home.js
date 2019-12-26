@@ -41,7 +41,7 @@ class HomeController extends Controller {
   async test(){
     const { ctx, app } = this;
     const { Admin,User,WechatApp } = ctx.model;
-    const { lock } = ctx.service;
+    const { lock, apply } = ctx.service;
 
     const { id = 1 , page = 1, page_size = 10 } = ctx.request.body;
     const user = await User.findOne();
@@ -53,9 +53,10 @@ class HomeController extends Controller {
       reg: '/dd/api'.search(/^\/api/),
       json: JSON.stringify({id: 11}),
       // id: id
-      data: await lock.modify( 2, { name: '2号锁' } ),
+      data: await apply.getAuditer(),
       cache: app.user,
       time: new Date().getTime(),
+      config: app.config.sequelize
     };
   }
 }
