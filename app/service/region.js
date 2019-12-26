@@ -8,9 +8,9 @@ class RegionService extends Service{
   // async list
   async allArea(){
     const { ctx, app } = this;
-    const { access_token } = ctx.request.body;
+    const { access_token, user_id } = ctx.request.body;
     const { Region } = app.model;
-    const user = app.cache.get( access_token + '-user');
+    const user = app.cache.get( access_token + '-user-' + user_id);
     const list = await Region.findAll({
       where: {
         is_delete: 0,

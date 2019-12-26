@@ -17,7 +17,7 @@ module.exports = app => {
   router.get('/operate-list', controller.website.record.operateList);
 
   router.get('/', controller.home.index);
-  router.get('/test',controller.home.test);
+  router.get('/api/v1/test',controller.home.test);
 
   // api
   router.post('/api/login', controller.wxapi.passport.login);

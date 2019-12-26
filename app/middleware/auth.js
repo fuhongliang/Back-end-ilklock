@@ -5,7 +5,7 @@ module.exports = (app,options) => {
 
     // 判断用户是否登录
     let url = ctx.request.url;
-    if (url.search(/^\/api/) < 0){
+    if (url.search(/^\/api/) < 0 || true){
       let is_login = false;
       if (is_login) {
         return;

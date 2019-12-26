@@ -25,9 +25,10 @@ module.exports = appInfo => {
     enable: true,
     ignore: ['/web/login', '/api/login', '/api/binding'],
   };
+
   config.access = {
     enable: true,
-    match: '/api',
+    match: '/api/v1',
   };
 
   // 配置模板引擎
@@ -57,21 +58,21 @@ module.exports = appInfo => {
   };
 
   // 配置数据库
-  config.sequelize = {
-    // 单数据库信息配置
-    dialect: 'mysql',
-    host: '127.0.0.1',
-    port: 3306,
-    database: 'ilock',
-    username:"root",
-    password:"123456",
-    define: {
-      freezeTableName: false,
-      createdAt: false,
-      updatedAt: false
-    },
-    operatorsAliases: true
-  };
+  // config.sequelize = {
+  //   // 单数据库信息配置
+  //   dialect: 'mysql',
+  //   host: '127.0.0.1',
+  //   port: 3306,
+  //   database: 'ilock',
+  //   username:"root",
+  //   password:"123456",
+  //   define: {
+  //     freezeTableName: false,
+  //     createdAt: false,
+  //     updatedAt: false
+  //   },
+  //   operatorsAliases: true
+  // };
 
   // 配置阿里云短信
   config.alysms = {

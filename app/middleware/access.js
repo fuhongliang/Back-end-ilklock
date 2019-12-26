@@ -25,7 +25,7 @@ const assert = require('assert');
 module.exports = (app,options) => {
   return async function(ctx, next) {
 
-    if (!ctx.request.body.is_debug){
+    if (!ctx.request.body.is_debug && ctx.request.method === 'post'){
       const { app_key, access_sign, nonce_str, access_time } = ctx.request.body;
       // 判检查用户访问参数
       assert(app_key,'需要app_key参数');

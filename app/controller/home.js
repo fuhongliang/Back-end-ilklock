@@ -46,14 +46,14 @@ class HomeController extends Controller {
     const { id = 1 , page = 1, page_size = 10 } = ctx.request.body;
     const user = await User.findOne();
     // assert(id,'参数id不能为空');
-    // let data = Array();
+    app.user = user;
 
     ctx.body = {
       utl: ctx.path,
       reg: '/dd/api'.search(/^\/api/),
       json: JSON.stringify({id: 11}),
       // id: id
-      data: await lock.modify( 2, { name: '2号锁' } ),
+      // data: await lock.modify( 2, { name: '2号锁' } ),
       cache: app.user,
       time: new Date().getTime(),
     };
