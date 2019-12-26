@@ -56,6 +56,7 @@ class HomeController extends Controller {
       // data: await lock.modify( 2, { name: '2号锁' } ),
       cache: app.user,
       time: new Date().getTime(),
+      method: ctx.method
     };
   }
 }
