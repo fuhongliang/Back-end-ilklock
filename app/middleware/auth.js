@@ -5,13 +5,7 @@ module.exports = (app,options) => {
 
     // 判断用户是否登录
     let url = ctx.request.url;
-    if (url.search(/^\/api/) < 0){
-      let is_login = false;
-      if (is_login) {
-        return;
-      }
-
-    } else {
+    if (url.search(/^\/api\/v1/) > 0 && ctx.method === 'POST'){
       const { access_token, user_id } = ctx.request.body;
       assert(access_token,'参数access_token不能为空');
       assert(user_id,'参数user_id不能为空');
@@ -21,6 +15,12 @@ module.exports = (app,options) => {
           code: -1,
           msg: '账号未登录',
         };
+        return;
+      }
+
+    } else {
+      let is_login = false;
+      if (is_login) {
         return;
       }
     }

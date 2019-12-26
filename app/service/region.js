@@ -10,6 +10,7 @@ class RegionService extends Service{
    * @returns {Promise<{msg: string, code: number, data: {list: *}}>}
    */
   async allArea(mch_id){
+
     const { app } = this;
     const { Region } = app.model;
 

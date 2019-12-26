@@ -10,6 +10,7 @@ class IndexController extends BaseController {
     const { user_id, access_token } = ctx.request.body;
     const user = app.cache.get(access_token + '-user-' + user_id);
     const records = await ctx.service.record.getOperateRecordById(user.id,{ page: 1, page_size: 5});
+
   }
 
   // async get
