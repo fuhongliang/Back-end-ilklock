@@ -26,16 +26,7 @@ class HomeController extends Controller {
 
     ctx.session.user = {hhh : 1111};
     ctx.body = {
-      hhh: 123,
-      data: wx.config.getConfig(),
-      path: path.join(process.cwd(),'wx.config.js'),
-      user: await Admin.findOne(),
-      model: app.model.Admin,
-      add: num,
-      root_path: this.config.baseDir,
-      code: random(16),
-      ast: ast,
-      md5: md5.update('111').digest('hex')
+
     };
   }
   async test(){
