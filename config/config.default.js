@@ -66,7 +66,7 @@ module.exports = appInfo => {
     sms_code: '',
   };
 
-  config.security =
+  config.security = {
     csrf: {
       ignore: '/api',
       xframe: {
