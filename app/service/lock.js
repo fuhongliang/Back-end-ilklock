@@ -3,6 +3,7 @@
 const path = require('path');
 const Service = require(path.join(process.cwd(),'app/service/baseService'));
 const assert = require('assert');
+const sd = require('silly-datetime');
 
 class LockService extends Service{
 
@@ -26,12 +27,16 @@ class LockService extends Service{
           where: {
             is_delete: 0
           },
-          attributes: ['name'],
-        }
+          attributes: [],
+        },
       ],
+      attributes: ['id', 'addtime', 'name', 'lock_no', [app.Sequelize.col('area.name'), 'area_name']],
     });
 
     if (lock){
+      lock = lock.toJSON();
+      lock.user_name = user.name;
+      lock.addtime = sd.format(new Date(lock.addtime),'YYYY-MM-DD HH:mm:ss');
       return {
         code: 0,
         msg: 'success',

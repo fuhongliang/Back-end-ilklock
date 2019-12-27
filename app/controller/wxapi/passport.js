@@ -69,7 +69,8 @@ class passportController extends BaseController {
           data.data = {
             nickname: decrypt_data.nickName,
             avatar: decrypt_data.avatarUrl,
-            access_token: access_token
+            access_token: access_token,
+            user: user
           }
         }
       }
