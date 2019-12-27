@@ -30,7 +30,7 @@ class UserService extends  Service{
     }
     let user = User.findOne({
       where: {
-        $or: [
+        [app.Sequelize.Op.or]: [
           {username: data.username},
           {phone: data.phone},
         ]

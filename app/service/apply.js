@@ -18,7 +18,7 @@ class ApplyService extends Service{
     let list = await ApplyAuthorize.findAll({
       where: {
         user_id: user.id,
-        expiry_time: { $gt: new Date().getTime() },
+        expiry_time: { [app.Sequelize.Op.gt]: new Date().getTime() },
         status: 1,
         is_delete: 0
       },
@@ -76,10 +76,10 @@ class ApplyService extends Service{
         is_delete: 0,
         is_check: 1,
         id: {
-          $ne: 3
+          [app.Sequelize.Op.ne]: 3
         },
         level: {
-          $gt: 0
+          [app.Sequelize.Op.gt]: 0
         }
       },
       include: [
