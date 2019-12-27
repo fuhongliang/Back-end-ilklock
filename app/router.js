@@ -20,12 +20,13 @@ module.exports = app => {
   router.get('/api/v1/test',controller.home.test);
 
   // api
-  router.post('/api/login', controller.wxapi.passport.login);
-  router.post('/api/binding', controller.wxapi.apply.getKeys);
-  router.post('/api/index', controller.wxapi.index.index);
-  router.post('/api/get_keys', controller.wxapi.apply.getKeys);
-  router.post('/api/get_lock', controller.wxapi.lock.getLockInfo);
-  router.post('/api/get_area_locks', controller.wxapi.lock.getAreaLock);
-  router.post('/api/add_lock', controller.wxapi.lock.createLock);
-  router.post('/api/modify_lock_name', controller.wxapi.lock.createLock);
+  router.prefix('/api/v1');
+  router.post('login', controller.wxapi.passport.login);
+  router.post('binding', controller.wxapi.apply.getKeys);
+  router.post('index', controller.wxapi.index.index);
+  router.post('get_keys', controller.wxapi.apply.getKeys);
+  router.post('get_lock', controller.wxapi.lock.getLockInfo);
+  router.post('get_area_locks', controller.wxapi.lock.getAreaLock);
+  router.post('add_lock', controller.wxapi.lock.createLock);
+  router.post('modify_lock_name', controller.wxapi.lock.createLock);
 };
