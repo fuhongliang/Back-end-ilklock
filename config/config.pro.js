@@ -10,11 +10,11 @@ module.exports = appInfo => {
   config.sequelize = {
     // 单数据库信息配置
     dialect: 'mysql',
-    host: '127.0.0.1',
+    host: 'ilklock-public-mysql-dk38ql.mysql.polardb.rds.aliyuncs.com',
     port: 3306,
-    database: 'ilock',
-    username:"root",
-    password:"123456",
+    database: 'ilklock_test',
+    username:"ilklock_test",
+    password:"BVx4CbM7MR9CC9",
     define: {
       freezeTableName: false,
       createdAt: false,
