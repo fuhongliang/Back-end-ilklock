@@ -15,14 +15,6 @@ class HomeController extends Controller {
       content: { type: 'string' },
     };
 
-    const crypto = require('crypto');
-    const md5 = crypto.createHash('MD5');
-    let num = null;
-    const random = require('string-random');
-    let ast = null;
-    let id = 2;
-    let name = 'hhh';
-    let value = '1';
 
     ctx.session.user = {hhh : 1111};
     ctx.body = {
@@ -32,7 +24,7 @@ class HomeController extends Controller {
   async test(){
     const { ctx, app } = this;
     const { Admin,User,WechatApp } = ctx.model;
-    const { lock } = ctx.service;
+    const { lock, apply } = ctx.service;
 
     const { id = 1 , page = 1, page_size = 10 } = ctx.request.body;
     const user = await User.findOne();
@@ -44,10 +36,6 @@ class HomeController extends Controller {
       reg: '/dd/api'.search(/^\/api/),
       json: JSON.stringify({id: 11}),
       // id: id
-      // data: await lock.modify( 2, { name: '2号锁' } ),
-      cache: app.user,
-      time: new Date().getTime(),
-      method: ctx.method
     };
   }
 }

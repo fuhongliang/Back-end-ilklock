@@ -14,38 +14,17 @@ class ApplyController extends BaseController {
   /**
    * 获取审批人
    * @returns {Promise<void>}
-   * type { nl: '新增锁', ol: '申请开锁' }
    */
   async getAuditer() {
-    const { ctx, app } = this;
-    const { User, Role } = ctx.model;
-    const { access_token, type } = ctx.request.body;
-    const user = app.cache.get(access_token + '-user');
-    const Op = app.Sequelize.Op;
-    let list = User.findAll({
-      where: {
-        mch_id: user.mch_id,
-        is_delete: 0,
-        id: {
-          [Op.ne]: user.id
-        },
-      },
-      include: [
-        {
-          model: 'Role',
-          attributes: [ ['name', 'role_name'] ],
-        }
-      ],
-      attributes: ['id', 'name'],
-    });
-
+    const { ctx } = this;
+    const { apply } = ctx.service;
     ctx.body = {
       code: 0,
       msg: 'success',
       data: {
-        list: list ? list.toJSON() : []
+        list: await apply.getAuditer()
       }
-    }
+    };
   }
 
   async getRecords() {
@@ -61,6 +40,8 @@ class ApplyController extends BaseController {
       }
     }
   }
+
+
 }
 
 module.exports = ApplyController;

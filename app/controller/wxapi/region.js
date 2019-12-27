@@ -10,8 +10,17 @@ class AgentController extends BaseController {
   }
 
   async listArea(){
-    const { ctx } = this;
-    ctx.body = await ctx.service.region.allArea();
+    const { ctx, app } = this;
+    const { access_token, user_id } = ctx.request.body;
+    const user = app.cache.get( access_token + '-user-' + user_id);
+    const { region } = ctx.service;
+    ctx.body = {
+      code: 0,
+      msg: 'success',
+      data: {
+        list: await region.allArea(user.mch_id)
+      }
+    };
   }
 }
 
