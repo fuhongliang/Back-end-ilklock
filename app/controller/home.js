@@ -10,13 +10,6 @@ class HomeController extends Controller {
     const { ctx ,app } = this;
     const { Admin,User,WechatApp } = ctx.model;
 
-    const createRule = {
-      mch_id: { type: 'int', require: true },
-      content: { type: 'string' },
-    };
-
-
-    ctx.session.user = {hhh : 1111};
     ctx.body = {
 
     };
