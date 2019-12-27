@@ -6,7 +6,7 @@ const Service = require(path.join(process.cwd(),'app/service/baseService'));
 
 class RecordService extends Service{
 
-  async getOperateRecordById(id,options){
+  async getOperateRecordByUser(id,options){
     const { ctx } = this;
     let { page , page_size } = options;
     const { LockLog, Lock, Region } = ctx.model;

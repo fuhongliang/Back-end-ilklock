@@ -60,8 +60,8 @@ module.exports = appInfo => {
 
   // 配置阿里云短信
   config.alysms = {
-    access_key_id: '',
-    access_secret: '',
+    access_key_id: 'LTAI4FcKwPHHa5a67bjFCqhK',
+    access_secret: 'a9Jwyr39mJYo7JuvsFJ7ZAV0bQ83H1',
     sign_name: '',
     sms_code: '',
   };
@@ -101,12 +101,12 @@ module.exports = appInfo => {
 
   // 错误处理
   config.onerror = {
-    // all(err, ctx) {
-    //   // 在此处定义针对所有响应类型的错误处理方法
-    //   // 注意，定义了 config.all 之后，其他错误处理方法不会再生效
-    //   ctx.body = 'error';
-    //   ctx.status = 500;
-    // },
+    all(err, ctx) {
+      // 在此处定义针对所有响应类型的错误处理方法
+      // 注意，定义了 config.all 之后，其他错误处理方法不会再生效
+      ctx.body = { code: 1000,msg: err };
+      ctx.status = 500;
+    },
     html(err, ctx) {
       // html hander
       ctx.body = '<h3>' + err + '</h3>';

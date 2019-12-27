@@ -18,6 +18,9 @@ module.exports = app => {
   router.post('/get_area_locks', controller.wxapi.lock.getAreaLock);
   router.post('/add_lock', controller.wxapi.lock.createLock);
   router.post('/modify_lock_name', controller.wxapi.lock.createLock);
+  router.post('/locks_log', controller.wxapi.record.operateList);
+
+
   router.get('/', controller.home.index);
   router.get('/test', controller.home.test);
 
