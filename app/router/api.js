@@ -5,7 +5,6 @@
  */
 module.exports = app => {
 
-
   const { router, controller } = app;
 
   // api
@@ -20,5 +19,4 @@ module.exports = app => {
   router.post('/modify_lock_name', controller.wxapi.lock.createLock);
   router.get('/', controller.home.index);
   router.get('/test', controller.home.test);
-
 };
