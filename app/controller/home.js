@@ -10,9 +10,12 @@ class HomeController extends Controller {
     const { ctx ,app } = this;
     const { Admin,User,WechatApp } = ctx.model;
 
-    ctx.body = {
-
-    };
+    // 校验用户名是否正确
+    const validateResult = await ctx.validate('test', { username: 13 });
+    if (!validateResult) return ;
+    // ctx.body = {
+    //   err
+    // };
   }
   async test(){
     const { ctx, app } = this;

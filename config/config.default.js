@@ -19,7 +19,7 @@ module.exports = appInfo => {
   config.keys = appInfo.name + '_1576458671859_8708';
 
   // add your middleware config here
-  config.middleware = [ 'access', 'auth' ];
+  config.middleware = [ 'errorHandler', 'access', 'auth'];
 
   // 中间件配置
   config.auth = {
@@ -30,6 +30,21 @@ module.exports = appInfo => {
   config.access = {
     enable: true,
     match: '/api/v1',
+  };
+
+  // 验证器
+  config.validatePlus = {
+    resolveError(ctx, errors) {
+      if (errors.length) {
+        ctx.type = 'json';
+        ctx.status = 200;
+        ctx.body = {
+          code: 1,
+          errors,
+          message: '参数错误',
+        };
+      }
+    }
   };
 
   // 配置模板引擎
@@ -50,12 +65,6 @@ module.exports = appInfo => {
       commentEnd: '#>'
     },
     noCache: true,
-  };
-
-  // 鉴权
-  config.passportLocal = {
-    usernameField: 'username',
-    passwordField: 'password',
   };
 
   // 配置阿里云短信
@@ -104,22 +113,23 @@ module.exports = appInfo => {
     // all(err, ctx) {
     //   // 在此处定义针对所有响应类型的错误处理方法
     //   // 注意，定义了 config.all 之后，其他错误处理方法不会再生效
+    //   ctx.set('content-type', 'application/json; charset=utf-8');
+    //   ctx.body = { code: 1000,msg: err };
+    //   ctx.status = 200;
+    // },
+    // html(err, ctx) {
+    //   // html hander
+    //   ctx.body = '<h3>' + err + '</h3>';
+    //   ctx.status = 500;
+    // },
+    // json(err, ctx) {
+    //   // json hander
     //   ctx.body = { code: 1000,msg: err };
     //   ctx.status = 500;
     // },
-    html(err, ctx) {
-      // html hander
-      ctx.body = '<h3>' + err + '</h3>';
-      ctx.status = 500;
-    },
-    json(err, ctx) {
-      // json hander
-      ctx.body = { code: 1000,msg: err };
-      ctx.status = 500;
-    },
-    jsonp(err, ctx) {
-      // 一般来说，不需要特殊针对 jsonp 进行错误定义，jsonp 的错误处理会自动调用 json 错误处理，并包装成 jsonp 的响应格式
-    },
+    // jsonp(err, ctx) {
+    //   // 一般来说，不需要特殊针对 jsonp 进行错误定义，jsonp 的错误处理会自动调用 json 错误处理，并包装成 jsonp 的响应格式
+    // },
   };
 
   // add your user config here

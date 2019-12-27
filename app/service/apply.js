@@ -131,6 +131,13 @@ class ApplyService extends Service{
       order: [ ['addtime', 'DESC'] ],
     });
   }
+
+  async applyKeySecret(){
+
+    const { ctx, app } = this;
+    const { locks, audit_id, duration, access_token, user_id } = ctx.request.body;
+
+  }
 }
 
 module.exports = ApplyService;

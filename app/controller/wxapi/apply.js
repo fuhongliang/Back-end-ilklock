@@ -41,6 +41,10 @@ class ApplyController extends BaseController {
     }
   }
 
+  async applyKeySecret(){
+
+  }
+
 
 }
 

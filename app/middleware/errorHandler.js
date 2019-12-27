@@ -4,17 +4,23 @@ const assert = require('assert');
 const BizError = require('../error');
 
 module.exports = () => {
-  return async function errorHandler(ctx, next) {
+  return async function(ctx, next) {
     ctx.set('content-type', 'application/json; charset=utf-8');
 
     // const start = Date.now();
     try {
       await next();
-      if (ctx.status === 200) {
+      if (ctx.status === 404) {
         ctx.body = {
-          code: 0,
-          msg: 'success',
-          data: ctx.body,
+          code: 404,
+          msg: 'Not Found!'
+        }
+      }else if (ctx.status === 200) {
+
+      }else{
+        ctx.body = {
+          code: 1000,
+          msg: '请求异常!'
         };
       }
     } catch (err) {
