@@ -32,8 +32,8 @@
     "node": ">=10.0.0"
   },
   "scripts": {
-    "start": "egg-scripts start --daemon --title=back-end-ilklock",
-    "stop": "egg-scripts stop --title=back-end-ilklock",
+    "start": "egg-scripts start --daemon --title=egg-server-ilock",
+    "stop": "egg-scripts stop --title=egg-server-ilock",
     "dev": "egg-bin dev",
     "debug": "egg-bin debug",
     "test": "npm run lint -- --fix && npm run test-local",
