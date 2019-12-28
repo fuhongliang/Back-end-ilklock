@@ -6,7 +6,7 @@ module.exports = {
     { require: true, message: '锁名称不能为空'}
   ],
   id: [
-    { type: 'integer', message: '地区id为整数' },
+    { type: 'number', message: '地区id为整数' },
     {require: true, message: '选择地区不能为空' }
   ],
 };

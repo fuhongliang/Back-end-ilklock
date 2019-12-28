@@ -57,8 +57,10 @@ class passportController extends BaseController {
 
         const access_token = md5.update('user_info=' + result.session_key + '&' + result.openid).digest('hex');
 
+        app.cache.set(access_token + '-account',account.toJSON(),60*60);
+
         if (!account.user_id) {
-          app.cache.set(access_token + '-account',account.toJSON(),60*60);
+
           data.code = 1;
           data.msg = '请绑定手机号';
           data.data = {
@@ -91,19 +93,21 @@ class passportController extends BaseController {
     let phones = await app.cache.get(access_token + '-' + phone);
 
     if (phones.phone !== phone || phones.code !== code){
-      return {
+      ctx.body = {
         code: 1,
         msg: '验证码错误'
-      }
+      };
+      return ;
     }
 
-    let user = User.findOne({where: {phone: phone}});
+    let user = await User.findOne({where: {phone: phone}});
 
     if (!user){
-      return {
+      ctx.body = {
         code: 1,
         msg: '手机号不存在',
-      }
+      };
+      return ;
     }
 
     let account = await app.cache.get(access_token + '-account');
@@ -111,7 +115,7 @@ class passportController extends BaseController {
     if (result){
       app.cache.set(access_token + '-user-' + user.id,user.toJSON(),60*60*24*7);
 
-      return {
+      ctx.body = {
         code: 0,
         msg: '绑定成功',
         data: {
@@ -120,11 +124,13 @@ class passportController extends BaseController {
           user: user.toJSON(),
         }
       }
+      return ;
     }
-    return {
+    ctx.body = {
       code: 1000,
       msg: '绑定失败',
-    }
+    };
+    return ;
   }
 
   async apply(){
