@@ -1,15 +1,16 @@
 'use strict';
 const assert = require('assert');
-module.exports = (app,options) => {
+module.exports = () => {
   return async function(ctx, next) {
 
     // 判断用户是否登录
     let url = ctx.request.url;
-    if (url.search(/^\/api\/v1/) > 0 && ctx.method === 'POST'){
+
+    if (/^\/api\/v1/.test(url) && ctx.method === 'POST'){
       const { access_token, user_id } = ctx.request.body;
       assert(access_token,'参数access_token不能为空');
       assert(user_id,'参数user_id不能为空');
-      let user = await app.cache.get(access_token + '-user-' + user_id);
+      let user = await ctx.app.cache.get(access_token + '-user-' + user_id);
       if (!user){
         ctx.body = {
           code: -1,
