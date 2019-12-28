@@ -21,5 +21,6 @@ class IndexController extends BaseController{
     }
     ctx.body = await sms.sendSmsCode(phone);
   }
+
 }
 module.exports = IndexController;

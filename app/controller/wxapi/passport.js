@@ -123,14 +123,13 @@ class passportController extends BaseController {
           nickname: account.nickname,
           user: user.toJSON(),
         }
-      }
+      };
       return ;
     }
     ctx.body = {
       code: 1000,
       msg: '绑定失败',
     };
-    return ;
   }
 
   async apply(){
