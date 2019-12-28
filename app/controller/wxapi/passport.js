@@ -61,7 +61,7 @@ class passportController extends BaseController {
             access_token: access_token
           }
         } else {
-          let user = User.findOne({where: {id: account.user_id}});
+          let user = await User.findOne({where: {id: account.user_id}});
           app.cache.set(access_token + '-user-' + user.id,user.toJSON(),60*60*24*7);
           data.code = 0;
           data.msg = '登录成功';
