@@ -43,6 +43,7 @@ class Alysms {
 
   addPhone(phone){
     this.params.PhoneNumbers += phone;
+    return this;
   }
 
   sendSms(){

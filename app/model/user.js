@@ -15,7 +15,7 @@ module.exports = app => {
       mch_id: {
         type: INTEGER(11),
         allowNull: false,
-        defaultValue: '0'
+        defaultValue: 0
       },
       username: {
         type: STRING(25),
@@ -33,12 +33,13 @@ module.exports = app => {
       },
       level: {
         type: INTEGER(2),
-        allowNull: false
+        allowNull: false,
+        defaultValue: 1
       },
       roleid: {
         type: INTEGER(11),
         allowNull: false,
-        defaultValue: '0'
+        defaultValue: 0
       },
       name: {
         type: STRING(25),

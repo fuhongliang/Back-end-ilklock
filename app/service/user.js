@@ -6,6 +6,7 @@ const Service = require(path.join(process.cwd(),'app/service/baseService'));
 
 class UserService extends  Service{
 
+  /*
   async register(){
     const { ctx ,app } = this;
     const { WxAccount,User } = ctx.model;
@@ -67,6 +68,7 @@ class UserService extends  Service{
       msg: '账号绑定失败'
     };
   }
+   */
 }
 
 module.exports = UserService;

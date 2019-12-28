@@ -37,6 +37,11 @@ module.exports = app => {
         allowNull: false,
         defaultValue: 0
       },
+      duration: {
+        type: INTEGER(11),
+        allowNull: false,
+        defaultValue: 0
+      },
       secret_key: {
         type: TEXT,
         allowNull: false

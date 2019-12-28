@@ -11,6 +11,7 @@ module.exports = app => {
   // api
   router.prefix('/api/v1');
   router.post('/login', controller.wxapi.passport.login);
+  router.post('/get_valid_code', controller.index.getSmsCode);
   router.post('/binding', controller.wxapi.apply.getKeys);
   router.post('/index', controller.wxapi.index.index);
   router.post('/get_keys', controller.wxapi.apply.getKeys);

@@ -24,7 +24,7 @@ module.exports = appInfo => {
   // 中间件配置
   config.auth = {
     enable: true,
-    ignore: ['/web/login', '/api/login', '/api/binding'],
+    ignore: ['/api/v1/login', '/api/v1/binding', '/api/v1/get_sms_code'],
   };
 
   config.access = {
@@ -71,8 +71,8 @@ module.exports = appInfo => {
   config.alysms = {
     access_key_id: 'LTAI4FcKwPHHa5a67bjFCqhK',
     access_secret: 'a9Jwyr39mJYo7JuvsFJ7ZAV0bQ83H1',
-    sign_name: '',
-    sms_code: '',
+    sign_name: '艾乐科智能闭锁',
+    sms_code: 'SMS_181500433',
   };
 
   config.security = {

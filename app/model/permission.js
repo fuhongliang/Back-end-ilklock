@@ -16,6 +16,10 @@ module.exports = app => {
         type: STRING(25),
         allowNull: false
       },
+      alias_name: {
+        type: STRING(25),
+        allowNull: false
+      },
       route: {
         type: STRING(255),
         allowNull: false

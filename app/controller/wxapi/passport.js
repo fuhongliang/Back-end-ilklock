@@ -13,11 +13,11 @@ class passportController extends BaseController {
     const { WxAccount,User } = ctx.model;
     const { code, encryptedData, iv, rawData, signature } = ctx.request.body;
     const md5 = crypto.createHash('MD5');
-    assert(code,'参数code不能为空');
-    assert(encryptedData,'参数encryptedData不能为空');
-    assert(iv,'参数iv不能为空');
-    assert(rawData,'参数rawData不能为空');
-    assert(signature,'参数signature不能为空');
+    const validateResult = await ctx.validate('login',ctx.request.body);
+
+    if (!validateResult){
+      return ;
+    }
 
     const result = await wx.auth.code2Session({ js_code: code });
 
@@ -50,7 +50,7 @@ class passportController extends BaseController {
           account = await WxAccount.create({nickname: decrypt_data.nickName,avatar: decrypt_data.avatarUrl,openid: decrypt_data.openId,unionid: decrypt_data.unionId});
         }
 
-        const access_token = md5.update('access_token=' + result.session_key).digest('hex');
+        const access_token = md5.update('user_info=' + result.session_key + '&' + result.openid).digest('hex');
 
         app.cache.set(access_token + '-account',account.toJSON(),60*60);
 
@@ -62,7 +62,6 @@ class passportController extends BaseController {
           }
         } else {
           let user = User.findOne({where: {id: account.user_id}});
-          let user_key = md5.update('user_info=' + result.session_key + '&' + result.openid).digest('hex');
           app.cache.set(access_token + '-user-' + user.id,user.toJSON(),60*60*24*7);
           data.code = 0;
           data.msg = '登录成功';

@@ -30,24 +30,23 @@ class LockController extends BaseController {
   async createLock(){
     const { ctx } = this;
     const { lock } = ctx.service;
-    ctx.body = await lock.create();
 
+    const validateResult = await ctx.validate('lock.create',ctx.request.body);
+
+    if (!validateResult){
+      return ;
+    }
+
+    ctx.body = await lock.create();
   }
 
   async modifyName(){
     const { ctx, app } = this;
     const { id, name, access_token, user_id } = ctx.request.body;
-    const role = {
-      id: { type: 'int', require: true },
-      name: { type:'string', require: true }
-    };
-    let errs = app.validator.validate(role, { id, name });
 
-    if (errs){
-      ctx.body = {
-        code: 1,
-        msg: errs
-      };
+    const validateResult = await ctx.validate('lock.create',{ id, name });
+
+    if (!validateResult){
       return ;
     }
 

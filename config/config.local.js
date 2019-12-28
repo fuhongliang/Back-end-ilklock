@@ -14,7 +14,7 @@ module.exports = appInfo => {
     port: 3306,
     database: 'ilock',
     username:"root",
-    password:"root",
+    password:"123456",
     define: {
       freezeTableName: false,
       createdAt: false,

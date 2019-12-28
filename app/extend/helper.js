@@ -27,5 +27,35 @@ module.exports = {
     // this 是 helper 对象，在其中可以调用其他 helper 方法
     // this.ctx => context 对象
     // this.app => application 对象
+  },
+
+  /**
+   * 检测用户是否有权限
+   * @param id
+   * @param type = { qygl: '区域管理', qysz: '区域设置', kssq: '开锁授权', ckjl: '查看记录', rygl: '人员管理', jsgl: '角色管理', kssz: '开锁设置' }
+   */
+  async isPermission(id, type) {
+    const { Permission, User } = this.app.model;
+
+    const p = await User.findOne({
+      where: {
+        id: id,
+      },
+      include: [
+        {
+          model: Permission,
+          as: 'up',
+          where: {
+            alias_name: type
+          },
+          require: true
+        }
+      ],
+    });
+
+    if (!p){
+      return false;
+    }
+    return true;
   }
 };

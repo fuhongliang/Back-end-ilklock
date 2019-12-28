@@ -72,20 +72,6 @@ class LockService extends Service{
     const { Lock, Region } = ctx.model;
 
 
-    const createRule = {
-      lock_no: { type: 'string', require: true },
-      lock_name: { type: 'string', require: true },
-      region_id: { type: 'int', require: true },
-    };
-
-    let err = app.validator.validate(createRule,ctx.request.body);
-    if (err){
-      return {
-        code: 1,
-        msg: '参数不符合规定',
-      }
-    }
-
     const { lock_no, region_id, name: lock_name, access_token, user_id } = ctx.request.body;
     const user = app.cache.get(access_token + '-user-' + user_id);
 

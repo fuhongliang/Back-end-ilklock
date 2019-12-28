@@ -104,9 +104,28 @@ class ApplyService extends Service{
     // return list;
   }
 
-  async getRecordByUserId(id){
-    const { ctx } = this;
+  /**
+   *
+   * @param id
+   * @param type = { 0: 待处理, 1:已处理, 2:已提交 3:已批准 4:未完成}
+   * @returns {Bluebird<any[]>}
+   */
+  async getRecordByUserId(id, options){
+    const { ctx, app } = this;
     const { ApplyAuthorize, Lock, Group } = ctx.model;
+    const { page , page_size } = options;
+    const Op = app.Sequelize.Op;
+    // let status;
+    // switch (type) {
+    //   case 0:
+    //     status = 0;
+    //     break;
+    //   case 1:
+    //     status = { [Op.ne]: 0 };
+    //     break;
+    //   case 2:
+    //     break;
+    // }
     return ApplyAuthorize.findAll({
       where: {
         user_id: user.id,
@@ -129,14 +148,23 @@ class ApplyService extends Service{
         },
       ],
       order: [ ['addtime', 'DESC'] ],
+      offset: (page - 1)*page_size,
+      limit: page_size
     });
   }
 
-  async applyKeySecret(){
+  async applyKeySecret(data){
 
-    const { ctx, app } = this;
-    const { locks, audit_id, duration, access_token, user_id } = ctx.request.body;
+    const { app } = this;
+    const { Lock, ApplyAuthorize } = app.model;
+    const { lock_id, audit_id, mch_id, user_id, duration } = data;
 
+    const checkLock = await Lock.findOne({ where: { mch_id , id: lock_id } });
+    if (!checkLock){
+      throw new Error('锁信息不存在');
+    }
+    let addtime = new Date().getTime();
+    await ApplyAuthorize.create({ mch_id, user_id, lock_id, audit_id, duration, addtime, type: 0 });
   }
 }
 
