@@ -11,7 +11,7 @@ class LockService extends Service{
     const { ctx, app } = this;
     const { access_token, user_id } = ctx.request.body;
     const { Lock, Region } = ctx.model;
-    const user = app.cache.get(access_token + '-user-' + user_id);
+    const user = await app.cache.get(access_token + '-user-' + user_id);
 
     let lock = await Lock.findOne({
       where: {
@@ -54,7 +54,7 @@ class LockService extends Service{
     const { id, access_token, user_id } = ctx.request.body;
     assert(id,'区域id不能为空');
     const { Lock } = app.model;
-    const user = app.cache.get(access_token + '-user-' + user_id);
+    const user = await app.cache.get(access_token + '-user-' + user_id);
     return Lock.findAll({
       where: {
         region_id: id,
@@ -73,7 +73,7 @@ class LockService extends Service{
 
 
     const { lock_no, region_id, name: lock_name, access_token, user_id } = ctx.request.body;
-    const user = app.cache.get(access_token + '-user-' + user_id);
+    const user = await app.cache.get(access_token + '-user-' + user_id);
 
     let exist_area = await Region.findOne({
       where: {

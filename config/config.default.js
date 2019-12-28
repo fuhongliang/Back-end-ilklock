@@ -97,15 +97,24 @@ module.exports = appInfo => {
   };
 
   // 缓存
+  const fsStore = require('cache-manager-fs');
   config.cache = {
-    default: 'memory',
+    default: 'fsStore',
     stores: {
       memory: {
         driver: 'memory',
         max: 100,
         ttl: 0,
       },
+      fsStore: {
+        driver: fsStore,
+        max: 1024*1024*10,
+        path:'diskcache',
+        preventfill:true,
+        ttl: 0,
+      }
     },
+
   };
 
   // 错误处理

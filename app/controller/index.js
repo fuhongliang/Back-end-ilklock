@@ -12,11 +12,12 @@ class IndexController extends BaseController{
 
     const { phone } = ctx.request.body;
     console.log(ctx.request.body);
-    if (/^1[3456789]\d{9}$/.test(phone)){
+    if (!/^1[3456789]\d{9}$/.test(phone)){
       ctx.body = {
         code: 1,
-        msg: '手机号格式错误'
-      }
+        msg: '手机号不存在'
+      };
+      return;
     }
     ctx.body = await sms.sendSmsCode(phone);
   }

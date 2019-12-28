@@ -6,15 +6,15 @@ const Service = require(path.join(process.cwd(),'app/service/baseService'));
 
 class RecordService extends Service{
 
-  async getOperateRecordByUser(id,options){
-    const { ctx } = this;
+  async getOperateRecordByUser(user_id,options){
+    const { ctx, app } = this;
     let { page , page_size } = options;
     const { LockLog, Lock, Region } = ctx.model;
 
     let data = await LockLog.findAll({
       order: [ ['addtime', 'DESC'] ],
       where: {
-        id: id,
+        user_id: user_id,
         is_delete: 0
       },
       offset: (page - 1)*page_size,
@@ -22,26 +22,24 @@ class RecordService extends Service{
       include: [
         {
           model: Lock,
-          attributes: [['name', 'lock_name']],
+          attributes: [],
           include:[
             {
               model: Region,
+              as: 'area',
               where: {
                 is_delete: 0
               },
-              attributes: [['name', 'region_name']],
+              attributes: [],
             }
           ],
         },
-
-      ]
+      ],
+      attributes: ['addtime', 'status', [app.Sequelize.col('Lock.name'), 'lock_name'], [app.Sequelize.col('Lock->area.name'), 'area_name'] ],
     });
 
-    if (data){
-      data = data.toJSON();
-      for ( let i in data){
-        data[i].addtime = sd.format(new Date(data[i].addtime),'YYYY年MM月DD日 HH:mm:ss');
-      }
+    for ( let i in data){
+      data[i].addtime = sd.format(new Date(data[i].addtime),'YYYY年MM月DD日 HH:mm:ss');
     }
 
     return data

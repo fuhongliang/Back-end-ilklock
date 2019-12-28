@@ -12,7 +12,7 @@ class ApplyService extends Service{
   async getAuthKeys(){
     const { app } = this;
     const { access_token, user_id } = this.ctx.request.body;
-    const user = app.cache.get(access_token + '-user-' + user_id);
+    const user = await app.cache.get(access_token + '-user-' + user_id);
     const { ApplyAuthorize, Lock, Group } = app.model;
 
     let list = await ApplyAuthorize.findAll({
@@ -68,7 +68,7 @@ class ApplyService extends Service{
     }else if(type === 'ol'){
       permission_id = 3;
     }
-    const user = app.cache.get(access_token + '-user-' + user_id);
+    const user = await app.cache.get(access_token + '-user-' + user_id);
 
     return User.findAll({
       where: {

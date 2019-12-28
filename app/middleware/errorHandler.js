@@ -31,7 +31,8 @@ module.exports = () => {
       if (err.constructor !== BizError && err.constructor !== assert.AssertionError) { // 自己系统的错误不记录
         // 所有的异常都在 app 上触发一个 error 事件，框架会记录一条错误日志
         ctx.app.emit('error', err, ctx);
-        errorMsg = 'Internal Server Error';
+        errorMsg = err.message;
+        // errorMsg = 'Internal Server Error';
       } else {
         if (ctx.app.config.env !== 'prod') ctx.app.emit('error', err, ctx);
         errorMsg = err.message;
@@ -49,7 +50,7 @@ module.exports = () => {
       };
       ctx.status = status;
     } finally {
-      // ctx.logger.debug('request time for path `%s`: %sms', ctx.path, (Date.now() - start));
+      ctx.logger.debug('request time for path `%s`: %sms', ctx.path, (Date.now()));
     }
   };
 };

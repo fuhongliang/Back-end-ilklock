@@ -24,6 +24,11 @@ class passportController extends BaseController {
     let data = {
       code: 1000,
       msg: '用户登录失败',
+      data: {
+        session_key: result.session_key,
+        openid: result.openid,
+        ck: wx.units.checkUserSign({ session_key: result.session_key, rawData, signature })
+      }
     };
 
     if (result.openid && wx.units.checkUserSign({ session_key: result.session_key, rawData, signature })) {
@@ -52,9 +57,8 @@ class passportController extends BaseController {
 
         const access_token = md5.update('user_info=' + result.session_key + '&' + result.openid).digest('hex');
 
-        app.cache.set(access_token + '-account',account.toJSON(),60*60);
-
         if (!account.user_id) {
+          app.cache.set(access_token + '-account',account.toJSON(),60*60);
           data.code = 1;
           data.msg = '请绑定手机号';
           data.data = {
