@@ -18,7 +18,7 @@ class AgentController extends BaseController {
       code: 0,
       msg: 'success',
       data: {
-        list: await region.allArea(user.mch_id)
+        list: await region.allArea(user.com_id)
       }
     };
   }

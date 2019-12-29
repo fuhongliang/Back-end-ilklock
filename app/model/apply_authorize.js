@@ -12,7 +12,7 @@ module.exports = app => {
         primaryKey: true,
         autoIncrement: true
       },
-      mch_id: {
+      com_id: {
         type: INTEGER(11),
         allowNull: false,
         defaultValue: 0
@@ -23,11 +23,6 @@ module.exports = app => {
         defaultValue: 0
       },
       lock_id: {
-        type: INTEGER(11),
-        allowNull: false,
-        defaultValue: 0
-      },
-      group_id: {
         type: INTEGER(11),
         allowNull: false,
         defaultValue: 0
@@ -80,7 +75,6 @@ module.exports = app => {
 
   ApplyAuthorize.associate = () => {
     ApplyAuthorize.belongsTo(app.model.Lock,{foreignKey: 'lock_id', targetKey: 'id', as: 'lock'});
-    ApplyAuthorize.belongsTo(app.model.Group,{foreignKey: 'group_id', targetKey: 'id', as: 'work'});
     ApplyAuthorize.belongsTo(app.model.User,{foreignKey: 'user_id', targetKey: 'id', as: 'user'});
     ApplyAuthorize.belongsTo(app.model.User,{foreignKey: 'audit_id', targetKey: 'id', as: 'audit'});
   };

@@ -72,7 +72,7 @@ class ApplyService extends Service{
 
     return User.findAll({
       where: {
-        mch_id: user.mch_id,
+        com_id: user.com_id,
         is_delete: 0,
         is_check: 1,
         id: {
@@ -139,13 +139,6 @@ class ApplyService extends Service{
             is_delete: 0
           }
         },
-        {
-          model: Group,
-          attributes: [ ['id', 'group_id'], ['name', 'gname'] ],
-          where: {
-            is_delete: 0
-          }
-        },
       ],
       order: [ ['addtime', 'DESC'] ],
       offset: (page - 1)*page_size,
@@ -157,14 +150,14 @@ class ApplyService extends Service{
 
     const { app } = this;
     const { Lock, ApplyAuthorize } = app.model;
-    const { lock_id, audit_id, mch_id, user_id, duration } = data;
+    const { lock_id, audit_id, com_id, user_id, duration } = data;
 
-    const checkLock = await Lock.findOne({ where: { mch_id , id: lock_id } });
+    const checkLock = await Lock.findOne({ where: { com_id , id: lock_id } });
     if (!checkLock){
       throw new Error('锁信息不存在');
     }
     let addtime = new Date().getTime();
-    await ApplyAuthorize.create({ mch_id, user_id, lock_id, audit_id, duration, addtime, type: 0 });
+    await ApplyAuthorize.create({ com_id, user_id, lock_id, audit_id, duration, addtime, type: 0 });
   }
 }
 

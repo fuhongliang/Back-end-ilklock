@@ -4,7 +4,7 @@ module.exports = app => {
 
   const { STRING, INTEGER ,TEXT, BIGINT } = app.Sequelize;
 
-  const Group = app.model.define('Group',
+  const LockMode = app.model.define('LockMode',
     {
       id: {
         type: INTEGER(11),
@@ -43,8 +43,8 @@ module.exports = app => {
       // freezeTableName: true,
     });
 
-  Group.associate = function(){};
+  LockMode.associate = function(){};
 
-  return Group;
+  return LockMode;
 
 };

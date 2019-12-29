@@ -4,7 +4,7 @@ module.exports = app => {
 
   const { STRING, INTEGER } = app.Sequelize;
 
-  const Mch = app.model.define('Mch',
+  const Company = app.model.define('Company',
     {
       id: {
         type: INTEGER(11),
@@ -12,7 +12,7 @@ module.exports = app => {
         primaryKey: true,
         autoIncrement: true
       },
-      mch_name: {
+      com_name: {
         type: STRING(25),
         allowNull: false,
         defaultValue: ''
@@ -43,14 +43,14 @@ module.exports = app => {
       }
     },
     {
-      tableName: 'ilock_mch',
+      tableName: 'ilock_company',
       // 自定义表名
       // freezeTableName: true,
     });
 
-  Mch.associate = function(){};
+  Company.associate = function(){};
 
-  return Mch;
+  return Company;
 
 };
 

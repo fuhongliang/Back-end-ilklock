@@ -9,7 +9,7 @@ class RegionService extends Service{
    * 获取所有区域
    * @returns {Promise<{msg: string, code: number, data: {list: *}}>}
    */
-  async allArea(mch_id){
+  async allArea(com_id){
 
     const { app } = this;
     const { Region } = app.model;
@@ -17,7 +17,7 @@ class RegionService extends Service{
     const list = await Region.findAll({
       where: {
         is_delete: 0,
-        mch_id: mch_id
+        com_id: com_id
       }
     });
     let new_list = {};

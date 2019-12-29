@@ -57,10 +57,8 @@ class passportController extends BaseController {
 
         const access_token = md5.update('user_info=' + result.session_key + '&' + result.openid).digest('hex');
 
-        app.cache.set(access_token + '-account',account.toJSON(),60*60);
-
         if (!account.user_id) {
-
+          app.cache.set(access_token + '-account',account.toJSON(),60*60);
           data.code = 1;
           data.msg = '请绑定手机号';
           data.data = {
@@ -111,6 +109,14 @@ class passportController extends BaseController {
     }
 
     let account = await app.cache.get(access_token + '-account');
+    if (!account){
+      ctx.body = {
+        code: -1,
+        msg: '请重新登录'
+      };
+      return ;
+    }
+
     let result = await WxAccount.update({user_id: user.id},{where: {openid: account.openid,unionid: account.unionid}});
     if (result){
       app.cache.set(access_token + '-user-' + user.id,user.toJSON(),60*60*24*7);

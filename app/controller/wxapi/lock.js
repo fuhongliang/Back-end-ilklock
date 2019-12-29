@@ -30,7 +30,7 @@ class LockController extends BaseController {
   async createLock(){
     const { ctx } = this;
     const { lock } = ctx.service;
-
+    console.log(ctx.request.body);
     const validateResult = await ctx.validate('lock.create',ctx.request.body);
 
     if (!validateResult){
@@ -44,15 +44,16 @@ class LockController extends BaseController {
     const { ctx, app } = this;
     const { id, name, access_token, user_id } = ctx.request.body;
 
-    const validateResult = await ctx.validate('lock.create',{ id, name });
+    const validateResult = await ctx.validate('lock.modify',{ id, name });
 
     if (!validateResult){
       return ;
     }
 
-    const { user } = app.cache.get(access_token + '-user-' + user_id);
+    const user = await app.cache.get(access_token + '-user-' + user_id);
+
     const { lock } = ctx.service;
-    ctx.body = await lock.modify({ id, mch_id: user.mch_id },{ name });
+    ctx.body = await lock.modify({ id, com_id: user.com_id },{ name });
   }
 }
 

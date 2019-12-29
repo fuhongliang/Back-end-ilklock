@@ -12,7 +12,7 @@ module.exports = app => {
         primaryKey: true,
         autoIncrement: true
       },
-      mch_id: {
+      com_id: {
         type: INTEGER(11),
         allowNull: false,
         defaultValue: 0

@@ -10,13 +10,13 @@ class LockService extends Service{
   async getLockByNo(lock_no){
     const { ctx, app } = this;
     const { access_token, user_id } = ctx.request.body;
-    const { Lock, Region } = ctx.model;
+    const { Lock, Region, Company } = ctx.model;
     const user = await app.cache.get(access_token + '-user-' + user_id);
 
     let lock = await Lock.findOne({
       where: {
         lock_no: lock_no,
-        mch_id: user.mch_id,
+        com_id: user.com_id,
         is_delete: 0,
         is_check: 1
       },
@@ -29,13 +29,21 @@ class LockService extends Service{
           },
           attributes: [],
         },
+        {
+          model: Company,
+          as: 'com',
+          where: {
+            is_delete: 0
+          },
+          attributes: [],
+        },
       ],
-      attributes: ['id', 'addtime', 'name', 'lock_no', [app.Sequelize.col('area.name'), 'area_name']],
+      attributes: ['id', 'addtime', 'name', 'lock_no', [app.Sequelize.col('area.name'), 'area_name'], [app.Sequelize.col('com.com_name'), 'com_name']],
     });
 
     if (lock){
       lock = lock.toJSON();
-      lock.user_name = user.name;
+      lock.user_name = app.userInfo.name;
       lock.addtime = sd.format(new Date(lock.addtime),'YYYY-MM-DD HH:mm:ss');
       return {
         code: 0,
@@ -58,7 +66,7 @@ class LockService extends Service{
     return Lock.findAll({
       where: {
         region_id: id,
-        mch_id: user.mch_id,
+        com_id: user.com_id,
         is_delete: 0,
         is_check: 1,
       },
@@ -72,37 +80,46 @@ class LockService extends Service{
     const { Lock, Region } = ctx.model;
 
 
-    const { lock_no, region_id, name: lock_name, access_token, user_id } = ctx.request.body;
+    const { lock_no, region_id, lock_name: name, access_token, user_id } = ctx.request.body;
     const user = await app.cache.get(access_token + '-user-' + user_id);
 
     let exist_area = await Region.findOne({
       where: {
-        mch_id: user.mch_id,
+        com_id: user.com_id,
         id: region_id,
         is_delete: 0,
-      }
+        where: app.Sequelize.literal(`pr.id is null`),
+      },
+      attributes: ['id'],
+      include: [
+        {
+          model: Region,
+          as: 'pr',
+          where: {
+            is_delete: 0,
+          },
+          attributes: [],
+          required: false
+        }
+      ],
     });
 
     if (!exist_area){
       return {
         code: 1,
-        msg: '区域不存在'
-      }
-    }
-    let ck_area =  await Region.findOne({
-      where: {
-        parent_id: region_id,
-        is_delete: 0,
-      }
-    });
-    if (ck_area){
-      return {
-        code: 1,
-        msg: '当前区域存在子区域,请将锁放在子区域内'
+        msg: '该区域无法添加锁,请重新选择',
       }
     }
 
-    let res = await Lock.create({ lock_no, region_id, lock_name, mch_id: user.mch_id });
+    let ck_lock = await Lock.findOne({ where: { lock_no } });
+    if (ck_lock){
+      return {
+        code: 1,
+        msg: '锁ID已存在,无法重复添加',
+      }
+    }
+
+    let res = await Lock.create({ lock_no, region_id, name, com_id: user.com_id });
     if (res){
       return {
         code: 0,

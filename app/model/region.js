@@ -12,7 +12,7 @@ module.exports = app => {
         primaryKey: true,
         autoIncrement: true
       },
-      mch_id: {
+      com_id: {
         type: INTEGER(11),
         allowNull: false,
         defaultValue: 0
@@ -39,7 +39,9 @@ module.exports = app => {
       // freezeTableName: true,
     });
 
-  Region.associate = function(){};
+  Region.associate = () => {
+    Region.hasMany(app.model.Region,{ foreignKey: 'parent_id', sourceKey: 'id', as: 'pr' });
+  };
 
   return Region;
 

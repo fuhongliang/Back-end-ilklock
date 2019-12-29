@@ -52,7 +52,7 @@ class ApplyController extends BaseController {
     }
     const { locks, audit_id, duration, access_token, user_id } = ctx.request.body;
     const user = app.cache.get(access_token + '-user-' + user_id);
-    const checkAudit = User.findOne({ where: { id: audit_id, mch_id: user.mch_id }});
+    const checkAudit = User.findOne({ where: { id: audit_id, com_id: user.com_id }});
     if (!checkAudit || await ctx.helper.isPermission(audit_id,'kssq')){
       ctx.body = {
         code: 1,
@@ -66,7 +66,7 @@ class ApplyController extends BaseController {
       transaction = await this.ctx.model.transaction();
 
       for (let lock_id of locks) {
-        await apply.applyKeySecret({ lock_id, audit_id, mch_id: user.mch_id, user_id, duration });
+        await apply.applyKeySecret({ lock_id, audit_id, com_id: user.com_id, user_id, duration });
       }
 
       // 提交事务

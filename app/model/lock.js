@@ -12,7 +12,7 @@ module.exports = app => {
         primaryKey: true,
         autoIncrement: true
       },
-      mch_id: {
+      com_id: {
         type: INTEGER(11),
         allowNull: false,
         defaultValue: 0
@@ -56,6 +56,7 @@ module.exports = app => {
   // 定义关联关系
   Lock.associate = () => {
     Lock.belongsTo(app.model.Region,{foreignKey: 'region_id', targetKey: 'id', as: 'area'});
+    Lock.belongsTo(app.model.Company,{foreignKey: 'com_id', targetKey: 'id', as: 'com'});
   };
 
 

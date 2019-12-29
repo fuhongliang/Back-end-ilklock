@@ -47,6 +47,22 @@ module.exports = appInfo => {
     }
   };
 
+  config.sequelize = {
+    // 单数据库信息配置
+    dialect: 'mysql',
+    host: 'ilklock-public-mysql-dk38ql.mysql.polardb.rds.aliyuncs.com',
+    port: 3306,
+    database: 'ilklock_test',
+    username:"ilklock_test",
+    password:"BVx4CbM7MR9CC9",
+    define: {
+      freezeTableName: false,
+      createdAt: false,
+      updatedAt: false
+    },
+    // operatorsAliases: {}
+  };
+
   // 配置模板引擎
   config.view = {
     defaultViewEngine: 'nunjucks',

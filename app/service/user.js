@@ -11,7 +11,7 @@ class UserService extends  Service{
     const { ctx ,app } = this;
     const { WxAccount,User } = ctx.model;
     const createRule = {
-      mch_id: { type: 'int', require: true },
+      com_id: { type: 'int', require: true },
       username: { type: 'int', require: true },
       name: { type: 'string', require: true },
       pinyin: { type: 'string', require: true },
