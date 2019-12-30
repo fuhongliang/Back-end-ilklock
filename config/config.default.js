@@ -24,7 +24,7 @@ module.exports = appInfo => {
   // 中间件配置
   config.auth = {
     enable: true,
-    ignore: ['/api/v1/login', '/api/v1/binding', '/api/v1/get_sms_code'],
+    ignore: ['/api/v1/login', '/api/v1/binding', '/api/v1/get_valid_code'],
   };
 
   config.access = {
