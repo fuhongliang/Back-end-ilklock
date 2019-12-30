@@ -136,11 +136,11 @@ class ApplyService extends Service{
       where: { com_id, is_delete: 0, type: 0 },
       attributes: ['locks']
     });
-    locks_open_by_one = locks_open_by_one ? JSON.parse(locks_open_by_one):[];
+    locks_open_by_one = locks_open_by_one['locks'] ? JSON.parse(locks_open_by_one['locks']):[];
 
-    // if ( !ctx.helper.inArray(lock_id,locks_open_by_one) ){
-    //   throw new Error('锁不支持单个申请');
-    // }
+    if ( !ctx.helper.inArray(lock_id,locks_open_by_one) ){
+      throw new Error('锁不支持单个申请');
+    }
     const checkLock = await Lock.findOne({ where: { com_id , id: lock_id, is_delete: 0 } });
     if (!checkLock){
       throw new Error('锁信息不存在');

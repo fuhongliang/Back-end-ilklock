@@ -11,15 +11,14 @@ class HomeController extends Controller {
   async index() {
     const { ctx ,app } = this;
     const { Admin,User,WechatApp } = ctx.model;
-    const md5 = crypto.createHash('MD5');
-    const access_token = md5.update('user_info=&test').digest('hex');
-    let user = await User.findOne({where: {id: 1}});
-    await app.cache.set(access_token + '-user-' + user.id,user.toJSON(),60*60*24*7);
-    await app.cache.set('test',{ test: '哈哈哈哈', msg: '缓存测试'},6000);
+    let str = JSON.stringify([2,3,4]);
+    let arr = JSON.parse(str);
+    arr.push('3');
     ctx.body = {
       test: /^1[3456789]\d{9}$/.test(undefined),
-      access_token: access_token,
-      a: ctx.helper.inArray(1,['1', 2])
+      a: ctx.helper.inArray(1,['1', 2]),
+      str,
+      arr: [...new Set(arr)]
     };
   }
   async test(){

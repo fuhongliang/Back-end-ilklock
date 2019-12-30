@@ -26,11 +26,6 @@ module.exports = app => {
         type: TEXT,
         allowNull: false
       },
-      expire_time: {
-        type: BIGINT,
-        allowNull: false,
-        defaultValue: 0
-      },
       type: {
         type: INTEGER(1),
         allowNull: false,

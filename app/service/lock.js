@@ -91,7 +91,7 @@ class LockService extends Service{
 
   async create(){
     const { ctx, app } = this;
-    const { Lock, Region } = ctx.model;
+    const { Lock, Region, LockMode } = ctx.model;
 
 
     const { lock_no, region_id, lock_name: name, access_token, user_id } = ctx.request.body;
@@ -125,6 +125,7 @@ class LockService extends Service{
       }
     }
 
+
     let ck_lock = await Lock.findOne({ where: { lock_no } });
     if (ck_lock){
       return {
@@ -133,16 +134,49 @@ class LockService extends Service{
       }
     }
 
-    let res = await Lock.create({ lock_no, region_id, name, com_id: user.com_id });
-    if (res){
-      return {
-        code: 0,
-        msg: '创建成功',
+    const locks_open_by_one = await LockMode.findOne({
+      where: { com_id: user.com_id, is_delete: 0, type: 0 },
+      attributes: ['id','locks']
+    });
+    let locks = locks_open_by_one['locks'] ? JSON.parse(locks_open_by_one['locks']):[];
+
+    let transaction;
+
+    try {
+      // 建立事务对象
+      transaction = await this.ctx.model.transaction();
+
+      let res = await Lock.create({ lock_no, region_id, name, com_id: user.com_id });
+      if (!res){
+        throw new Error('创建锁失败');
       }
+      let lockres;
+      locks.push(res.id);
+      if (locks_open_by_one){
+        lockres = await LockMode.update({locks: JSON.stringify([...new Set(locks)])}, { where: {id: locks_open_by_one.id} });
+      }else{
+        lockres = await LockMode.create({locks: JSON.stringify([...new Set(locks)]), com_id: user.com_id, name: '允许单个锁申请开锁', type: 0 });
+      }
+
+      if (!lockres){
+        throw new Error('创建锁失败');
+      }
+      // 提交事务
+      await transaction.commit();
+    } catch (err) {
+      // 事务回滚
+      await transaction.rollback();
+      ctx.body = {
+        code: 1,
+        msg: err.errorMsg,
+      };
+      return ;
     }
+
+
     return {
-      code: 1,
-      msg: '创建失败'
+      code: 0,
+      msg: '创建成功',
     }
   }
 
