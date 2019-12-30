@@ -114,15 +114,12 @@ module.exports = appInfo => {
   };
 
   // 缓存
-  const fsStore = require('cache-manager-fs');
   config.cache = {
-    default: 'fsStore',
+    default: 'memory',
     stores: {
-      fsStore: {
-        driver: fsStore,
+      memory: {
+        driver: 'memory',
         max: 1024*1024*10,
-        path:'cachefile',
-        preventfill:false,
         ttl: 0,
       }
     },
