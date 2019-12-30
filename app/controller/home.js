@@ -19,6 +19,7 @@ class HomeController extends Controller {
     ctx.body = {
       test: /^1[3456789]\d{9}$/.test(undefined),
       access_token: access_token,
+      a: ctx.helper.inArray(1,['1', 2])
     };
   }
   async test(){

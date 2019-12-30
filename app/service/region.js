@@ -33,8 +33,19 @@ class RegionService extends Service{
     return new_list
   }
 
-  async getNonParentArea(){
-
+  async getChildArea(){
+    const { ctx, app } = this;
+    const { Region } = app.model;
+    const { access_token, user_id, id = 0 } = ctx.request.body;
+    const user = await app.cache.get(access_token + '-user-' + user_id);
+    return Region.findAll({
+      where: {
+        com_id: user.com_id,
+        is_delete: 0,
+        parent_id: id
+      },
+      attributes: ['id', 'name'],
+    });
   }
 }
 

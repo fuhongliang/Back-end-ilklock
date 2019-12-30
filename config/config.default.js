@@ -119,7 +119,7 @@ module.exports = appInfo => {
     stores: {
       memory: {
         driver: 'memory',
-        max: 1024*1024*10,
+        max: 100,
         ttl: 0,
       }
     },

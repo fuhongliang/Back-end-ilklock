@@ -61,9 +61,14 @@ class LockService extends Service{
     const { ctx, app } = this;
     const { id, access_token, user_id } = ctx.request.body;
     assert(id,'区域id不能为空');
-    const { Lock } = app.model;
+    const { Lock, LockMode } = app.model;
     const user = await app.cache.get(access_token + '-user-' + user_id);
-    return Lock.findAll({
+    let locks_open_by_one = await LockMode.findOne({
+      where: { com_id: user.com_id, is_delete: 0, type: 0 },
+      attributes: ['locks']
+    });
+    locks_open_by_one = locks_open_by_one ? JSON.parse(locks_open_by_one):[];
+    let list = await Lock.findAll({
       where: {
         region_id: id,
         com_id: user.com_id,
@@ -72,7 +77,16 @@ class LockService extends Service{
       },
       attributes: [ 'id', 'name' ],
     });
-    // return list;
+    console.log(list);
+    // list = list.length>0?list.toJSON():[];
+    for (let i in list){
+      if ( ctx.helper.inArray(list[i].id,locks_open_by_one) ){
+        list[i].check = '可选';
+      }else{
+        list[i].check = '不可选';
+      }
+    }
+    return list;
   }
 
   async create(){

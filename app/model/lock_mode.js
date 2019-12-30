@@ -12,6 +12,11 @@ module.exports = app => {
         primaryKey: true,
         autoIncrement: true
       },
+      com_id: {
+        type: INTEGER(11),
+        allowNull: false,
+        defaultValue: 0
+      },
       name: {
         type: STRING(255),
         allowNull: false,
@@ -24,21 +29,21 @@ module.exports = app => {
       expire_time: {
         type: BIGINT,
         allowNull: false,
-        defaultValue: '0'
+        defaultValue: 0
       },
       type: {
         type: INTEGER(1),
         allowNull: false,
-        defaultValue: '0'
+        defaultValue: 1
       },
       is_delete: {
         type: INTEGER(1),
         allowNull: false,
-        defaultValue: '0'
+        defaultValue: 0
       }
     },
     {
-      tableName: 'ilock_group',
+      tableName: 'ilock_lock_mode',
       // 自定义表名
       // freezeTableName: true,
     });

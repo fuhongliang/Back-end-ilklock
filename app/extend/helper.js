@@ -57,5 +57,20 @@ module.exports = {
       return false;
     }
     return true;
+  },
+
+  /**
+   *
+   * @param value
+   * @param arr
+   * @returns {boolean}
+   */
+  inArray(value,arr){
+    for (let val of arr){
+      if (val == value){
+        return true;
+      }
+    }
+    return false;
   }
 };

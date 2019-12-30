@@ -13,7 +13,7 @@ class ApplyService extends Service{
     const { app } = this;
     const { access_token, user_id } = this.ctx.request.body;
     const user = await app.cache.get(access_token + '-user-' + user_id);
-    const { ApplyAuthorize, Lock, Group } = app.model;
+    const { ApplyAuthorize, Lock } = app.model;
 
     let list = await ApplyAuthorize.findAll({
       where: {
@@ -22,7 +22,7 @@ class ApplyService extends Service{
         status: 1,
         is_delete: 0
       },
-      attributes: ['id', 'secret_key', 'expiry_time'],
+      attributes: ['id', 'secret_key', 'expiry_time', [app.Sequelize.col('lock.name') , 'lock_name'] ],
       include: [
         {
           model: Lock,
@@ -30,19 +30,9 @@ class ApplyService extends Service{
           where: {
             is_delete: 0
           },
-          attributes: ['name'],
+          attributes: [],
           required: false
         },
-        {
-          model: Group,
-          as: 'work',
-          where: {
-            is_delete: 0
-          },
-          attributes: ['name'],
-          required: false
-        }
-
       ],
     });
     return {
@@ -138,17 +128,27 @@ class ApplyService extends Service{
 
   async applyKeySecret(data){
 
-    const { app } = this;
-    const { Lock, ApplyAuthorize } = app.model;
+    const { app, ctx } = this;
+    const { Lock, ApplyAuthorize, LockMode } = app.model;
     const { lock_id, audit_id, com_id, user_id, duration } = data;
 
-    const checkLock = await Lock.findOne({ where: { com_id , id: lock_id } });
+    let locks_open_by_one = await LockMode.findOne({
+      where: { com_id, is_delete: 0, type: 0 },
+      attributes: ['locks']
+    });
+    locks_open_by_one = locks_open_by_one ? JSON.parse(locks_open_by_one):[];
+
+    // if ( !ctx.helper.inArray(lock_id,locks_open_by_one) ){
+    //   throw new Error('锁不支持单个申请');
+    // }
+    const checkLock = await Lock.findOne({ where: { com_id , id: lock_id, is_delete: 0 } });
     if (!checkLock){
       throw new Error('锁信息不存在');
     }
     let addtime = new Date().getTime();
     await ApplyAuthorize.create({ com_id, user_id, lock_id, audit_id, duration, addtime, type: 0 });
   }
+
 }
 
 module.exports = ApplyService;

@@ -46,12 +46,14 @@ class ApplyController extends BaseController {
     const { ctx, app } = this;
     const { User } = app.model;
     const { apply } = ctx.service;
+
     const validateResult = await ctx.validate('apply.openlock',ctx.request.body);
     if (!validateResult){
       return ;
     }
     const { locks, audit_id, duration, access_token, user_id } = ctx.request.body;
-    const user = app.cache.get(access_token + '-user-' + user_id);
+    const user = await app.cache.get(access_token + '-user-' + user_id);
+
     const checkAudit = User.findOne({ where: { id: audit_id, com_id: user.com_id }});
     if (!checkAudit || await ctx.helper.isPermission(audit_id,'kssq')){
       ctx.body = {
@@ -76,7 +78,7 @@ class ApplyController extends BaseController {
       await transaction.rollback();
       ctx.body = {
         code: 1,
-        msg: err,
+        msg: err.errorMsg,
       };
       return ;
     }

@@ -7,6 +7,14 @@ class AgentController extends BaseController {
 
   async getArea(){
     const { ctx } = this;
+    const { region } = ctx.service;
+    ctx.body = {
+      code: 0,
+      msg: 'success',
+      data: {
+        list: await region.getChildArea()
+      }
+    }
   }
 
   async listArea(){

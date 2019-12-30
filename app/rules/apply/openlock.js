@@ -4,7 +4,6 @@ module.exports = {
   locks: [
     { type: 'array', message: '锁必须是个数组' },
     { required: true, message: '请选择锁' },
-    { min: 1, message: '请选择锁'}
   ],
   audit_id: [
     { pattern: /^\d+/, message: '审核人id为整数' },
