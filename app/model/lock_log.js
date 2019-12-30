@@ -2,7 +2,7 @@
 
 module.exports = app => {
 
-  const { STRING, INTEGER,BIGINT } = app.Sequelize;
+  const { STRING, INTEGER,DATE } = app.Sequelize;
 
   const LockLog = app.model.define('LockLog',
     {
@@ -12,31 +12,72 @@ module.exports = app => {
         primaryKey: true,
         autoIncrement: true
       },
-      lock_id: {
+      key_id: {
+        type: STRING(25),
+        allowNull: false,
+        defaultValue: ''
+      },
+      key_status: {
+        type: INTEGER(2),
+        allowNull: false,
+        defaultValue: 0
+      },
+      log_time: {
         type: INTEGER(11),
         allowNull: false,
-        defaultValue: '0'
+        defaultValue: 0
       },
-      user_id: {
+      log_version: {
         type: INTEGER(11),
         allowNull: false,
-        defaultValue: '0'
+        defaultValue: 0
       },
-      addtime: {
-        type: BIGINT,
+      log_order: {
+        type: INTEGER(11),
         allowNull: false,
-        defaultValue: '0'
+        defaultValue: 0
       },
-      status: {
-        type: STRING(5),
+      company: {
+        type: INTEGER(11),
         allowNull: false,
-        defaultValue: '读码'
+        defaultValue: 0
       },
-      is_delete: {
-        type: INTEGER(1),
+      user: {
+        type: INTEGER(11),
         allowNull: false,
-        defaultValue: '0'
-      }
+        defaultValue: 0
+      },
+      user_addition: {
+        type: INTEGER(11),
+        allowNull: false,
+        defaultValue: 0
+      },
+      locks: {
+        type: INTEGER(11),
+        allowNull: false,
+        defaultValue: 0
+      },
+      sensor_status: {
+        type: INTEGER(11),
+        allowNull: false,
+        defaultValue: 0
+      },
+      soft_status: {
+        type: INTEGER(11),
+        allowNull: false,
+        defaultValue: 0
+      },
+      log_code: {
+        type: INTEGER(11),
+        allowNull: false,
+        defaultValue: 0
+      },
+      create_at: {
+        type: DATE,
+        allowNull: false,
+        defaultValue: '0000-00-00 00:00:00'
+
+      },
     },
     {
       tableName: 'ilock_lock_log',

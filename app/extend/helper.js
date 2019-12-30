@@ -3,6 +3,7 @@
 const path = require('path');
 
 module.exports = {
+
   getMenu() {
     const { ctx } = this;
     const menu = require(path.join(process.cwd(), 'app/controller/website/menu'));
@@ -72,5 +73,28 @@ module.exports = {
       }
     }
     return false;
+  },
+
+  /**
+   *
+   * @param buf
+   * @param bitOffset
+   * @param length
+   * @returns {number}
+   */
+  readInt(buf, bitOffset, length) {
+    let readOffset = bitOffset;
+    let result = 0;
+    for (let i = 0; i < length; i++) {
+      const bytePos = Math.floor(readOffset / 8);
+      const bitPos = 7 - (readOffset % 8);
+      const byte = buf.readUInt8(bytePos);
+      const bit = (byte >> bitPos) & 1;
+
+      result |= bit << (length - i - 1);
+      readOffset++;
+    }
+
+    return result;
   }
 };

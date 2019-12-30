@@ -19,7 +19,7 @@ module.exports = appInfo => {
   config.keys = appInfo.name + '_1576458671859_8708';
 
   // add your middleware config here
-  config.middleware = [ 'errorHandler', 'access', 'auth'];
+  config.middleware = [ 'errorHandler', 'access', 'auth', 'sysLog'];
 
   // 中间件配置
   config.auth = {
@@ -28,6 +28,11 @@ module.exports = appInfo => {
   };
 
   config.access = {
+    enable: true,
+    match: '/api/v1',
+  };
+
+  config.sysLog = {
     enable: true,
     match: '/api/v1',
   };

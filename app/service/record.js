@@ -46,6 +46,65 @@ class RecordService extends Service{
 
   }
 
+  /**
+   * 插入一条日志
+   * @param {Number} keyId 钥匙ID
+   * @param {Buffer} ciperLog 加密后的串
+   */
+  async insertLogs(keyId, ciperLog) {
+
+    const logData = this.decrypt(ciperLog);
+    const { LockLog } = this.app.model;
+    const results = await LockLog.create({
+      key_id: keyId,
+      key_status: logData.keyStatus,
+      log_time: logData.logTime,
+      log_version: logData.logVersion,
+      log_order: logData.logOrder,
+      log_code: logData.logCode,
+      user: logData.user,
+      company: logData.company,
+      user_addition: logData.userAddition,
+      locks: logData.locks,
+      soft_status: logData.softStatus,
+      sensor_status: logData.sensorStatue,
+      create_at: new Date(),
+    });
+
+    return results;
+  }
+
+  decrypt(data) {
+    const { helper } = this.ctx;
+    assert(data instanceof Buffer, 'Error');
+
+    const logVersion = helper.readInt(data, 0, 4);
+    const logTime = helper.readInt(data, 4, 32);
+    const logOrder = helper.readInt(data, 36, 16);
+    const keyStatus = helper.readInt(data, 52, 8);
+    const logCode = helper.readInt(data, 60, 8);
+    const user = helper.readInt(data, 68, 32);
+    const company = helper.readInt(data, 100, 32);
+    const userAddition = helper.readInt(data, 132, 32);
+    const locks = helper.readInt(data, 164, 32);
+    const softStatus = helper.readInt(data, 196, 4);
+    const sensorStatue = helper.readInt(data, 200, 16);
+
+    return {
+      logVersion,
+      logTime,
+      logOrder,
+      keyStatus,
+      logCode,
+      user,
+      company,
+      userAddition,
+      locks,
+      softStatus,
+      sensorStatue,
+    };
+  }
+
 }
 
 module.exports = RecordService;
