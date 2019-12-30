@@ -118,11 +118,6 @@ module.exports = appInfo => {
   config.cache = {
     default: 'fsStore',
     stores: {
-      memory: {
-        driver: 'memory',
-        max: 100,
-        ttl: 0,
-      },
       fsStore: {
         driver: fsStore,
         max: 1024*1024*10,
