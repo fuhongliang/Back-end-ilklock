@@ -20,6 +20,7 @@ module.exports = app => {
   router.post('/add_lock', controller.wxapi.lock.createLock);
   router.post('/modify_lock_name', controller.wxapi.lock.modifyName);
   router.post('/locks_log', controller.wxapi.record.operateList);
+  router.post('/get_audits', controller.wxapi.apply.getAuditer);
 
 
   router.get('/', controller.home.index);

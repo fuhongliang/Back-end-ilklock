@@ -92,7 +92,7 @@ class passportController extends BaseController {
 
     console.log(phones,access_token,phone);
 
-    if (phones.phone !== phone || phones.code !== code){
+    if (phones.phone != phone || phones.code != code){
       ctx.body = {
         code: 1,
         msg: '验证码错误'

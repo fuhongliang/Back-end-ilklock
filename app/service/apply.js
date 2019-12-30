@@ -115,17 +115,7 @@ class ApplyService extends Service{
     const { ApplyAuthorize, Lock, Group } = ctx.model;
     const { page , page_size } = options;
     const Op = app.Sequelize.Op;
-    // let status;
-    // switch (type) {
-    //   case 0:
-    //     status = 0;
-    //     break;
-    //   case 1:
-    //     status = { [Op.ne]: 0 };
-    //     break;
-    //   case 2:
-    //     break;
-    // }
+
     return ApplyAuthorize.findAll({
       where: {
         user_id: user.id,
