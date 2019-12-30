@@ -7,7 +7,7 @@ yarn.lock
 coverage/
 .idea/
 run/
-runtime/
+cachefile/
 .DS_Store
 *.sw*
 *.un~
