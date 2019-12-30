@@ -90,6 +90,8 @@ class passportController extends BaseController {
 
     let phones = await app.cache.get(access_token + '-' + phone);
 
+    console.log(phones,access_token,phone);
+
     if (phones.phone !== phone || phones.code !== code){
       ctx.body = {
         code: 1,
