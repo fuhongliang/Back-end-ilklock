@@ -126,7 +126,7 @@ module.exports = appInfo => {
       fsStore: {
         driver: fsStore,
         max: 1024*1024*10,
-        path:'cachefile/',
+        path:'cachefile',
         preventfill:false,
         ttl: 0,
       }
