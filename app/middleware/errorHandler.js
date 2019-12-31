@@ -5,6 +5,7 @@ const BizError = require('../error');
 
 module.exports = () => {
   return async function(ctx, next) {
+
     ctx.set('content-type', 'application/json; charset=utf-8');
 
     // const start = Date.now();

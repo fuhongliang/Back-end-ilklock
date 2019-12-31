@@ -22,6 +22,12 @@ module.exports = appInfo => {
   config.middleware = [ 'errorHandler', 'access', 'auth', 'sysLog'];
 
   // 中间件配置
+  config.errorHandler = {
+    enable: true,
+    match: '/api/v1',
+  };
+
+
   config.auth = {
     enable: true,
     ignore: ['/api/v1/login', '/api/v1/binding', '/api/v1/get_valid_code'],
@@ -34,7 +40,7 @@ module.exports = appInfo => {
 
   config.sysLog = {
     enable: true,
-    ignore: ['/api/v1/login', '/api/v1/binding', '/api/v1/get_valid_code'],
+    match: '/api/v1',
   };
 
   // 验证器
@@ -50,6 +56,15 @@ module.exports = appInfo => {
         };
       }
     }
+  };
+
+  // 验证码
+  config.verifyCode = {
+    canvas: {
+      width: 100,
+      height: 30
+    },
+    font: '24px "微软雅黑"'
   };
 
   config.sequelize = {

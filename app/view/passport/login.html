@@ -1,8 +1,52 @@
 <html>
 <head>
-    {% include "common/head.html" %}
+    <title>艾乐科后台登录系统</title>
+    <!-- meta -->
+    <meta charset="utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="format-detection" content="email=no"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+
+
+    <!-- css 文件-->
+    <link rel="stylesheet" href="/vendor/iconfont/iconfont.css" />
+    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/css/login.css" />
+
+    <!-- js文件 -->
+    <script type="text/javascript" src="/js/main.js"></script>
+    <script type="text/javascript" src="/vendor/jQuery/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/vendor/vue/vue.min.js"></script>
+    <script type="text/javascript" src="/vendor/layui/layer/layer.js"></script>
 </head>
 <body>
-<div>哈哈哈哈</div>
+    <div class="bg-login">
+        <div class="tab-login">
+            <div class="tab-login-title">艾乐科智能锁管理系统</div>
+            <form action="" method="post">
+
+                <div class="ipt-text">
+                    <input type="text" placeholder="请输入账号" />
+                </div>
+
+                <div class="ipt-text">
+                    <input type="text" placeholder="请输入密码" />
+                </div>
+
+                <div class="ipt-text">
+                    <input type="text" placeholder="请输入验证码" />
+                    <div class="captcha"></div>
+                </div>
+
+                <button class="login-btn">登录</button>
+            </form>
+
+        </div>
+    </div>
 </body>
 </html>

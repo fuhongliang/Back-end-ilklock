@@ -96,5 +96,10 @@ module.exports = {
     }
 
     return result;
+  },
+
+  verifyCode(){
+    const { ctx } = this;
+
   }
 };
