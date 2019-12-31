@@ -2,6 +2,7 @@
 const path = require('path');
 const wx = require('wx-minprogram');
 const BaseService = require(path.join(process.cwd(), 'app/service/baseService'));
+const crypto = require('crypto');
 
 class PassportService extends BaseService{
 
@@ -42,7 +43,8 @@ class PassportService extends BaseService{
         const access_token = md5.update('user_info=' + result.session_key + '&' + result.openid).digest('hex');
 
         if (!account.user_id) {
-          await app.cache.set(access_token + '-account',account.toJSON(),60*60);
+          this.setUser(access_token,account.toJSON(),60*10, 'wxAccount');
+          // await app.cache.set(access_token + '-account',account.toJSON(),60*60);
           return {
             code: 1,
             msg: '请绑定手机号',
@@ -52,7 +54,7 @@ class PassportService extends BaseService{
           };
         } else {
           let user = await User.findOne({where: {id: account.user_id}});
-          await app.cache.set(access_token + '-user-' + user.id,user.toJSON(),60*60*24*7);
+          this.setUser(access_token,account.toJSON(),60*60*24*7,'wechatUser',user.id);
           return {
             code: 0,
             msg: '登录成功',
@@ -65,6 +67,59 @@ class PassportService extends BaseService{
           };
         }
       }
+    }
+  }
+
+  async binding(){
+    const { ctx, app } = this;
+    const { phone, code, access_token } = ctx.request.body;
+    const { WxAccount,User } = ctx.model;
+    let phones = await this.getUser(access_token,'sms');
+
+    if (!phones){
+      return {
+        code: 1,
+        msg: '验证码不存在'
+      }
+    }
+
+    if (phones.phone != phone || phones.code != code){
+      return {
+        code: 1,
+        msg: '验证码错误'
+      };
+    }
+
+    let user = await User.findOne({where: {phone: phone}});
+
+    if (!user){
+      return {
+        code: 1,
+        msg: '手机号不存在',
+      };
+    }
+
+    let account = this.getUser(access_token,'wxAccount');
+    if (!account){
+      return {
+        code: -1,
+        msg: '请重新登录'
+      };
+    }
+
+    let result = await WxAccount.update({user_id: user.id},{where: {openid: account.openid,unionid: account.unionid}});
+    if (result){
+      this.setUser(access_token,user.toJSON(),60*60*24*7,'wechatUser',user.id);
+
+      return {
+        code: 0,
+        msg: '绑定成功',
+        data: {
+          avatar: account.avatar,
+          nickname: account.nickname,
+          user: user.toJSON(),
+        }
+      };
     }
   }
 

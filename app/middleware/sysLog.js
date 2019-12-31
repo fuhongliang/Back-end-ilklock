@@ -5,19 +5,23 @@ module.exports = () => {
 
     await next();
 
-    ctx.app.runInBackground(async ctx => {
+    ctx.runInBackground(async () => {
 
       // 记录用户访问日志
       const user = ctx.app.userInfo;
       const { SysLog } = ctx.model;
-      console.log(ctx.app.userInfo);
-      await SysLog.create({
-        com_id: user.com_id,
-        user_id: user.id,
-        path: ctx.path,
-        params: JSON.stringify(ctx.request.body),
-        response_text: JSON.stringify(ctx.body)
-      });
+
+      if (user){
+        await SysLog.create({
+          com_id: user.com_id,
+          user_id: user.id,
+          path: ctx.path,
+          params: JSON.stringify(ctx.request.body),
+          response_text: JSON.stringify(ctx.body),
+          create_at: new Date()
+        });
+      }
+
     })
   };
 

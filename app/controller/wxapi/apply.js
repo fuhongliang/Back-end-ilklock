@@ -31,7 +31,7 @@ class ApplyController extends BaseController {
     const { ctx, app } = this;
     const { apply } = ctx.service;
     const { access_token, user_id, page = 1, page_size = 10 } = ctx.request.body;
-    const user = app.cache.get(access_token + '-user-' + user_id);
+    const user = app.userInfo;
     ctx.body = {
       code: 0,
       msg: 'success',
@@ -52,7 +52,7 @@ class ApplyController extends BaseController {
       return ;
     }
     const { locks, audit_id, duration, access_token, user_id } = ctx.request.body;
-    const user = await app.cache.get(access_token + '-user-' + user_id);
+    const user = app.userInfo;
 
     const checkAudit = User.findOne({ where: { id: audit_id, com_id: user.com_id }});
     if (!checkAudit || await ctx.helper.isPermission(audit_id,'kssq')){

@@ -20,7 +20,7 @@ class AgentController extends BaseController {
   async listArea(){
     const { ctx, app } = this;
     const { access_token, user_id } = ctx.request.body;
-    const user = app.cache.get( access_token + '-user-' + user_id);
+    const user = app.userInfo;
     const { region } = ctx.service;
     ctx.body = {
       code: 0,

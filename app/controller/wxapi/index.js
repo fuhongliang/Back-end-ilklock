@@ -8,7 +8,7 @@ class IndexController extends BaseController {
     const { ctx, app } = this;
     const { record } = this;
     const { user_id, access_token } = ctx.request.body;
-    const user = app.cache.get(access_token + '-user-' + user_id);
+    const user = app.userInfo;
     const records = await record.getOperateRecordByUser(user.id,{ page: 1, page_size: 5});
 
   }

@@ -17,7 +17,7 @@ class SmsService extends BaseService{
     }
     let code = random(6, {letters: false});
 
-    await app.cache.set(access_token + '-' + phone, { phone , code },60*10);
+    await this.setUser(access_token, { phone , code },60*10,'sms',);
     let sms = new Sms(setting.access_key_id,setting.access_secret);
     try{
       sms.setSignName(setting.sign_name)
@@ -36,5 +36,6 @@ class SmsService extends BaseService{
       msg: '发送成功'
     }
   }
+
 }
 module.exports = SmsService;

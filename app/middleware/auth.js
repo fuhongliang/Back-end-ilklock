@@ -11,7 +11,8 @@ module.exports = () => {
       assert(access_token,'参数access_token不能为空');
       assert(user_id,'参数user_id不能为空');
 
-      let user = await ctx.app.cache.get(access_token + '-user-' + user_id);
+      let user = await ctx.service.passport.getUser(access_token,'wechatUser',user_id);
+
       let userInfo = await User.findOne({ where:{ id: user_id, is_delete: 0 } });
       if (!user || !userInfo){
         ctx.body = {

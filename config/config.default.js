@@ -24,7 +24,7 @@ module.exports = appInfo => {
   // 中间件配置
   config.auth = {
     enable: true,
-    ignore: ['/api','/api/v1/login', '/api/v1/binding', '/api/v1/get_valid_code'],
+    ignore: ['/api/v1/login', '/api/v1/binding', '/api/v1/get_valid_code'],
   };
 
   config.access = {
@@ -34,7 +34,7 @@ module.exports = appInfo => {
 
   config.sysLog = {
     enable: true,
-    ignore: ['/api','/api/v1/login', '/api/v1/binding', '/api/v1/get_valid_code'],
+    ignore: ['/api/v1/login', '/api/v1/binding', '/api/v1/get_valid_code'],
   };
 
   // 验证器

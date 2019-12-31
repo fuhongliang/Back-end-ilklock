@@ -9,7 +9,7 @@ class RecordController extends BaseController {
     const { ctx, app } = this;
     const { access_token, user_id , page = 1, page_size = 10 } = ctx.request.body;
     const { record } = ctx.service;
-    const user = await app.cache.get(access_token + '-user-' + user_id);
+    const user = app.userInfo;
     console.log(user);
     const data = await record.getOperateRecordByUser(user.id,{ page: page, page_size: page_size});
     ctx.body = {

@@ -18,8 +18,4 @@ module.exports = {
     enable: true,
     package: 'egg-validate-plus',
   },
-  cache: {
-    enable: true,
-    package: 'egg-cache',
-  },
 };

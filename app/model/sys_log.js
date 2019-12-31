@@ -40,7 +40,6 @@ module.exports = app => {
     }
   }, {
     tableName: 'ilock_sys_log',
-    createdAt: true
   });
 
   SysLog.associate = function(){};

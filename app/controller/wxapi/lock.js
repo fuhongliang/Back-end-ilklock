@@ -50,7 +50,7 @@ class LockController extends BaseController {
       return ;
     }
 
-    const user = await app.cache.get(access_token + '-user-' + user_id);
+    const user = app.userInfo;
 
     const { lock } = ctx.service;
     ctx.body = await lock.modify({ id, com_id: user.com_id },{ name });

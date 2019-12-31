@@ -36,8 +36,9 @@ class RegionService extends Service{
   async getChildArea(){
     const { ctx, app } = this;
     const { Region } = app.model;
-    const { access_token, user_id, id = 0 } = ctx.request.body;
-    const user = await app.cache.get(access_token + '-user-' + user_id);
+    const { id = 0 } = ctx.request.body;
+    const user = app.userInfo;
+
     return Region.findAll({
       where: {
         com_id: user.com_id,
