@@ -9,9 +9,9 @@ module.exports = () => {
 
       // 记录用户访问日志
       const user = ctx.app.userInfo;
-      const { SysLlog } = ctx.model;
-
-      await SysLlog.create({
+      const { SysLog } = ctx.model;
+      console.log(ctx.app.userInfo);
+      await SysLog.create({
         com_id: user.com_id,
         user_id: user.id,
         path: ctx.path,

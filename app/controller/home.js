@@ -13,12 +13,21 @@ class HomeController extends Controller {
     const { Admin,User,WechatApp } = ctx.model;
     let str = JSON.stringify([2,3,4]);
     let arr = JSON.parse(str);
+    const access_token = crypto.createHash('MD5').update('user1').digest('hex');
+    const key = crypto.createHash('MD5').update(access_token + '-user-1').digest('hex');
+    const user = await User.findOne({ where: {id: 1}});
+    await app.cache.set('test',{hh: '哈哈', test: '测试'});
     arr.push('3');
+
     ctx.body = {
       test: /^1[3456789]\d{9}$/.test(undefined),
       a: ctx.helper.inArray(1,['1', 2]),
-      str,
-      arr: [...new Set(arr)]
+      arr: [...new Set(arr)],
+      str: JSON.stringify("sss"),
+      // userInfo: ctx.app.userInfo,
+      json: JSON.parse(JSON.stringify("sss")),
+      // cache: app.authCache,
+      access_token
     };
   }
   async test(){
