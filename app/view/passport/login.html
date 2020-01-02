@@ -40,7 +40,7 @@
 
                 <div class="ipt-text">
                     <input type="text" name="code" placeholder="请输入验证码" />
-                    <div class="captcha"><img src="/web/get_captcha" /></div>
+                    <div class="captcha"><img src="/web/get_captcha" onclick='javascript:this.src="/web/get_captcha?tm" + Math.random()'/></div>
                 </div>
 
                 <button class="login-btn">登录</button>

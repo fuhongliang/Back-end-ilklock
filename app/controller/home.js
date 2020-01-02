@@ -33,7 +33,10 @@ class HomeController extends Controller {
   async test(){
     const { ctx, app } = this;
 
-    ctx.body = 'helle Word';
+    ctx.body = {
+      host: ctx.request.toJSON(),
+      parse: JSON.parse([10,11,12])
+    };
   }
 }
 

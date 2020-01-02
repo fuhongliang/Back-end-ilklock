@@ -67,7 +67,9 @@ class LockService extends Service{
       where: { com_id: user.com_id, is_delete: 0, type: 0 },
       attributes: ['locks']
     });
-    locks_open_by_one = locks_open_by_one ? JSON.parse(locks_open_by_one['locks']):[];
+    console.log(locks_open_by_one['locks']);
+    locks_open_by_one = locks_open_by_one ? JSON.parse(`${locks_open_by_one['locks']}`):[];
+    console.log(locks_open_by_one,Array.isArray(locks_open_by_one));
     let list = await Lock.findAll({
       where: {
         region_id: id,
