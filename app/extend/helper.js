@@ -98,10 +98,4 @@ module.exports = {
     return result;
   },
 
-  verifyCode(){
-    const { ctx, app } = this;
-    const verify = app.verifyCode.generate();
-    ctx.session.code = verify.code;
-    return verify.image
-  }
 };

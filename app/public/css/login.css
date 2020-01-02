@@ -49,6 +49,7 @@ html,body{
     background-repeat: no-repeat;
     background-size: 1rem 1.1rem;
     background-position: 20px 13px;
+    outline: none;
 }
 .tab-login .ipt-text input[name='username']{
     background-image: url("../images/icon/ic_account.png");
@@ -58,14 +59,16 @@ html,body{
     background-image: url("../images/icon/ic_password.png");
 }
 .tab-login .ipt-text input[name='code']{
-    width: 15rem;
+    flex: 0;
+    width: calc(19rem - 120px);
+    margin-right: 1rem;
     background-image: url("../images/icon/ic_msgcode.png");
 }
 .tab-login .captcha{
-    margin-left: 1rem;
-    flex: .5;
+    width: 120px;
     background: #ffffff;
     border-radius: .4rem;
+    overflow: hidden;
 }
 .login-btn{
     margin-top: 1.5rem;

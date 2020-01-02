@@ -58,15 +58,6 @@ module.exports = appInfo => {
     }
   };
 
-  // 验证码
-  config.verifyCode = {
-    canvas: {
-      width: 100,
-      height: 30
-    },
-    font: '24px "微软雅黑"'
-  };
-
   config.sequelize = {
     // 单数据库信息配置
     dialect: 'mysql',

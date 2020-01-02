@@ -24,8 +24,9 @@ module.exports = app => {
   router.post('/api/v1/get_area', controller.wxapi.region.getArea);
 
 
-
+  // web
   router.get('/web/login', controller.website.passport.login);
+  router.get('/web/get_captcha', controller.website.passport.captcha);
   router.get('/web/home', controller.website.home.index);
   router.get('/web/locks', controller.website.agent.locks);
   router.get('/web/users', controller.website.user.index);
@@ -34,7 +35,7 @@ module.exports = app => {
   router.get('/web/role/list', controller.website.role.list);
   router.get('/web/operate-list', controller.website.record.operateList);
 
-
+  //
   router.get('/', controller.home.index);
   router.get('/test', controller.home.test);
 

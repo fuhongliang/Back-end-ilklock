@@ -67,7 +67,7 @@ class LockService extends Service{
       where: { com_id: user.com_id, is_delete: 0, type: 0 },
       attributes: ['locks']
     });
-    locks_open_by_one = locks_open_by_one ? JSON.parse(locks_open_by_one):[];
+    locks_open_by_one = locks_open_by_one ? JSON.parse(locks_open_by_one['locks']):[];
     let list = await Lock.findAll({
       where: {
         region_id: id,
@@ -77,16 +77,19 @@ class LockService extends Service{
       },
       attributes: [ 'id', 'name' ],
     });
-    // console.log(list);
-    // list = list.length>0?list.toJSON():[];
-    for (let i in list){
-      if ( ctx.helper.inArray(list[i].id,locks_open_by_one) ){
-        list[i].check = 1;
+
+    let new_list = [];
+    for (let item of list){
+      let new_item = item.toJSON();
+      if ( ctx.helper.inArray(new_item.id,locks_open_by_one) ){
+        new_item.check = 1;
       }else{
-        list[i].check = 0;
+        new_item.check = 0;
       }
+      new_list.push(new_item);
     }
-    return list;
+
+    return new_list;
   }
 
   async create(){
