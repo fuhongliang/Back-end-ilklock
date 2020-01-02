@@ -11,7 +11,7 @@ class passportController extends BaseController {
   async login() {
     const { ctx } = this;
 
-    const validateResult = await ctx.validate('login',ctx.request.body);
+    const validateResult = await ctx.validate('passport.login',ctx.request.body);
 
     if (!validateResult){
       return ;

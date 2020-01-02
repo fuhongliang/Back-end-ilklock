@@ -98,4 +98,8 @@ module.exports = {
     return result;
   },
 
+  getHost() {
+    const { ctx } = this;
+    return ctx.request.protocol + '://' + ctx.request.host;
+  }
 };

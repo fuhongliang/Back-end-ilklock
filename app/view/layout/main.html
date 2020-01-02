@@ -57,7 +57,7 @@
                     <div class="item parent-item" :class="{active: menu.is_active}">
                         <icon class="icon iconfont" :class="menu.icon"></icon>
                         <sapn class="title">{{ menu.name }}</sapn>
-                        <icon class="trig iconfont" :class="getActiveClass(menu.is_active)"></icon>
+                        <icon class="trig iconfont" :class="getActiveClass(menu)"></icon>
                     </div>
                     <div v-if="menu.children && menu.is_active">
                         <div class="item child-item" :class="{active: child.is_active}" v-for="child in menu.children">
@@ -79,8 +79,8 @@
           menu_list: JSON.parse(`<$ helper.getMenu() | safe $>`),
         },
         methods: {
-          getActiveClass: function(is_active){
-            return is_active?'icon-triangle-copy-copy-copy':'icon-triangle-right';
+          getActiveClass: function(menu){
+            return menu.children?(menu.is_active?'icon-triangle-copy-copy-copy':'icon-triangle-right'):'';
           }
         }
       });

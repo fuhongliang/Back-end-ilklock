@@ -8,6 +8,17 @@ html,body{
     height: 100%;
 }
 
+button:focus,
+button:active:focus,
+button.active:focus,
+button.focus,
+button:active.focus,
+button.active.focus {
+    outline: none;
+    border-color: transparent;
+    box-shadow:none;
+}
+
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     -webkit-appearance: none;
@@ -69,7 +80,7 @@ input[type="number"]{
     overflow-y: auto;
     top: 0;
     left: 0;
-    width: 15rem;
+    width: 14rem;
     min-height: 100%;
     background: #29313E;
     color: #7B8595;
@@ -122,7 +133,7 @@ input[type="number"]{
 
 /*内容*/
 .content .tree-list{
-    min-width: 7.5rem;
+    min-width: 8.5rem;
     margin-right: 1.5rem;
     background: #FFFFFF;
     font-size: .88rem;

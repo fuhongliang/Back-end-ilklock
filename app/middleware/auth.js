@@ -4,7 +4,7 @@ module.exports = () => {
   return async function(ctx, next) {
 
     // 判断用户是否登录
-    let url = ctx.request.url;
+    let url = ctx.path;
     const { User } = ctx.model;
     if (/^\/api\/v1/.test(url) && ctx.method === 'POST'){
       const { access_token, user_id } = ctx.request.body;
@@ -23,10 +23,12 @@ module.exports = () => {
       }
       ctx.app.userInfo = userInfo;
 
-    } else {
-      let is_login = false;
-      if (is_login) {
-        return;
+    } else if (/^\/web/.test(url)) {
+
+      const user = ctx.session.userInfo;
+      let userInfo = await User.findOne({ where:{ id: user.id, is_delete: 0 } });
+      if (!user || !userInfo){
+        ctx.redirect('/web/login?return_url=' + ctx.helper.getHost() + url + '&' + ctx.querystring);
       }
     }
     await next();

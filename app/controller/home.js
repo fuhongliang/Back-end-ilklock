@@ -34,9 +34,11 @@ class HomeController extends Controller {
     const { ctx, app } = this;
 
     ctx.body = {
-      host: ctx.request.toJSON(),
-      parse: JSON.parse([10,11,12])
+      host: ctx.request.protocol + '://' + ctx.request.host,
+      // parse: JSON.parse([10,11,12])
+      crypto: crypto.createHash('sha1').update('123456'),
     };
+
   }
 }
 

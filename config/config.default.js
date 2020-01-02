@@ -30,7 +30,7 @@ module.exports = appInfo => {
 
   config.auth = {
     enable: true,
-    ignore: ['/api/v1/login', '/api/v1/binding', '/api/v1/get_valid_code', '/static'],
+    ignore: ['/api/v1/login', '/api/v1/binding', '/api/v1/get_valid_code', '/web/login', '/web/get_captcha', '/static'],
   };
 
   config.access = {
@@ -51,13 +51,29 @@ module.exports = appInfo => {
         ctx.status = 200;
         ctx.body = {
           code: 1,
-          errors,
-          message: '参数错误',
+          err_field: errors[0].field,
+          msg: '参数错误' + errors[0].message,
         };
       }
     }
   };
 
+  // session
+  config.session = {
+    key: 'egg:sess', /** (string) cookie key (default is koa:sess) */
+    /** (number || 'session') maxAge in ms (default is 1 days) */
+    /** 'session' will result in a cookie that expires when session/browser is closed */
+    /** Warning: If a session cookie is stolen, this cookie will never expire */
+    maxAge: 86400000,
+    autoCommit: true, /** (boolean) automatically commit headers (default true) */
+    overwrite: true, /** (boolean) can overwrite or not (default true) */
+    httpOnly: true, /** (boolean) httpOnly or not (default true) */
+    signed: true, /** (boolean) signed or not (default true) */
+    rolling: false, /** (boolean) Force a session identifier cookie to be set on every response. The expiration is reset to the original maxAge, resetting the expiration countdown. (default is false) */
+    renew: true, /** (boolean) renew session when session is nearly expired, so we can always keep user logged in. (default is false)*/
+  };
+
+  // 数据库
   config.sequelize = {
     // 单数据库信息配置
     dialect: 'mysql',

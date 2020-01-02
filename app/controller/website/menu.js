@@ -4,17 +4,17 @@ const menuList = [
   {
     name: '区域管理',
     icon: 'icon-quyuguanli1',
-    url: '/region/locks',
+    url: '/locks',
     is_show: true,
     children: [
       {
         name: '锁管理',
-        url: '/region/locks',
+        url: '/web/locks',
         is_show: true,
       },
       {
         name: '区域设置',
-        url: '/region/setting',
+        url: '/web/region/setting',
         is_show: true,
       }
     ],
@@ -22,31 +22,31 @@ const menuList = [
   {
     name: '申请记录',
     icon: 'icon-shenqingkaiban',
-    url: '/apply/list',
+    url: '/web/apply/list',
     is_show: true
   },
   {
     name: '角色管理',
     icon: 'icon-rrenyuanguanli-',
-    url: '/role/list',
+    url: '/web/role/list',
     is_show: true
   },
   {
     name: '人员管理',
     icon: 'icon-jiaoseguanli',
-    url: '/users',
+    url: '/web/users',
     is_show: true
   },
   {
     name: '操作记录',
     icon: 'icon-jiudianguanlihoutai-kaisuojilu',
-    url: '/operate-list',
+    url: '/web/operate-list',
     is_show: true
   },
   {
     name: '开锁模式',
     icon: 'icon-beijingjingwu_chaxun_kaisuojigongchaxun',
-    url: '/group/list',
+    url: '/web/mode_locks',
     is_show: true,
   }
 ];

@@ -6,6 +6,8 @@ html,body{
     background: #F1F1F1;
     height: 100%;
 }
+input {  filter: none !important; -webkit-filter: none !important }
+
 .bg-login{
     width: 100%;
     height: 100%;
@@ -21,7 +23,7 @@ html,body{
 }
 .tab-login{
     width: 24rem;
-    height: 22rem;
+    height: 24rem;
     background:rgba(0,0,0,.4);
     border-radius:5px;
     position: fixed;
@@ -36,12 +38,11 @@ html,body{
 
 .tab-login .ipt-text{
     display: flex;
-    margin: 1rem 0;
 }
 
 .tab-login .ipt-text input{
     flex: 1;
-    background-color: #FFFFFF;
+    background-color: #FFFFFF !important;
     border: none;
     border-radius: .4rem;
     font-size: 1rem;
@@ -51,18 +52,20 @@ html,body{
     background-position: 20px 13px;
     outline: none;
 }
+
 .tab-login .ipt-text input[name='username']{
-    background-image: url("../images/icon/ic_account.png");
+    background-image: url("../images/icon/ic_account.png") !important;
+    box-shadow: inset 0 0 0 1000px #ffffff !important;
 
 }
 .tab-login .ipt-text input[name='password']{
-    background-image: url("../images/icon/ic_password.png");
+    background-image: url("../images/icon/ic_password.png") !important;
 }
 .tab-login .ipt-text input[name='code']{
-    flex: 0;
+    flex: none;
     width: calc(19rem - 120px);
     margin-right: 1rem;
-    background-image: url("../images/icon/ic_msgcode.png");
+    background-image: url("../images/icon/ic_msgcode.png") !important;
 }
 .tab-login .captcha{
     width: 120px;
@@ -79,4 +82,15 @@ html,body{
     text-align: center;
     height: 3rem;
     line-height: 3rem;
+    color: #ffffff;
+}
+.form-group{
+    position: relative;
+}
+.text-error{
+    position: absolute;
+    left: 1rem;
+    top: -1.3rem;
+    padding: .3rem 0;
+    font-size: .6rem;
 }
