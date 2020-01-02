@@ -18,8 +18,8 @@ module.exports = {
     enable: true,
     package: 'egg-validate-plus',
   },
-  verifyCode: {
-    enable: true,
-    package: 'egg-verify-code',
-  },
+  // verifyCode: {
+  //   enable: true,
+  //   package: 'egg-verify-code',
+  // },
 };
