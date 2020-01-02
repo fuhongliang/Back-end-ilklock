@@ -77,13 +77,13 @@ class LockService extends Service{
       },
       attributes: [ 'id', 'name' ],
     });
-    console.log(list);
+    // console.log(list);
     // list = list.length>0?list.toJSON():[];
     for (let i in list){
       if ( ctx.helper.inArray(list[i].id,locks_open_by_one) ){
-        list[i].check = '可选';
+        list[i].check = 1;
       }else{
-        list[i].check = '不可选';
+        list[i].check = 0;
       }
     }
     return list;
@@ -94,7 +94,7 @@ class LockService extends Service{
     const { Lock, Region, LockMode } = ctx.model;
 
 
-    const { lock_no, region_id, lock_name: name, access_token, user_id } = ctx.request.body;
+    const { lock_no, region_id, lock_name: name } = ctx.request.body;
     const user = app.userInfo;
 
     let exist_area = await Region.findOne({
@@ -138,7 +138,7 @@ class LockService extends Service{
       where: { com_id: user.com_id, is_delete: 0, type: 0 },
       attributes: ['id','locks']
     });
-    let locks = locks_open_by_one['locks'] ? JSON.parse(locks_open_by_one['locks']):[];
+    let locks = locks_open_by_one ? JSON.parse(locks_open_by_one['locks']):[];
 
     let transaction;
 

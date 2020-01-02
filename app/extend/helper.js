@@ -99,7 +99,9 @@ module.exports = {
   },
 
   verifyCode(){
-    const { ctx } = this;
-
+    const { ctx, app } = this;
+    const verify = app.verifyCode.generate();
+    ctx.session.code = verify.code;
+    return verify.image
   }
 };

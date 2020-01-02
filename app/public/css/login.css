@@ -41,11 +41,22 @@ html,body{
 
 .tab-login .ipt-text input{
     flex: 1;
-    background: #FFFFFF;
+    background-color: #FFFFFF;
     border: none;
     border-radius: .4rem;
     font-size: 1rem;
     padding: 10px;
+    background-repeat: no-repeat;
+}
+.tab-login .ipt-text input[name='username']{
+    background-image: url("../images/icon/ic_account.png");
+
+}
+.tab-login .ipt-text input[name='password']{
+    background-image: url("../images/icon/ic_password.png");
+}
+.tab-login .ipt-text input[name='code']{
+    background-image: url("../images/icon/ic_msgcode.png");
 }
 .tab-login .captcha{
     margin-left: 1rem;
