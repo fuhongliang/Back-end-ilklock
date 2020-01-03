@@ -26,10 +26,20 @@ module.exports = () => {
     } else if (/^\/web/.test(url)) {
 
       const user = ctx.session.userInfo;
-      let userInfo = await User.findOne({ where:{ id: user.id, is_delete: 0 } });
-      if (!user || !userInfo){
-        ctx.redirect('/web/login?return_url=' + ctx.helper.getHost() + url + '&' + ctx.querystring);
+      let returnUrl = `/web/login?return_url=${ctx.helper.getHost()}${url}`;
+      if (ctx.querystring){
+        returnUrl += '&' + ctx.querystring
       }
+      if (!user){
+        ctx.redirect(returnUrl);
+        return;
+      }
+      let userInfo = await User.findOne({ where:{ id: user.id, is_delete: 0 } });
+      if (!userInfo){
+        ctx.redirect(returnUrl);
+        return;
+      }
+      ctx.app.userInfo = userInfo;
     }
     await next();
   };

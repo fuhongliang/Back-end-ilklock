@@ -12,10 +12,9 @@ class RecordService extends Service{
     const { LockLog, Lock, Region } = ctx.model;
 
     let data = await LockLog.findAll({
-      order: [ ['addtime', 'DESC'] ],
+      order: [ ['log_time', 'DESC'] ],
       where: {
-        user_id: user_id,
-        is_delete: 0
+        user: user_id,
       },
       offset: (page - 1)*page_size,
       limit: page_size,
@@ -35,11 +34,11 @@ class RecordService extends Service{
           ],
         },
       ],
-      attributes: ['addtime', 'status', [app.Sequelize.col('Lock.name'), 'lock_name'], [app.Sequelize.col('Lock->area.name'), 'area_name'] ],
+      attributes: ['log_time', 'key_status', 'sensor_status', 'soft_status', 'create_at', [app.Sequelize.col('Lock.name'), 'lock_name'], [app.Sequelize.col('Lock->area.name'), 'area_name'] ],
     });
 
     for ( let i in data){
-      data[i].addtime = sd.format(new Date(data[i].addtime),'YYYY年MM月DD日 HH:mm:ss');
+      data[i].log_time = sd.format(new Date(data[i].log_time),'YYYY年MM月DD日 HH:mm:ss');
     }
 
     return data

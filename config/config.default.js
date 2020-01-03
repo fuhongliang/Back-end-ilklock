@@ -120,8 +120,8 @@ module.exports = appInfo => {
 
   config.security = {
     csrf: {
-      enable: false,
-      ignore: '/api',
+      enable: true,
+      match: '/web',
       xframe: {
         //...
       },

@@ -5,13 +5,15 @@ const BaseController = require(path.join(process.cwd(),'app/controller/baseContr
 
 class AgentController extends BaseController {
   async locks() {
-    const { ctx } = this;
-    await ctx.render('agent/locks');
+    const { ctx, app } = this;
+    const { region } = ctx.service;
+    const list_region = await region.allArea(app.userInfo.com_id);
+    await ctx.render('region/locks',{ list_region: JSON.stringify(list_region) });
   }
 
   async setting() {
     const { ctx } = this;
-    await ctx.render('agent/setting');
+    await ctx.render('region/setting');
   }
 }
 

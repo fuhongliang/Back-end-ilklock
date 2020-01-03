@@ -16,7 +16,6 @@ class PassportController extends BaseController {
       const { passport } = ctx.service;
       ctx.body = await passport.userLogin();
     }else{
-      console.log(ctx.query);
       let url = ctx.query?ctx.query.return_url:'';
       await ctx.render('passport/login',{ returnUrl: url});
     }

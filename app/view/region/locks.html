@@ -2,23 +2,24 @@
 
 <% block content %>
 <div id="page">
+    <template>
     <div class="content">
         <!-- 分类树 -->
         <div class="tree-list">
-            <template>
-                <div class="tree-item" v-for="(agent,index) in list_agent">
+
+            <div class="tree-item" id="region.id" v-for="(region,index) in list_region[0]">
                 <div class="item">
-                    <span class="icon iconfont" :class="getAgentClass(agent)"></span>
-                    <span>{{ agent.name }}</span>
+                    <span class="icon iconfont" :class="getAgentClass(region)"></span>
+                    <span>{{ region.name }}</span>
                 </div>
-    <!--            <div class="child-list">-->
-    <!--                <div class="tree-item">-->
-    <!--                    <div class="item active">二级区域</div>-->
-    <!--                    <div class="child-list"></div>-->
-    <!--                </div>-->
-    <!--            </div>-->
+                <div class="child-list" v-if="list_region[region.id]">
+                    <div class="tree-item">
+                        <div class="item active">二级区域</div>
+                        <div class="child-list"></div>
+                    </div>
+                </div>
             </div>
-            </template>
+
         </div>
 
         <!-- 数据展示 -->
@@ -45,6 +46,7 @@
         </table>
     </div>
     </div>
+    </template>
 </div>
 <% endblock %>
 
@@ -53,35 +55,19 @@
     let page = new Vue({
       el: '#page',
       data: {
-        list_agent: [
-          {
-            name: '一级区域',
-            is_open: false,
-            children: [
-              {
-                name: '二级区域',
-                is_open: false
-              }
-            ],
-          },
-          {
-            name: '一级区域',
-            is_open: false,
-            children: [],
-          },
-        ]
+        list_region: JSON.parse(`<$ list_region | safe $>`),
       },
       methods: {
-        getAgentClass: function(agent){
-          if (agent.children != null && agent.children.length > 0){
-            if (!agent.is_open){
+        getAgentClass: function(region){
+          if (Array.isArray(this.list_region[region.id]) && this.list_region[region.id].length > 0){
+            if (!region.is_open){
               return 'icon-triangle-right';
             }else{
               return 'icon-triangle-copy-copy-copy';
             }
           }
           return '';
-        }
+        },
       }
     });
 </script>

@@ -30,7 +30,6 @@ class LockController extends BaseController {
   async createLock(){
     const { ctx } = this;
     const { lock } = ctx.service;
-    console.log(ctx.request.body);
     const validateResult = await ctx.validate('lock.create',ctx.request.body);
 
     if (!validateResult){

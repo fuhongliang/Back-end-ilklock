@@ -28,9 +28,9 @@ module.exports = app => {
   router.all('/web/login', controller.website.passport.login);
   router.get('/web/get_captcha', controller.website.passport.captcha);
   router.get('/web/home', controller.website.home.index);
-  router.get('/web/locks', controller.website.agent.locks);
+  router.get('/web/locks', controller.website.region.locks);
   router.get('/web/users', controller.website.user.index);
-  router.get('/web/region/setting', controller.website.agent.setting);
+  router.get('/web/region/setting', controller.website.region.setting);
   router.get('/web/apply/list', controller.website.apply.list);
   router.get('/web/role/list', controller.website.role.list);
   router.get('/web/operate-list', controller.website.record.operateList);

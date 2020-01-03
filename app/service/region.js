@@ -23,11 +23,12 @@ class RegionService extends Service{
     let new_list = {};
 
     if (list){
-      for (let item of list.toJSON()){
-        if (!new_list[item.parent_id]){
-          new_list[item.parent_id] = [];
+      for (let item of list){
+        let new_item = item.toJSON();
+        if (!new_list[new_item.parent_id]){
+          new_list[new_item.parent_id] = [];
         }
-        new_list[item.parent_id].push(item);
+        new_list[new_item.parent_id].push(new_item);
       }
     }
     return new_list
