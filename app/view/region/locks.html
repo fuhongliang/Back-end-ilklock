@@ -5,21 +5,16 @@
     <template>
     <div class="content">
         <!-- 分类树 -->
-        <div class="tree-list">
-
-            <div class="tree-item" id="region.id" v-for="(region,index) in list_region[0]">
-                <div class="item">
-                    <span class="icon iconfont" :class="getAgentClass(region)"></span>
-                    <span>{{ region.name }}</span>
-                </div>
-                <div class="child-list" v-if="list_region[region.id]">
-                    <div class="tree-item">
-                        <div class="item active">二级区域</div>
-                        <div class="child-list"></div>
+        <div class="tree-list" id="tree">
+            <div class="tree-tab" :class="'tab' + index" v-for="(list,index) in list_region">
+                <div class="tree-item" :id="'tab' + region.id" v-for="(region,index) in list">
+                    <div class="item" :data-id="region.id" @click="showData(region,$event)">
+                        <span class="icon iconfont" :class="getAgentClass(region)"></span>
+                        <span class="region-name">{{ region.name }}</span>
                     </div>
+                    <div class="child-list"></div>
                 </div>
             </div>
-
         </div>
 
         <!-- 数据展示 -->
@@ -27,19 +22,18 @@
         <table>
             <thead>
             <th class="tb-col-1 text-center">锁状态</th>
-            <th class="tb-col-5">锁ID</th>
+            <th class="tb-col-5 text-center">锁ID</th>
             <th class="tb-col-6">锁名称</th>
             <th class="tb-col-4 text-center">操作</th>
             </thead>
             <tbody>
-            <tr>
+            <tr v-for="(lock,index) in list_lock">
                 <td class="tb-col-1 text-center">开启</td>
-                <td class="tb-col-5">534353187482462</td>
-                <td class="tb-col-6">艾乐科智能无源碧锁1</td>
+                <td class="tb-col-5 text-center">{{lock.lock_no}}</td>
+                <td class="tb-col-6">{{lock.name}}</td>
                 <td class="tb-col-4 text-center">
                     <button class="tb-btn tb-btn-auth">授权</button>
-                    <button class="tb-btn tb-btn-edit">编辑区域</button>
-
+                    <button class="tb-btn tb-btn-edit" @click="edit(lock.id)">编辑区域</button>
                 </td>
             </tr>
             </tbody>
@@ -48,6 +42,33 @@
     </div>
     </template>
 </div>
+
+<!-- 弹窗 -->
+<div id="edit-area" class="layer-pop">
+    <div class="form-group row">
+        <label for="area" class="col-sm-3 col-form-label text-right">选择区域</label>
+        <div class="col-sm-9">
+            <div class="input-group">
+                <input type="text" readonly class="form-control sel" id="area" v-model="area">
+                <icon class="sel-icon"></icon>
+            </div>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="lock_name" class="col-sm-3 col-form-label text-right">锁的名称</label>
+        <div class="col-sm-9">
+            <input type="text" class="form-control" id="lock_name" v-model="lock">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-3 col-form-label text-right"></label>
+        <div class="col-sm-9">
+            <button class="layer-btn layer-btn-cancel">取消</button>
+            <button class="layer-btn layer-btn-success">确定</button>
+        </div>
+    </div>
+</div>
+
 <% endblock %>
 
 <% block script %>
@@ -56,19 +77,100 @@
       el: '#page',
       data: {
         list_region: JSON.parse(`<$ list_region | safe $>`),
+        list_lock: []
       },
       methods: {
         getAgentClass: function(region){
           if (Array.isArray(this.list_region[region.id]) && this.list_region[region.id].length > 0){
-            if (!region.is_open){
-              return 'icon-triangle-right';
-            }else{
-              return 'icon-triangle-copy-copy-copy';
-            }
+            return 'icon-triangle-right';
           }
           return '';
         },
+        showData: function(region,e){
+
+          /**
+           * 小图标
+           * 收起 icon-triangle-right
+           * 展开 icon-triangle-copy-copy-copy
+           */
+          if (Array.isArray(this.list_region[region.id]) && this.list_region[region.id].length > 0){
+            let targetIcon = $(e.currentTarget).find('.icon');
+            if (targetIcon.hasClass('icon-triangle-right')){
+              let child_list = $(e.currentTarget).next('.child-list');
+
+              if (child_list.children().length === 0){
+                child_list.html($(`.tab${region.id}`));
+              }
+              targetIcon.removeClass('icon-triangle-right');
+              targetIcon.addClass('icon-triangle-copy-copy-copy');
+              $(`.tab${region.id}`).show();
+            }else if (targetIcon.hasClass('icon-triangle-copy-copy-copy')){
+              targetIcon.removeClass('icon-triangle-copy-copy-copy');
+              targetIcon.addClass('icon-triangle-right');
+              $(`.tab${region.id}`).hide();
+            }
+          }else{
+            $('#tree .item').removeClass('active');
+            if (!$(e.currentTarget).hasClass('active')){
+              $(e.currentTarget).addClass('active');
+            }
+
+            if ($(e.currentTarget).parents('.layui-layer-content').length === 0){
+
+              $.ajax({
+                url: `<$ helper.getHost() $>/web/get_locks`,
+                type: 'get',
+                data: {
+                  region_id: region.id
+                },
+                success: function(res){
+                  if (res.code === 0){
+                    page.list_lock = res.data.list;
+                  }
+                }
+              });
+            }else{
+              edit_area.area = $(e.currentTarget).find('.region-name').html();
+              edit_area.area_id = $(e.currentTarget).attr('data-id');
+            }
+
+          }
+        },
+        edit: function(id){
+          $.ajax({
+            url: '',
+          });
+          layer.open({
+            type: 1,
+            title: '编辑锁',
+            content: $('#edit-area'),
+            area: ['500px', '300px'],
+            skin: 'edit-lock',
+          });
+        },
       }
     });
+
+    let edit_area = new Vue({
+      el: '#edit-area',
+      data: {
+        lock: '',
+        lock_id: 0,
+        area: '',
+        area_id: 0,
+      }
+    });
+
+    // 选择地区弹窗
+    $(document).on('click','#area',function() {
+      layer.open({
+        type: 1,
+        content: $('#tree'),
+        area: ['auto', '500px'],
+        offset: ['auto','calc(50% + 250px)'],
+        shade: false
+      });
+    });
+
 </script>
 <% endblock %>

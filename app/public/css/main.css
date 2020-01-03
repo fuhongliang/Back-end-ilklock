@@ -137,8 +137,14 @@ input[type="number"]{
     margin-right: 1.5rem;
     background: #FFFFFF;
     font-size: .88rem;
-    padding: .73rem;
+    padding: .73rem 1.5rem .73rem .73rem;
     color: #333333;
+}
+.content .tree-list .tree-tab{
+    display: none;
+}
+.content .tree-list .tab0{
+    display: block;
 }
 .content .tree-list .tree-item{
     margin-left: 1.25rem;
@@ -161,6 +167,8 @@ input[type="number"]{
     color: #00CA7C;
 }
 
+
+/* data */
 .content .data-page{
     background: #FFFFFF;
     padding: 2.75rem;
@@ -219,4 +227,41 @@ input[type="number"]{
 }
 .agent .tb-body .tb-item{
     padding-left: 1.5rem;
+}
+
+/*input 输入样式*/
+.sel[readonly]{
+    background-color: #ffffff;
+    cursor: pointer;
+}
+.sel-icon{
+    position: absolute;
+    right: .375rem;
+    top: .75rem;
+    width: 8px;
+    height: 13px;
+    z-index: 4;
+    background: url("../images/icon/icon_jiantou.png") no-repeat;
+}
+
+
+/*弹窗*/
+.layer-pop{
+    padding: 1.5rem 20px;
+    display: none;
+    font-size: 14px;
+}
+.layer-btn{
+    padding: .5rem 1.5rem;
+    margin: 1rem;
+    text-align: center;
+    border: none;
+}
+.layer-btn-success{
+    background-color: #00CA7C;
+    color: #ffffff;
+}
+.layer-btn-cancel{
+    background-color: #D7DCDA;
+    color: #333333;
 }

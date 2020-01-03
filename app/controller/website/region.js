@@ -11,6 +11,25 @@ class AgentController extends BaseController {
     await ctx.render('region/locks',{ list_region: JSON.stringify(list_region) });
   }
 
+  async getLocks() {
+    const { ctx, app } = this;
+    const { lock } = ctx.service;
+    const { region_id } = ctx.query;
+    const list = await lock.getAreaLock(region_id);
+    ctx.body = {
+      code: 0,
+      msg: 'success',
+      data: {
+        list
+      }
+    }
+  }
+
+  async getLockById() {
+    const { ctx, app } = this;
+    const { lock } = ctx.service;
+  }
+
   async setting() {
     const { ctx } = this;
     await ctx.render('region/setting');

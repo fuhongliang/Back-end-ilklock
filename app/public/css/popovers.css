@@ -1,0 +1,9 @@
+/**
+*layer弹窗自定义样式
+*edit-lock 在layer  skin定义
+*/
+
+/*锁编辑*/
+body .edit-lock .layui-layer-title{background:#00CA7C; color:#fff;}
+body .edit-lock .layui-layer-ico{background: url("../images/icon/tanchuang_gb.png") no-repeat;}
+body .layui-layer{border-radius:5px;overflow: hidden;}

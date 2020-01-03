@@ -17,7 +17,9 @@ class LockController extends BaseController {
   async getAreaLock(){
     const { ctx } = this;
     const { lock } = ctx.service;
-    let list = await lock.getAreaLock();
+    const { id } = ctx.request.body;
+    assert(id,'区域id不能为空');
+    let list = await lock.getAreaLock(id);
     ctx.body = {
       code: 0,
       msg: 'success',

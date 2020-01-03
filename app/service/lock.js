@@ -57,27 +57,31 @@ class LockService extends Service{
     }
   }
 
-  async getAreaLock(){
+  async getLockById(id) {
     const { ctx, app } = this;
-    const { id, access_token, user_id } = ctx.request.body;
-    assert(id,'区域id不能为空');
+    const { Lock } = app.model;
+  }
+
+  async getAreaLock(region_id){
+    const { ctx, app } = this;
+
     const { Lock, LockMode } = app.model;
     const user = app.userInfo;
     let locks_open_by_one = await LockMode.findOne({
       where: { com_id: user.com_id, is_delete: 0, type: 0 },
       attributes: ['locks']
     });
-    console.log(locks_open_by_one['locks']);
+
     locks_open_by_one = locks_open_by_one ? JSON.parse(`${locks_open_by_one['locks']}`):[];
-    console.log(locks_open_by_one,Array.isArray(locks_open_by_one));
+
     let list = await Lock.findAll({
       where: {
-        region_id: id,
+        region_id: region_id,
         com_id: user.com_id,
         is_delete: 0,
         is_check: 1,
       },
-      attributes: [ 'id', 'name' ],
+      attributes: [ 'id', 'name', 'lock_no' ],
     });
 
     let new_list = [];
