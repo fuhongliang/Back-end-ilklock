@@ -7,6 +7,11 @@ const sd = require('silly-datetime');
 
 class LockService extends Service{
 
+  /**
+   * 根据锁编号获取锁
+   * @param lock_no
+   * @returns {Promise<{msg: string, code: number, data: {lock: *}}|{msg: string, code: number}>}
+   */
   async getLockByNo(lock_no){
     const { ctx, app } = this;
     const { access_token, user_id } = ctx.request.body;
@@ -57,11 +62,11 @@ class LockService extends Service{
     }
   }
 
-  async getLockById(id) {
-    const { ctx, app } = this;
-    const { Lock } = app.model;
-  }
-
+  /**
+   * 根据区域id获取锁
+   * @param region_id
+   * @returns {Promise<[]>}
+   */
   async getAreaLock(region_id){
     const { ctx, app } = this;
 
@@ -98,6 +103,10 @@ class LockService extends Service{
     return new_list;
   }
 
+  /**
+   * 创建锁
+   * @returns {Promise<{msg: string, code: number}>}
+   */
   async create(){
     const { ctx, app } = this;
     const { Lock, Region, LockMode } = ctx.model;
@@ -189,6 +198,12 @@ class LockService extends Service{
     }
   }
 
+  /**
+   * 修改锁信息
+   * @param options
+   * @param data
+   * @returns {Promise<{msg: string, code: number}>}
+   */
   async modify(options,data){
     const { Lock } = this.ctx.model;
     const res = await Lock.update(data,{ where: options });

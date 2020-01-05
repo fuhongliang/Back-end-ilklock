@@ -11,4 +11,15 @@ module.exports = {
     { pattern: /^\d+/, message: '锁id为整数' },
     {required: true, message: '锁不能为空' }
   ],
+  region_id: {
+    type: 'integer',
+    min: 1,
+    transform(value) {
+      if ('string' === typeof value){
+        value = parseInt(value);
+      }
+      return value;
+    },
+    message: '请选择地区',
+  },
 };

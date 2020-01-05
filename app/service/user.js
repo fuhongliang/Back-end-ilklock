@@ -69,6 +69,31 @@ class UserService extends  Service{
     };
   }
    */
+
+  async listUser() {
+    const { app } = this;
+    const { User, Role } = app.model;
+    const user = app.userInfo;
+    return User.findAll({
+      where: {
+        com_id: user.com_id,
+        id: {
+          [app.Sequelize.Op.ne]: user.id
+        },
+        is_delete: 0,
+        is_check: 1,
+        level: 1
+      },
+      include: [
+        {
+          model: Role,
+          as: 'role',
+          attributes: []
+        }
+      ],
+      attributes: ['id', 'name', 'avatar', [app.Sequelize.col('role.name'), 'role_name']],
+    });
+  }
 }
 
 module.exports = UserService;

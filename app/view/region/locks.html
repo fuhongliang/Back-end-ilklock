@@ -32,8 +32,9 @@
                 <td class="tb-col-5 text-center">{{lock.lock_no}}</td>
                 <td class="tb-col-6">{{lock.name}}</td>
                 <td class="tb-col-4 text-center">
-                    <button class="tb-btn tb-btn-auth">授权</button>
-                    <button class="tb-btn tb-btn-edit" @click="edit(lock.id)">编辑区域</button>
+                    <button class="tb-btn tb-btn-auth" @click="auth(lock)">授权</button>
+                    <button class="tb-btn tb-btn-edit" @click="edit(lock)">编辑</button>
+                    <button class="tb-btn tb-btn-del">删除</button>
                 </td>
             </tr>
             </tbody>
@@ -44,7 +45,8 @@
 </div>
 
 <!-- 弹窗 -->
-<div id="edit-area" class="layer-pop">
+<!-- 编辑锁 -->
+<div id="edit-lock" class="layer-pop">
     <div class="form-group row">
         <label for="area" class="col-sm-3 col-form-label text-right">选择区域</label>
         <div class="col-sm-9">
@@ -58,112 +60,181 @@
         <label for="lock_name" class="col-sm-3 col-form-label text-right">锁的名称</label>
         <div class="col-sm-9">
             <input type="text" class="form-control" id="lock_name" v-model="lock">
+            <div class="error-tips">{{error_tips}}</div>
         </div>
+
     </div>
     <div class="form-group row">
         <label class="col-sm-3 col-form-label text-right"></label>
         <div class="col-sm-9">
             <button class="layer-btn layer-btn-cancel">取消</button>
-            <button class="layer-btn layer-btn-success">确定</button>
+            <button class="layer-btn layer-btn-success edit-confirm">确定</button>
         </div>
     </div>
+</div>
+
+<!-- 授权 -->
+<div id="auth-lock" class="layer-pop">
+    <form>
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label text-right">锁的名称</label>
+            <div class="col-sm-9">
+                <input type="text" readonly class="form-control-plaintext" :value="lock">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="user" class="col-sm-3 col-form-label text-right">授权用户</label>
+            <div class="col-sm-9">
+                <div class="input-group" @click="chosenUser();">
+                    <input type="text" readonly class="form-control sel" id="user" />
+                    <icon class="sel-icon"></icon>
+                </div>
+                <div class="sel-user myscroll">
+                    <div class="user" v-for="user in list_user" @click="chosenUser(user)">{{user.name}}</div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="duration" class="col-sm-3 col-form-label text-right">选择时长</label>
+            <div class="col-sm-9">
+                <div class="input-group">
+                    <input type="text" readonly class="form-control sel" id="duration" />
+                    <icon class="sel-icon"></icon>
+                </div>
+                <div class="sel-duration myscroll">
+                    <div class="time" v-for="t in time" @click="chosenTime(t,$event)">{{t}}小时</div>
+                </div>
+                <div class="error-tips">{{error_tips}}</div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label text-right"></label>
+            <div class="col-sm-9">
+                <button type="button" class="layer-btn layer-btn-cancel">取消</button>
+                <button type="button" class="layer-btn layer-btn-success" @click="confirm();">确定</button>
+            </div>
+        </div>
+    </form>
 </div>
 
 <% endblock %>
 
 <% block script %>
 <script type="text/javascript">
-    let page = new Vue({
-      el: '#page',
-      data: {
-        list_region: JSON.parse(`<$ list_region | safe $>`),
-        list_lock: []
+  let page = new Vue({
+    el: '#page',
+    data: {
+      list_region: JSON.parse(`<$ list_region | safe $>`),
+      list_lock: []
+    },
+    methods: {
+      getAgentClass: function(region){
+        if (Array.isArray(this.list_region[region.id]) && this.list_region[region.id].length > 0){
+          return 'icon-triangle-right';
+        }
+        return '';
       },
-      methods: {
-        getAgentClass: function(region){
-          if (Array.isArray(this.list_region[region.id]) && this.list_region[region.id].length > 0){
-            return 'icon-triangle-right';
+      showData: function(region,e){
+
+        /**
+         * 小图标
+         * 收起 icon-triangle-right
+         * 展开 icon-triangle-copy-copy-copy
+         */
+        if (Array.isArray(this.list_region[region.id]) && this.list_region[region.id].length > 0){
+          let targetIcon = $(e.currentTarget).find('.icon');
+          if (targetIcon.hasClass('icon-triangle-right')){
+            let child_list = $(e.currentTarget).next('.child-list');
+
+            if (child_list.children().length === 0){
+              child_list.html($(`.tab${region.id}`));
+            }
+            targetIcon.removeClass('icon-triangle-right');
+            targetIcon.addClass('icon-triangle-copy-copy-copy');
+            $(`.tab${region.id}`).show();
+          }else if (targetIcon.hasClass('icon-triangle-copy-copy-copy')){
+            targetIcon.removeClass('icon-triangle-copy-copy-copy');
+            targetIcon.addClass('icon-triangle-right');
+            $(`.tab${region.id}`).hide();
           }
-          return '';
-        },
-        showData: function(region,e){
-
-          /**
-           * 小图标
-           * 收起 icon-triangle-right
-           * 展开 icon-triangle-copy-copy-copy
-           */
-          if (Array.isArray(this.list_region[region.id]) && this.list_region[region.id].length > 0){
-            let targetIcon = $(e.currentTarget).find('.icon');
-            if (targetIcon.hasClass('icon-triangle-right')){
-              let child_list = $(e.currentTarget).next('.child-list');
-
-              if (child_list.children().length === 0){
-                child_list.html($(`.tab${region.id}`));
-              }
-              targetIcon.removeClass('icon-triangle-right');
-              targetIcon.addClass('icon-triangle-copy-copy-copy');
-              $(`.tab${region.id}`).show();
-            }else if (targetIcon.hasClass('icon-triangle-copy-copy-copy')){
-              targetIcon.removeClass('icon-triangle-copy-copy-copy');
-              targetIcon.addClass('icon-triangle-right');
-              $(`.tab${region.id}`).hide();
-            }
-          }else{
-            $('#tree .item').removeClass('active');
-            if (!$(e.currentTarget).hasClass('active')){
-              $(e.currentTarget).addClass('active');
-            }
-
-            if ($(e.currentTarget).parents('.layui-layer-content').length === 0){
-
-              $.ajax({
-                url: `<$ helper.getHost() $>/web/get_locks`,
-                type: 'get',
-                data: {
-                  region_id: region.id
-                },
-                success: function(res){
-                  if (res.code === 0){
-                    page.list_lock = res.data.list;
-                  }
-                }
-              });
-            }else{
-              edit_area.area = $(e.currentTarget).find('.region-name').html();
-              edit_area.area_id = $(e.currentTarget).attr('data-id');
-            }
-
+        }else{
+          $('#tree .item').removeClass('active');
+          if (!$(e.currentTarget).hasClass('active')){
+            $(e.currentTarget).addClass('active');
           }
-        },
-        edit: function(id){
-          $.ajax({
-            url: '',
-          });
-          layer.open({
-            type: 1,
-            title: '编辑锁',
-            content: $('#edit-area'),
-            area: ['500px', '300px'],
-            skin: 'edit-lock',
-          });
-        },
-      }
-    });
 
+          // 保存选中的地区
+          edit_area.area = $(e.currentTarget).find('.region-name').html();
+          edit_area.area_id = $(e.currentTarget).attr('data-id');
+          // 获取区域下的锁列表
+          this.findLocksByArea(region.id);
+        }
+      },
+      findLocksByArea: function(region_id) {
+        $.ajax({
+          url: `<$ helper.getHost() $>/web/get_locks`,
+          type: 'get',
+          data: {
+            region_id
+          },
+          success: function(res){
+            if (res.code === 0){
+              page.list_lock = res.data.list;
+            }
+          }
+        });
+      },
+      edit: function(lock){
+
+        // 锁名称和id
+        edit_area.lock = lock.name;
+        edit_area.lock_id = lock.id;
+        edit_area.error_tips = '';
+
+        let layerEdit = layer.open({
+          type: 1,
+          title: '编辑锁',
+          content: $('#edit-lock'),
+          area: ['500px', '300px'],
+          skin: 'ilock',
+        });
+        $('#edit-lock').find('.layer-btn-cancel').attr('layer-index',layerEdit);
+      },
+      auth: function(lock) {
+        // 锁名称和id
+        authLock.lock = lock.name;
+        authLock.lock_id = lock.id;
+        authLock.error_tips = '';
+
+        let layerAuth = layer.open({
+          type: 1,
+          title: '授权开锁',
+          content: $('#auth-lock'),
+          area: ['500px', '340px'],
+          skin: 'ilock',
+        });
+        $('#auth-lock').find('.layer-btn-cancel').attr('layer-index',layerAuth);
+      },
+    }
+  });
+</script>
+<!-- 锁编辑 -->
+<script type="text/javascript">
     let edit_area = new Vue({
-      el: '#edit-area',
+      el: '#edit-lock',
       data: {
         lock: '',
         lock_id: 0,
         area: '',
         area_id: 0,
+        error_tips: '',
       }
     });
 
     // 选择地区弹窗
     $(document).on('click','#area',function() {
       layer.open({
+        title: '选择区域',
         type: 1,
         content: $('#tree'),
         area: ['auto', '500px'],
@@ -172,5 +243,68 @@
       });
     });
 
+    // 保存修改
+    $(document).on('click','.edit-confirm',function(){
+
+      $.ajax({
+        url: `<$ helper.getHost() $>/web/edit_lock`,
+        type: 'post',
+        data: {
+          lock_id: edit_area.lock_id,
+          lock_name: edit_area.lock,
+          region_id: edit_area.area_id,
+          _csrf: `<$ ctx.csrf $>`
+        },
+        success: function(res){
+          if (res.code === 0){
+            page.findLocksByArea(edit_area.area_id);
+            layer.closeAll();
+            layer.msg('修改成功',{time: 1000});
+          }else{
+            edit_area.error_tips = res.msg;
+          }
+        },
+        error: function(){
+          edit_area.error_tips = '服务器异常,请稍后再试~';
+        }
+      });
+    });
+
 </script>
+
+<!-- 授权开锁 -->
+<script type="text/javascript">
+    let authLock = new Vue({
+      el: '#auth-lock',
+      data: {
+        list_user: JSON.parse(`<$ list_user | safe $>`),
+        error_tips: '',
+        lock: '',
+        lock_id: 0,
+        user_id: '',
+        time: 30,
+        duration: ''
+      },
+      methods: {
+        chosenUser: function(user){
+          $('.sel-user').hide();
+          $('#user').val(user.name);
+          this.user_id = user.id;
+        },
+        chosenTime: function(t,e){
+          $('.sel-duration').hide();
+          this.duration = t;
+          $('#duration').val($(e.currentTarget).html());
+        },
+      }
+    });
+
+    $(document).on('click','#duration',function(){
+      $('.sel-duration').show();
+    });
+    $(document).on('click','#user',function(){
+      $('.sel-user').show();
+    });
+</script>
+
 <% endblock %>

@@ -32,7 +32,12 @@ class HomeController extends Controller {
   }
   async test(){
     const { ctx, app } = this;
+    let id = 1,name = '哈哈哈',region_id = '0';
+    const validateResult = await ctx.validate('lock.modify',{ id, name });
 
+    if (!validateResult){
+      return ;
+    }
     ctx.body = {
       host: ctx.request.protocol + '://' + ctx.request.host,
       // parse: JSON.parse([10,11,12])

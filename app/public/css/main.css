@@ -133,7 +133,7 @@ input[type="number"]{
 
 /*内容*/
 .content .tree-list{
-    min-width: 8.5rem;
+    min-width: 12.5rem;
     margin-right: 1.5rem;
     background: #FFFFFF;
     font-size: .88rem;
@@ -264,4 +264,78 @@ input[type="number"]{
 .layer-btn-cancel{
     background-color: #D7DCDA;
     color: #333333;
+}
+.layer-pop .error-tips{
+    position: absolute;
+    padding: .5rem 0;
+    color: #F2535A;
+    font-size: .77rem;
+    left: 1rem;
+    bottom: -1.75rem;
+}
+
+/*下拉框*/
+.sel-duration{
+    display: none;
+    position: absolute;
+    right: 15px;
+    background: #FFFFFF;
+    z-index: 19891015;
+    box-shadow: 0 0 3px #000000;
+    min-width: 120px;
+    max-height: 300px;
+    overflow: auto;
+}
+.sel-user .user,.sel-duration .time{
+    padding: .5rem 0;
+    text-align: center;
+    cursor: pointer;
+}
+.sel-duration .time:hover{
+    background: #F3F3F3;
+}
+.sel-user{
+    display: none;
+    position: absolute;
+    left: 15px;
+    background: #FFFFFF;
+    z-index: 19891015;
+    box-shadow: 0 0 3px #000000;
+    min-width: 120px;
+    max-height: 300px;
+    overflow: auto;
+}
+.sel-user .user:hover{
+    color: #00CA7C;
+}
+
+/*选择用户弹窗*/
+.user-list{
+    /*background-color: #FFFFFF;*/
+}
+.user-list .user{
+    display: flex;
+    border-bottom: 1px solid #F3F3F3;
+    background: #ffffff;
+    padding: .75rem;
+    cursor: pointer;
+}
+.user-list .user.active,.user-list .user:hover{
+    background: #00CA7C;
+    color: #FFFFFF;
+}
+.user-list .user .avatar{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+.user-list .user .avatar img{
+    width: 100%;
+}
+.user-list .user .info{
+    font-size: .75rem;
+    padding: 0 .75rem;
+    display: flex;
+    flex-direction: column;
 }

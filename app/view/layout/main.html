@@ -20,12 +20,13 @@
     <link rel="stylesheet" href="/static/css/paginate.css" />
 
     <!-- js文件 -->
-    <script type="text/javascript" src="/static/js/main.js"></script>
     <script type="text/javascript" src="/static/vendor/jQuery/jquery-3.4.1.min.js"></script>
     <script type="text/javascript" src="/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/static/vendor/vue/vue.min.js"></script>
     <script type="text/javascript" src="/static/vendor/layui/layer/layer.js"></script>
+
+    <script type="text/javascript" src="/static/js/main.js"></script>
 </head>
 <body>
     <div class="app">
@@ -44,7 +45,7 @@
 
             <div class="nav tab-info">
                 <div class="tab-avatar">
-                    <img src="/images/avatar/avatar-01.jpg" />
+                    <img src="/static/images/avatar/avatar-01.jpg" />
                 </div>
                 <div class="tab-name">admin</div>
             </div>
@@ -53,6 +54,7 @@
         <!-- 左边 -->
         <div class="left-nav" id="navLeft">
             <div class="left-nav-head">艾乐科后台管理</div>
+            <template>
             <div class="list-nav">
                 <div class="nav-item" v-for="(menu,index) in menu_list">
                     <div class="item parent-item" :class="{active: menu.is_active}">
@@ -67,6 +69,7 @@
                     </div>
                 </div>
             </div>
+            </template>
         </div>
 
         <!-- 右边内容 -->

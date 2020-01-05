@@ -51,6 +51,11 @@ module.exports = app => {
         allowNull: false,
         defaultValue: ''
       },
+      avatar: {
+        type: STRING(1000),
+        allowNull: false,
+        defaultValue: ''
+      },
       addtime: {
         type: BIGINT,
         allowNull: false,
