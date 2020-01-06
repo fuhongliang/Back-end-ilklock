@@ -1,0 +1,78 @@
+<% extends "layout/main.html" %>
+
+<% block content %>
+<div id="page">
+    <div  class="content">
+        <form class="data-page">
+            <div class="form-group row">
+                <label for="area" class="col-sm-1 col-form-label text-right">父级区域</label>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <input type="text" readonly class="form-control sel" id="area" placeholder="无" />
+                        <input type="hidden" name="parent_id" />
+                        <icon class="sel-icon"></icon>
+                    </div>
+                    <div class="">父级区域可不设置</div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="region_name" class="col-sm-1 col-form-label text-right">区域名称</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" id="region_name" name="region_name" placeholder="请输入区域名称">
+                </div>
+
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label text-right"></label>
+                <div class="col-sm-6">
+                    <input type="hidden" name="_csrf" value="<$ ctx.csrf $>" />
+                    <button type="button" class="btn btn-success save">保存</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+</div>
+<% endblock %>
+
+<% block script %>
+
+<script type="text/javascript">
+
+    $(document).on('click','#area',function(){
+
+      layer.open({
+        type: 2,
+        title: '选择区域',
+        content: `<$ helper.getHost() $>/web/list_region`,
+        area: ['auto','500px'],
+        offset: ['6rem', '50%']
+      });
+
+    });
+
+    // 添加
+    $(document).on('click','.save',function(){
+      $.ajax({
+        url: `<$ helper.getHost() $>/web/add_region`,
+        type: 'post',
+        data: $('form').serialize(),
+        success: function(res){
+          if (res.code === 0){
+            layer.msg('添加成功');
+          }
+        },
+        error: function(){
+          layer.msg('服务器异常,请稍后尝试~');
+        }
+      });
+    });
+
+    // 子页面选中后调用
+    function selRegion(region) {
+      $('#area').val(region.name);
+      $('input[name="parent_id"]').val(region.id);
+    }
+</script>
+<% endblock %>

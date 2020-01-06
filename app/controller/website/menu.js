@@ -14,7 +14,7 @@ const menuList = [
       },
       {
         name: '区域设置',
-        url: '/web/region/setting',
+        url: '/web/region',
         is_show: true,
       }
     ],

@@ -8,50 +8,70 @@
 
             <div class="page-nav">
                 <div class="util-btn">
-                    <button class="tb-btn tb-btn-auth">添加区域</button>
+                    <a href="<$ helper.getHost() $>/web/add_region" class="tb-btn tb-btn-auth">添加区域</a>
                 </div>
             </div>
 
             <!-- 区域 -->
-            <div class="agent table">
+            <template>
+            <div class="region table">
                 <div class="tb-header">
                     <div class="tb-title">区域名称</div>
                     <div class="tb-operate text-center">操作</div>
                 </div>
-                <div class="tb-body">
-                    <div class="tb-item">
-                        <div class="item">
-                            <div class="tb-title">
-                                <sapn class="text-A9A9A9 iconfont icon-triangle-right"></sapn>
-                                <span class="text-333333">一级区域</span>
-                            </div>
-                            <div class="tb-operate text-center">
-                                <button class="tb-btn tb-btn-edit">编辑</button>
-                                <button class="tb-btn tb-btn-del">删除</button>
-                            </div>
-                        </div>
-                        <div class="child-list">
-                            <div class="tb-item">
-                                <div class="item">
-                                    <div class="tb-title">
-                                        <sapn class="text-A9A9A9 iconfont icon-triangle-right"></sapn>
-                                        <span class="text-333333">er级区域</span>
-                                    </div>
-                                    <div class="tb-operate text-center">
-                                        <button class="tb-btn tb-btn-edit">编辑</button>
-                                        <button class="tb-btn tb-btn-del">删除</button>
-                                    </div>
+                <div class="tb-body" style="position: relative">
+                    <div class="tb-list" :class="'tab' + index" v-for="(list,index) in list_region">
+                        <div class="tb-item" :id="'tab' + region.id" v-for="(region,i) in list">
+                            <div class="item">
+                                <div class="tb-title" @click="showData(region,$event)">
+                                    <sapn class="text-A9A9A9 iconfont icon" :class="getAgentClass(region)"></sapn>
+                                    <span class="text-333333">{{region.name}}</span>
+                                </div>
+                                <div class="tb-operate text-center">
+                                    <button class="tb-btn tb-btn-edit" @click="edit(region,index)">编辑</button>
+                                    <button class="tb-btn tb-btn-del del" data-url="<$ helper.getHost() $>/web/del_region" :data-id="region.id">删除</button>
                                 </div>
                             </div>
+                            <div style="position: absolute;left: 0;width: 100%;height: 1px; background: #F5F5F5;"></div>
+                            <div class="child-list"></div>
                         </div>
                     </div>
 
                 </div>
             </div>
-
+            </template>
         </div>
     </div>
 </div>
+
+<!-- 弹出层 -->
+<div class="layer-pop" id="edit-region">
+    <div class="form-group row">
+        <label for="parent" class="col-sm-3 col-form-label text-right">父级区域</label>
+        <div class="col-sm-9">
+            <div class="input-group" @click="chosenArea()">
+                <input type="text" readonly class="form-control sel" id="parent" v-model="parent">
+                <icon class="sel-icon"></icon>
+            </div>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="region_name" class="col-sm-3 col-form-label text-right">区域名称</label>
+        <div class="col-sm-9">
+            <input type="text" class="form-control" id="region_name" v-model="region">
+            <div class="error-tips">{{error_tips}}</div>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label class="col-sm-3 col-form-label text-right"></label>
+        <div class="col-sm-9">
+            <button class="layer-btn layer-btn-cancel">取消</button>
+            <button class="layer-btn layer-btn-success" @click="confirm();">确定</button>
+        </div>
+    </div>
+</div>
+
 <% endblock %>
 
 <% block script %>
@@ -59,36 +79,121 @@
   let page = new Vue({
     el: '#page',
     data: {
-      list_agent: [
-        {
-          name: '一级区域',
-          is_open: false,
-          children: [
-            {
-              name: '二级区域',
-              is_open: false
-            }
-          ],
-        },
-        {
-          name: '一级区域',
-          is_open: false,
-          children: [],
-        },
-      ]
+      list_region: JSON.parse(`<$ list_region | safe $>`),
     },
     methods: {
-      getAgentClass: function(agent){
-        if (agent.children != null && agent.children.length > 0){
-          if (!agent.is_open){
-            return 'icon-triangle-right';
-          }else{
-            return 'icon-triangle-copy-copy-copy';
-          }
+      getAgentClass: function(region){
+        if (Array.isArray(this.list_region[region.id]) && this.list_region[region.id].length > 0){
+          return 'icon-triangle-right';
         }
         return '';
+      },
+      showData: function(region,e){
+        /**
+         * 小图标
+         * 收起 icon-triangle-right
+         * 展开 icon-triangle-copy-copy-copy
+         */
+        if (Array.isArray(this.list_region[region.id]) && this.list_region[region.id].length > 0){
+          let targetIcon = $(e.currentTarget).find('.icon');
+          if (targetIcon.hasClass('icon-triangle-right')){
+            let child_list = $(e.currentTarget).closest('.item').nextAll('.child-list');
+
+            if (child_list.children().length === 0){
+              child_list.html($(`.tab${region.id}`));
+            }
+            targetIcon.removeClass('icon-triangle-right');
+            targetIcon.addClass('icon-triangle-copy-copy-copy');
+            $(`.tab${region.id}`).show();
+          }else if (targetIcon.hasClass('icon-triangle-copy-copy-copy')){
+            targetIcon.removeClass('icon-triangle-copy-copy-copy');
+            targetIcon.addClass('icon-triangle-right');
+            $(`.tab${region.id}`).hide();
+          }
+        }
+      },
+      edit: function(region,parent_id) {
+        edit.parent = this.getName(parent_id);
+        edit.parent_id = parent_id;
+        edit.region = region.name;
+        edit.region_id = region.id;
+        edit.error_tips = '';
+
+        let layerEdit = layer.open({
+          type: 1,
+          title: '编辑区域',
+          content: $('#edit-region'),
+          area: ['500px', '300px'],
+          skin: 'ilock',
+        });
+        $('#edit-region').find('.layer-btn-cancel').attr('layer-index',layerEdit);
+
+      },
+      getName: function(region_id) {
+        for (let index in this.list_region){
+          // console.log(this.list_region[index],region_id);
+          for (let region of this.list_region[index]){
+            if (region.id == region_id){
+              return region.name;
+            }
+          }
+        }
       }
     }
   });
+
+  let edit = new Vue({
+    el: '#edit-region',
+    data: {
+      parent: '',
+      parent_id: '',
+      region: '',
+      region_id: '',
+      error_tips: ''
+    },
+    methods: {
+      chosenArea: function() {
+        layer.open({
+          type: 2,
+          title: '选择区域',
+          content: `<$ helper.getHost() $>/web/list_region`,
+          area: ['auto','500px'],
+          offset: ['calc(50% - 250px)', 'calc(50% + 250px)'],
+          shade: false
+        });
+      },
+      confirm: function() {
+        $.ajax({
+          url: `<$ helper.getHost() $>/web/edit_region`,
+          type: 'post',
+          data: {
+            region_id: edit.region_id,
+            region_name: edit.region,
+            parent_id: edit.parent_id,
+            _csrf
+          },
+          success: function(res) {
+            if (res.code === 0){
+              layer.msg('编辑成功',{time: 1000},function(){
+                window.location.reload();
+              });
+            }else{
+              edit.error_tips = res.msg;
+            }
+          },
+          error: function() {
+            edit.error_tips = '服务器异常~';
+          }
+        });
+      }
+    }
+  });
+
+  // 子页面选中后调用
+    function selRegion(region) {
+      edit.parent = region.name;
+      edit.parent_id = region.id;
+    }
 </script>
+
 <% endblock %>

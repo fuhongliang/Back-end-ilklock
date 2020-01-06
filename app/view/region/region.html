@@ -1,0 +1,70 @@
+<link rel="stylesheet" href="/static/vendor/iconfont/iconfont.css" />
+<link rel="stylesheet" href="/static/vendor/bootstrap/css/bootstrap.min.css" />
+<link rel="stylesheet" href="/static/css/main.css" />
+
+
+<script type="text/javascript" src="/static/vendor/jQuery/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" src="/static/vendor/vue/vue.min.js"></script>
+<script type="text/javascript" src="/static/vendor/layui/layer/layer.js"></script>
+<div style="background: #FFFFFF;height: 100%;">
+    <div class="tree-list" id="tree">
+        <div class="tree-tab" :class="'tab' + index" v-for="(list,index) in list_region">
+            <div class="tree-item" :id="'tab' + region.id" v-for="(region,index) in list">
+                <div class="item">
+                    <span class="icon iconfont" :class="getAgentClass(region)" @click="getChild(region,$event)"></span>
+                    <span class="region-name" @click="selRegion(region,$event)">{{ region.name }}</span>
+                </div>
+                <div class="child-list"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    let list = new Vue({
+      el: '#tree',
+      data: {
+        list_region: JSON.parse(`<$ list_region | safe $>`),
+      },
+      methods: {
+        getAgentClass: function(region){
+          if (Array.isArray(this.list_region[region.id]) && this.list_region[region.id].length > 0){
+            return 'icon-triangle-right';
+          }
+          return '';
+        },
+        getChild: function(region,e){
+
+          /**
+           * 小图标
+           * 收起 icon-triangle-right
+           * 展开 icon-triangle-copy-copy-copy
+           */
+          let targetIcon = $(e.currentTarget);
+          if (targetIcon.hasClass('icon-triangle-right')){
+            let child_list = $(e.currentTarget).closest('.item').next('.child-list');
+
+            if (child_list.children().length === 0){
+              child_list.html($(`.tab${region.id}`));
+            }
+            targetIcon.removeClass('icon-triangle-right');
+            targetIcon.addClass('icon-triangle-copy-copy-copy');
+            $(`.tab${region.id}`).show();
+          }else if (targetIcon.hasClass('icon-triangle-copy-copy-copy')){
+            targetIcon.removeClass('icon-triangle-copy-copy-copy');
+            targetIcon.addClass('icon-triangle-right');
+            $(`.tab${region.id}`).hide();
+          }
+        },
+        selRegion: function(region,e) {
+          $('#tree .region-name').removeClass('active');
+          if (!$(e.currentTarget).hasClass('active')){
+            $(e.currentTarget).addClass('active');
+          }
+
+          // 调用父页面方法
+          window.parent.selRegion(region);
+        }
+      }
+    });
+</script>

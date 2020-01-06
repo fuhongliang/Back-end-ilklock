@@ -132,38 +132,40 @@ input[type="number"]{
 }
 
 /*内容*/
-.content .tree-list{
+.left-tree{
     min-width: 12.5rem;
     margin-right: 1.5rem;
     background: #FFFFFF;
+}
+.tree-list{
     font-size: .88rem;
     padding: .73rem 1.5rem .73rem .73rem;
     color: #333333;
 }
-.content .tree-list .tree-tab{
+.tree-list .tree-tab{
     display: none;
 }
-.content .tree-list .tab0{
+.tree-list .tab0{
     display: block;
 }
-.content .tree-list .tree-item{
+.tree-list .tree-item{
     margin-left: 1.25rem;
 }
-.content .tree-list .item{
+.tree-list .item{
     position: relative;
     height: 2rem;
     line-height: 2rem;
     cursor: pointer;
 }
 
-.content .tree-list .item .icon{
+.tree-list .item .icon{
     position: absolute;
     font-size: 1rem;
     left: -1.2rem;
 
 }
 
-.content .tree-list .item:hover,.content .tree-list .item.active{
+.tree-list .item:hover,.tree-list .active{
     color: #00CA7C;
 }
 
@@ -200,7 +202,7 @@ input[type="number"]{
 .text-A9A9A9{
     color: #A9A9A9;
 }
-.agent .tb-header{
+.region .tb-header{
     background: #F5F8F7;
     border-radius: 4px;
     height: 3.5rem;
@@ -209,23 +211,29 @@ input[type="number"]{
     display: flex;
     font-weight: bold;
 }
-.agent .tb-body .item{
-    border-bottom: 1px solid #F5F5F5;
+.region .tb-list{
+    display: none;
+}
+.region .tb-list.tab0{
+    display: block;
+}
+.region .tb-body .item{
+
     height: 3.5rem;
     line-height: 3.5rem;
     font-size: .88rem;
     display: flex;
 }
-.agent .tb-header .tb-title{
+.region .tb-header .tb-title{
     padding-left: 1.5rem;
 }
-.agent .tb-title{
+.region .tb-title{
     flex: 8;
 }
-.agent .tb-operate{
+.region .tb-operate{
     flex: 1;
 }
-.agent .tb-body .tb-item{
+.region .tb-body .tb-item{
     padding-left: 1.5rem;
 }
 

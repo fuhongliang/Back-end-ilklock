@@ -28,16 +28,28 @@ module.exports = app => {
   router.all('/web/login', controller.website.passport.login);
   router.get('/web/get_captcha', controller.website.passport.captcha);
   router.get('/web/home', controller.website.home.index);
-  // 锁
+  router.get('/web/list_region', controller.website.region.list);
+
+  // 锁 区域管理权限
   router.get('/web/locks', controller.website.region.locks);
   router.get('/web/get_locks', controller.website.region.getLocks);
   router.post('/web/edit_lock', controller.website.region.editLock);
-
-  // 用户
+  router.post('/web/auth_lock', controller.website.region.authLock);
+  router.post('/web/del_lock', controller.website.region.delLock);
   router.get('/web/get_users', controller.website.user.listUser);
 
+  // 区域设置 权限
+  router.get('/web/region', controller.website.region.setting);
+  router.post('/web/edit_region', controller.website.region.edit);
+  router.post('/web/del_region', controller.website.region.del);
+  router.all('/web/add_region', controller.website.region.add);
+
+
+
+  // 用户
   router.get('/web/users', controller.website.user.index);
-  router.get('/web/region/setting', controller.website.region.setting);
+
+
   router.get('/web/apply/list', controller.website.apply.list);
   router.get('/web/role/list', controller.website.role.list);
   router.get('/web/operate-list', controller.website.record.operateList);

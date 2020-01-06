@@ -5,17 +5,20 @@
     <template>
     <div class="content">
         <!-- 分类树 -->
-        <div class="tree-list" id="tree">
-            <div class="tree-tab" :class="'tab' + index" v-for="(list,index) in list_region">
-                <div class="tree-item" :id="'tab' + region.id" v-for="(region,index) in list">
-                    <div class="item" :data-id="region.id" @click="showData(region,$event)">
-                        <span class="icon iconfont" :class="getAgentClass(region)"></span>
-                        <span class="region-name">{{ region.name }}</span>
+        <div class="left-tree">
+            <div class="tree-list" id="tree">
+                <div class="tree-tab" :class="'tab' + index" v-for="(list,index) in list_region">
+                    <div class="tree-item" :id="'tab' + region.id" v-for="(region,index) in list">
+                        <div class="item" :data-id="region.id" @click="showData(region,$event)">
+                            <span class="icon iconfont" :class="getAgentClass(region)"></span>
+                            <span class="region-name">{{ region.name }}</span>
+                        </div>
+                        <div class="child-list"></div>
                     </div>
-                    <div class="child-list"></div>
                 </div>
             </div>
         </div>
+
 
         <!-- 数据展示 -->
         <div class="data-page">
@@ -34,7 +37,7 @@
                 <td class="tb-col-4 text-center">
                     <button class="tb-btn tb-btn-auth" @click="auth(lock)">授权</button>
                     <button class="tb-btn tb-btn-edit" @click="edit(lock)">编辑</button>
-                    <button class="tb-btn tb-btn-del">删除</button>
+                    <button class="tb-btn tb-btn-del del" data-url="<$ helper.getHost() $>/web/del_lock" :data-id="lock.id">删除</button>
                 </td>
             </tr>
             </tbody>
@@ -278,11 +281,11 @@
       el: '#auth-lock',
       data: {
         list_user: JSON.parse(`<$ list_user | safe $>`),
+        time: 30,
         error_tips: '',
         lock: '',
         lock_id: 0,
         user_id: '',
-        time: 30,
         duration: ''
       },
       methods: {
@@ -296,6 +299,30 @@
           this.duration = t;
           $('#duration').val($(e.currentTarget).html());
         },
+        confirm: function() {
+          $.ajax({
+            url: `<$ helper.getHost() $>/web/auth_lock`,
+            type: 'post',
+            data: {
+              lock_id: authLock.lock_id,
+              user_id: authLock.user_id,
+              duration: authLock.duration,
+              _csrf: `<$ ctx.csrf $>`
+            },
+            success: function(res) {
+              if (res.code === 0){
+                layer.msg('授权成功',{ time: 1500 },function(){
+                  layer.closeAll();
+                });
+              }else{
+                authLock.error_tips = res.msg;
+              }
+            },
+            error: function() {
+              authLock.error_tips = '服务器异常~';
+            }
+          });
+        }
       }
     });
 

@@ -39,7 +39,7 @@ module.exports = app => {
       },
       secret_key: {
         type: TEXT,
-        allowNull: false
+        allowNull: true
       },
       expiry_time: {
         type: BIGINT,

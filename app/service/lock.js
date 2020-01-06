@@ -218,6 +218,54 @@ class LockService extends Service{
       msg: '修改失败'
     }
   }
+
+  /**
+   * 授权开锁
+   * @returns {Promise<{msg: string, code: number}>}
+   */
+  async auth() {
+    const { app, ctx } = this;
+    const { user_id, lock_id, duration } = ctx.request.body;
+    const { ApplyAuthorize, User, Lock } = app.model;
+    const user = app.userInfo;
+
+    const exist_user = await User.findOne({ where: { id: user_id, com_id: user.com_id, is_delete: 0, is_check: 1 } });
+    if (!exist_user){
+      return {
+        code: 1,
+        msg: '用户不存在,请重新选择~'
+      }
+    }
+
+    const exist_lock = await Lock.findOne({ where: { id: lock_id, com_id: user.com_id, is_delete: 0, is_check: 1 }});
+    if (!exist_lock){
+      return {
+        code: 1,
+        msg: '锁信息不存在,请刷新页面重试~'
+      }
+    }
+    let res = await ApplyAuthorize.create({
+      com_id: user.com_id,
+      user_id,
+      lock_id,
+      audit_id: user.id,
+      duration,
+      expiry_time: new Date().getTime() + parseInt(duration)*60*60*1000,
+      addtime: new Date().getTime(),
+      type: 1,
+      status: 1,
+    });
+    if (res){
+      return {
+        code: 0,
+        msg: 'success'
+      }
+    }
+    return {
+      code: 1,
+      msg: '授权失败'
+    }
+  }
 }
 
 module.exports = LockService;
