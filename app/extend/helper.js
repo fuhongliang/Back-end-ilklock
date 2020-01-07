@@ -14,11 +14,21 @@ module.exports = {
         menu_list[i].is_active = true;
       }
       if (menu_list[i].children && Array.isArray(menu_list[i].children)) {
-        for (let ci in menu_list[i].children) {
+        let children = menu_list[i].children;
+        for (let ci in children) {
           menu_list[i].children[ci].is_active = false;
           if (ctx.path === menu_list[i].children[ci].url) {
             menu_list[i].children[ci].is_active = true;
             menu_list[i].is_active = true;
+          }
+
+          if (children[ci].sub && Array.isArray(children[ci].sub)){
+            for (let sub of children[ci].sub){
+              if (sub.url === ctx.path){
+                menu_list[i].children[ci].is_active = true;
+                menu_list[i].is_active = true;
+              }
+            }
           }
         }
       }

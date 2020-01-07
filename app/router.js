@@ -50,7 +50,7 @@ module.exports = app => {
   router.get('/web/users', controller.website.user.index);
 
 
-  router.get('/web/apply/list', controller.website.apply.list);
+  router.get('/web/list_apply', controller.website.apply.list);
   router.get('/web/role/list', controller.website.role.list);
   router.get('/web/operate-list', controller.website.record.operateList);
 

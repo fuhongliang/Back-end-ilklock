@@ -54,7 +54,7 @@ class PassportService extends BaseService{
           };
         } else {
           let user = await User.findOne({where: {id: account.user_id}});
-          this.setUser(access_token,user.toJSON(),60*60*24*7,'wechatUser',user.id);
+          this.setUser(access_token,user.toJSON(),60*60*24*365,'wechatUser',user.id);
           return {
             code: 0,
             msg: '登录成功',
@@ -109,7 +109,7 @@ class PassportService extends BaseService{
 
     let result = await WxAccount.update({user_id: user.id},{where: {openid: account.openid,unionid: account.unionid}});
     if (result){
-      this.setUser(access_token,user.toJSON(),60*60*24*7,'wechatUser',user.id);
+      this.setUser(access_token,user.toJSON(),60*60*24*365,'wechatUser',user.id);
 
       return {
         code: 0,

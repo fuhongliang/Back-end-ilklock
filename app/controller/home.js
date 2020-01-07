@@ -16,11 +16,11 @@ class HomeController extends Controller {
     const access_token = crypto.createHash('MD5').update('user1').digest('hex');
     const key = crypto.createHash('MD5').update(access_token + '-user-1').digest('hex');
     const user = await User.findOne({ where: {id: 1}});
-    await app.cache.set('test',{hh: '哈哈', test: '测试'});
+    // await app.cache.set('test',{hh: '哈哈', test: '测试'});
     arr.push('3');
 
     ctx.body = {
-      test: /^1[3456789]\d{9}$/.test(undefined),
+      test: await this.test2('ddd'),
       a: ctx.helper.inArray(1,['1', 2]),
       arr: [...new Set(arr)],
       str: JSON.stringify("sss"),
@@ -44,6 +44,10 @@ class HomeController extends Controller {
       crypto: crypto.createHash('sha1').update('123456'),
     };
 
+  }
+
+  async test2(str = '哈哈哈') {
+    return str;
   }
 }
 

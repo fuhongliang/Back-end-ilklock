@@ -64,6 +64,6 @@ table td{
     padding: .75rem .25rem;
     font-size: .88rem;
 }
-table td .agent-title{
+table td .region-title{
     cursor: pointer;
 }

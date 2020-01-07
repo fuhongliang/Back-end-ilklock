@@ -136,7 +136,13 @@ class AgentController extends BaseController {
 
   async add() {
     const { ctx, app } = this;
-    await ctx.render('region/add');
+    if (ctx.method === 'POST'){
+      const { region } = ctx.service;
+      ctx.body = await region.create();
+    }else{
+      await ctx.render('region/add');
+    }
+
   }
 
   async edit() {

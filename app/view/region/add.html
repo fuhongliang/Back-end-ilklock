@@ -3,7 +3,8 @@
 <% block content %>
 <div id="page">
     <div  class="content">
-        <form class="data-page">
+        <form class="data-page" action="<$ helper.getHost() $>/web/add_region" method="post"
+              return-url="<$ helper.getHost() $>/web/region">
             <div class="form-group row">
                 <label for="area" class="col-sm-1 col-form-label text-right">父级区域</label>
                 <div class="col-sm-3">
@@ -30,7 +31,6 @@
                 </div>
             </div>
         </form>
-
     </div>
 
 </div>
@@ -52,22 +52,6 @@
 
     });
 
-    // 添加
-    $(document).on('click','.save',function(){
-      $.ajax({
-        url: `<$ helper.getHost() $>/web/add_region`,
-        type: 'post',
-        data: $('form').serialize(),
-        success: function(res){
-          if (res.code === 0){
-            layer.msg('添加成功');
-          }
-        },
-        error: function(){
-          layer.msg('服务器异常,请稍后尝试~');
-        }
-      });
-    });
 
     // 子页面选中后调用
     function selRegion(region) {

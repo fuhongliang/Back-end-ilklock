@@ -31,3 +31,30 @@ $(document).on('click','.del',function(){
     layer.close(index);
   });
 });
+
+// 保存
+$(document).on('click','.save',function(){
+  let form = $(this).closest('form');
+  $.ajax({
+    url: form.attr('action'),
+    type: form.attr('method'),
+    data: form.serialize(),
+    success: function(res){
+      if (res.code === 0){
+        layer.msg('保存成功',{time: 1500},function(){
+          let returnUrl = form.attr('return-url');
+          if (returnUrl){
+            window.location.href = returnUrl;
+          }else{
+            window.location.reload();
+          }
+        });
+      }else{
+        layer.msg(res.msg);
+      }
+    },
+    error: function(){
+      layer.msg('服务器异常,请稍后尝试~');
+    }
+  });
+});

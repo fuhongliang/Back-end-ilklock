@@ -218,7 +218,6 @@ input[type="number"]{
     display: block;
 }
 .region .tb-body .item{
-
     height: 3.5rem;
     line-height: 3.5rem;
     font-size: .88rem;
@@ -228,7 +227,13 @@ input[type="number"]{
     padding-left: 1.5rem;
 }
 .region .tb-title{
+    padding-left: 1.2rem;
+    position: relative;
     flex: 8;
+}
+.region .tb-title .icon{
+    left: 0;
+    position: absolute;
 }
 .region .tb-operate{
     flex: 1;

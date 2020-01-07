@@ -126,6 +126,11 @@ class ApplyService extends Service{
     });
   }
 
+  /**
+   * 申请开锁
+   * @param data
+   * @returns {Promise<void>}
+   */
   async applyKeySecret(data){
 
     const { app, ctx } = this;
@@ -147,6 +152,20 @@ class ApplyService extends Service{
     }
     let addtime = new Date().getTime();
     await ApplyAuthorize.create({ com_id, user_id, lock_id, audit_id, duration, addtime, type: 0 });
+  }
+
+  async listApply() {
+    const { app } = this;
+    const { ApplyAuthorize } = app.model;
+    const user = app.userInfo;
+
+    let total = await ApplyAuthorize.findAll({
+      where: {
+        audit_id: user.id,
+        is_delete: 0,
+        type: 0,
+      }
+    })
   }
 
 }

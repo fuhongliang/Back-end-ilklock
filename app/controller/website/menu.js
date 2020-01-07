@@ -16,13 +16,20 @@ const menuList = [
         name: '区域设置',
         url: '/web/region',
         is_show: true,
+        sub: [
+          {
+            name: '添加区域',
+            url: '/web/add_region',
+            is_show: false
+          }
+        ],
       }
     ],
   },
   {
     name: '申请记录',
     icon: 'icon-shenqingkaiban',
-    url: '/web/apply/list',
+    url: '/web/list_apply',
     is_show: true
   },
   {

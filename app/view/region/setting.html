@@ -24,7 +24,7 @@
                         <div class="tb-item" :id="'tab' + region.id" v-for="(region,i) in list">
                             <div class="item">
                                 <div class="tb-title" @click="showData(region,$event)">
-                                    <sapn class="text-A9A9A9 iconfont icon" :class="getAgentClass(region)"></sapn>
+                                    <sapn class="text-A9A9A9 iconfont icon" :class="getRegionClass(region)"></sapn>
                                     <span class="text-333333">{{region.name}}</span>
                                 </div>
                                 <div class="tb-operate text-center">
@@ -82,7 +82,7 @@
       list_region: JSON.parse(`<$ list_region | safe $>`),
     },
     methods: {
-      getAgentClass: function(region){
+      getRegionClass: function(region){
         if (Array.isArray(this.list_region[region.id]) && this.list_region[region.id].length > 0){
           return 'icon-triangle-right';
         }
