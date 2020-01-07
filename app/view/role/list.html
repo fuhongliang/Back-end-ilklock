@@ -8,7 +8,7 @@
             <!-- 检索 -->
             <div class="page-nav">
                 <div class="util-btn">
-                    <button class="tb-btn tb-btn-auth">新建角色</button>
+                    <button class="tb-btn tb-btn-auth btn-new">新建角色</button>
                 </div>
             </div>
             <!-- table -->
@@ -55,16 +55,15 @@
 <div class="layer-pop" id="edit-role">
     <form>
         <div class="form-group row">
-            <label for="lock_name" class="col-sm-3 col-form-label text-right">角色名称</label>
+            <label for="role_name" class="col-sm-3 col-form-label text-right">角色名称</label>
             <div class="col-sm-9">
-                <input type="text" class="form-control" id="lock_name" v-model="lock">
-                <div class="error-tips">{{error_tips}}</div>
+                <input type="text" class="form-control" id="role_name" placeholder="请输入角色名称" v-model="role_name">
             </div>
         </div>
         <div class="form-group row">
             <label class="col-sm-3 col-form-label text-right">角色描述</label>
             <div class="col-sm-9">
-                <textarea class="form-control"></textarea>
+                <textarea class="form-control" v-model="desc" placeholder="请输入"></textarea>
                 <div class="error-tips">{{error_tips}}</div>
             </div>
 
@@ -72,18 +71,23 @@
         <div class="form-group row">
             <label class="col-sm-3 col-form-label text-right">权限列表</label>
             <div class="col-sm-9">
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" class="ck-item" id="ck-item">
-                    <label class="custom-control-label" for="ck-item"></label>
+                <div class="input-group">
+                    <div class="custom-control custom-checkbox my-checkbox" v-for="(per,index) in permission_list">
+                        <input type="checkbox" class="custom-control-input"
+                               v-model="check_ids"
+                               :value="per.id" class="ck-item" :id="'per' + index">
+                        <label class="custom-control-label ck-label" :for="'per' + index">
+                            <div>{{per.name}}</div>
+                        </label>
+                    </div>
                 </div>
             </div>
-
         </div>
         <div class="form-group row">
             <label class="col-sm-3 col-form-label text-right"></label>
             <div class="col-sm-9">
                 <button type="button" class="layer-btn layer-btn-cancel">取消</button>
-                <button type="button" class="layer-btn layer-btn-success edit-confirm">确定</button>
+                <button type="button" class="layer-btn layer-btn-success" @click="confirm()">确定</button>
             </div>
         </div>
     </form>
@@ -98,18 +102,32 @@
       list: JSON.parse(`<$ list | safe $>`) || [],
     },
     methods: {
-      edit: function() {
+      edit: function(role) {
+        edit.error_tips = '';
+        edit.role_id = role.id;
+        edit.role_name = role.name;
+        edit.desc = role.desc;
+        edit.check_ids = [];
+        for (let per of role.perms) {
+          edit.check_ids.push(per.id);
+        }
         editRole();
       }
     }
   });
 
+  // 新建角色
+  $(document).on('click','.btn-new',function(){
+    editRole();
+  });
+
+  // 角色编辑弹窗
   function editRole() {
     let layerEdit = layer.open({
       type: 1,
       title: '编辑锁',
       content: $('#edit-role'),
-      area: ['500px', '300px'],
+      area: ['500px', 'auto'],
       skin: 'ilock',
     });
     $('#edit-role').find('.layer-btn-cancel').attr('layer-index',layerEdit);
@@ -120,11 +138,42 @@
     let edit = new Vue({
       el: '#edit-role',
       data: {
+        error_tips: '',
         role_id: 0,
         role_name: '',
         desc: '',
-        permission: ''
+        permission_list: JSON.parse(`<$ permission_list | safe $>`),
+        check_ids: []
+      },
+      methods: {
+        confirm: function(e) {
+          $.ajax({
+            url: `<$ helper.getHost() $>/web/edit_role`,
+            type: 'post',
+            data: {
+              role_id: edit.role_id,
+              role_name: edit.role_name,
+              desc: edit.desc,
+              permission_ids: edit.check_ids,
+              _csrf
+            },
+            success: function(res) {
+              if (res.code === 0) {
+                layer.msg('保存成功', { time: 1500 }, function() {
+                  layer.closeAll();
+                  window.location.reload();
+                });
+              } else {
+                edit.error_tips = res.msg;
+              }
+            },
+            error: function() {
+              edit.error_tips = '服务器异常,请稍后尝试~';
+            }
+          });
+        }
       }
     });
+
 </script>
 <% endblock %>

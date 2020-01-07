@@ -23,12 +23,12 @@ module.exports = app => {
       level: {
           type: INTEGER(1),
           allowNull: false,
-          defaultValue: '0'
+          defaultValue: 0
       },
       roleid: {
           type: INTEGER(11).UNSIGNED,
           allowNull: false,
-          defaultValue: '0'
+          defaultValue: 0
       },
       name: {
           type: STRING(25),
@@ -43,7 +43,7 @@ module.exports = app => {
       is_delete: {
           type: INTEGER(1),
           allowNull: false,
-          defaultValue: '0'
+          defaultValue: 0
       }
     },
     {

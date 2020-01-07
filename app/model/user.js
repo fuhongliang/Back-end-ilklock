@@ -59,12 +59,12 @@ module.exports = app => {
       addtime: {
         type: BIGINT,
         allowNull: false,
-        defaultValue: '0'
+        defaultValue: 0
       },
       review_time: {
         type: BIGINT,
         allowNull: false,
-        defaultValue: '0'
+        defaultValue: 0
       },
       phone: {
         type: STRING(25),

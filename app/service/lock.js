@@ -206,16 +206,10 @@ class LockService extends Service{
    */
   async modify(options,data){
     const { Lock } = this.ctx.model;
-    const res = await Lock.update(data,{ where: options });
-    if (res){
-      return {
-        code: 0,
-        msg: 'success'
-      }
-    }
+    await Lock.update(data,{ where: options });
     return {
-      code: 1,
-      msg: '修改失败'
+      code: 0,
+      msg: 'success'
     }
   }
 

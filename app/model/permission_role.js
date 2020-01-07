@@ -15,18 +15,13 @@ module.exports = app => {
       roleid: {
         type: INTEGER(11),
         allowNull: false,
-        defaultValue: '0'
+        defaultValue: 0
       },
       permissionid: {
         type: INTEGER(11),
         allowNull: false,
-        defaultValue: '0'
+        defaultValue: 0
       },
-      is_delete: {
-        type: INTEGER(1),
-        allowNull: false,
-        defaultValue: '0'
-      }
     },
     {
       tableName: 'ilock_permission_role',

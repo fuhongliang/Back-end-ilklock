@@ -4,6 +4,10 @@ const path = require('path');
 
 module.exports = {
 
+  /**
+   * 菜单
+   * @returns {string}
+   */
   getMenu() {
     const { ctx } = this;
     const menu = require(path.join(process.cwd(), 'app/controller/website/menu'));
@@ -38,6 +42,11 @@ module.exports = {
     // this 是 helper 对象，在其中可以调用其他 helper 方法
     // this.ctx => context 对象
     // this.app => application 对象
+  },
+
+  async getAllPermisstion() {
+    console.log(this.ctx.path);
+    return this.app.model.Permission.findAll();
   },
 
   /**
@@ -116,19 +125,5 @@ module.exports = {
     const { ctx } = this;
     return ctx.request.protocol + '://' + ctx.request.host;
   },
-
-  renderUrl(page) {
-    const { ctx } = this;
-    let params = ctx.query;
-    params.page = page;
-    let querys = [];
-    for (let key in params){
-      querys.push(`${key}=${params[key]}`);
-    }
-    querys = querys.join('&');
-    querys = querys?'?' + querys:'';
-    return this.getHost() + ctx.path + querys;
-
-  }
 
 };

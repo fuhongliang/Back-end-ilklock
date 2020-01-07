@@ -14,7 +14,7 @@ module.exports = app => {
     com_id: {
       type: INTEGER(11),
       allowNull: false,
-      defaultValue: '0'
+      defaultValue: 0
     },
     name: {
       type: STRING(25),
@@ -28,12 +28,12 @@ module.exports = app => {
     addtime: {
       type: BIGINT,
       allowNull: false,
-      defaultValue: '0'
+      defaultValue: 0
     },
     is_delete: {
       type: INTEGER(1),
       allowNull: false,
-      defaultValue: '0'
+      defaultValue: 0
     }
   }, {
     tableName: 'ilock_role'

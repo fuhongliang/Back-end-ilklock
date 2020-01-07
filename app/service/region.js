@@ -61,16 +61,9 @@ class RegionService extends Service{
     const user = app.userInfo;
     this.moveLocks(parent_id,region_id);
     let res = await Region.update({ name: region_name, parent_id }, { where: { id: region_id, com_id: user.com_id }});
-    if (res){
-      return {
-        code: 0,
-        msg: 'success'
-      }
-    }else{
-      return {
-        code: 1,
-        msg: '修改失败'
-      }
+    return {
+      code: 0,
+      msg: 'success'
     }
   }
 
@@ -124,15 +117,9 @@ class RegionService extends Service{
     }
 
     let res = await Region.update({ is_delete: 0 }, { where: { id, com_id: user.com_id } });
-    if (res){
-      return {
-        code: 0,
-        msg: 'success'
-      }
-    }
     return {
-      code: 1,
-      msg: '删除失败'
+      code: 0,
+      msg: 'success'
     }
   }
 

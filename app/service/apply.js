@@ -213,15 +213,9 @@ class ApplyService extends Service{
 
     const res = await ApplyAuthorize.update({ status },{ where: { id, audit_id: user.id} });
 
-    if (!res || res[0] === 0){
-      return {
-        code: 1,
-        msg: '操作失败'
-      }
-    }
     return {
       code: 0,
-      msg: '操作成功'
+      msg: 'success'
     }
 
   }

@@ -56,6 +56,7 @@ module.exports = app => {
 
   router.get('/web/roles', controller.website.role.list);
   router.post('/web/del_role',controller.website.role.del);
+  router.post('/web/edit_role',controller.website.role.edit);
 
   // 开锁操作记录
   router.get('/web/operate_list', controller.website.record.operateList);

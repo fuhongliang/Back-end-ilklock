@@ -11,7 +11,7 @@ class HomeController extends Controller {
   async index() {
     const { ctx ,app } = this;
     const { data } = ctx.request.body;
-    const { Admin,User,WechatApp } = ctx.model;
+    const { Admin,User,WechatApp, Role } = ctx.model;
     let str = JSON.stringify([2,3,4]);
     let arr = JSON.parse(str);
     const access_token = crypto.createHash('MD5').update('user1').digest('hex');
@@ -19,6 +19,8 @@ class HomeController extends Controller {
     const user = await User.findOne({ where: {id: 1}});
     // await app.cache.set('test',{hh: '哈哈', test: '测试'});
     arr.push('3');
+    const role = await Role.findOrCreate({ where: { id: 16, com_id: 1 } , defaults:{ id: '',name: '普通用户', desc: '哈哈哈', addtime: new Date().getTime()} });
+    console.log(role);
 
     ctx.body = {
       test: await this.test2('ddd'),

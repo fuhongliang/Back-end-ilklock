@@ -352,3 +352,13 @@ input[type="number"]{
     display: flex;
     flex-direction: column;
 }
+
+/*CheckBox*/
+.my-checkbox{
+    margin: 0 .5rem;
+    line-height: 1.5rem;
+}
+.custom-control-input:checked~.ck-label:before{
+    border-color: #00CA7C;
+    background-color: #00CA7C;
+}
