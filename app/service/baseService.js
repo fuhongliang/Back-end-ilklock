@@ -9,6 +9,8 @@ class BaseService extends Service{
     let res = '';
     if (user_id){
       res = await AuthLogin.update({ key, data: JSON.stringify(value), expire_time: (new Date().getTime() + ttl*1000) }, { where: { user_id, type } });
+    }else{
+      res = await AuthLogin.update({ data: JSON.stringify(value), expire_time: (new Date().getTime() + ttl*1000) }, { where: { key, user_id, type } });
     }
 
     if (!res || res[0] < 1){

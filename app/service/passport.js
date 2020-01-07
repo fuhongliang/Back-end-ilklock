@@ -99,7 +99,7 @@ class PassportService extends BaseService{
       };
     }
 
-    let account = this.getUser(access_token,'wxAccount');
+    let account = await this.getUser(access_token,'wxAccount');
     if (!account){
       return {
         code: -1,

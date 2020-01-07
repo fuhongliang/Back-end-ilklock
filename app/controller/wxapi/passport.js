@@ -25,7 +25,7 @@ class passportController extends BaseController {
   }
 
   async binding(){
-    const { ctx, app } = this;
+    const { ctx } = this;
     const { passport } = ctx.service;
 
     ctx.body = await passport.binding();
