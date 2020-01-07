@@ -121,6 +121,10 @@ class PassportService extends BaseService{
         }
       };
     }
+    return {
+      code: 1,
+      msg: '绑定失败'
+    }
   }
 
   async userLogin(){

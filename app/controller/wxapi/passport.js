@@ -26,14 +26,9 @@ class passportController extends BaseController {
 
   async binding(){
     const { ctx, app } = this;
-    const { phone, code, access_token } = ctx.request.body;
-    const { WxAccount,User } = ctx.model;
+    const { passport } = ctx.service;
 
-
-    ctx.body = {
-      code: 1000,
-      msg: '绑定失败',
-    };
+    ctx.body = await passport.binding();
   }
 
   async apply(){
