@@ -35,7 +35,7 @@ const menuList = [
   {
     name: '角色管理',
     icon: 'icon-rrenyuanguanli-',
-    url: '/web/role/list',
+    url: '/web/roles',
     is_show: true
   },
   {
@@ -47,7 +47,7 @@ const menuList = [
   {
     name: '操作记录',
     icon: 'icon-jiudianguanlihoutai-kaisuojilu',
-    url: '/web/operate-list',
+    url: '/web/operate_list',
     is_show: true
   },
   {

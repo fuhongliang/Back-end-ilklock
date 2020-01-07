@@ -10,6 +10,7 @@ const crypto = require('crypto');
 class HomeController extends Controller {
   async index() {
     const { ctx ,app } = this;
+    const { data } = ctx.request.body;
     const { Admin,User,WechatApp } = ctx.model;
     let str = JSON.stringify([2,3,4]);
     let arr = JSON.parse(str);
@@ -27,7 +28,9 @@ class HomeController extends Controller {
       // userInfo: ctx.app.userInfo,
       json: JSON.parse(JSON.stringify("sss")),
       // cache: app.authCache,
-      access_token
+      access_token,
+      // computer: 4/3
+
     };
   }
   async test(){

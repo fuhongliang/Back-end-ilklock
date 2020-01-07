@@ -2,6 +2,7 @@
 
 const path = require('path');
 const Service = require(path.join(process.cwd(),'app/service/baseService'));
+const sd = require('silly-datetime');
 
 class ApplyService extends Service{
 
@@ -154,18 +155,75 @@ class ApplyService extends Service{
     await ApplyAuthorize.create({ com_id, user_id, lock_id, audit_id, duration, addtime, type: 0 });
   }
 
+  /**
+   * 申请开锁列表
+   * @returns {Bluebird<{rows: any[]; count: number}>}
+   */
   async listApply() {
     const { app } = this;
-    const { ApplyAuthorize } = app.model;
+    const { ApplyAuthorize, Region, Lock, User } = app.model;
+    const { page = 1, page_size = 10 } = this.ctx.request.body;
     const user = app.userInfo;
 
-    let total = await ApplyAuthorize.findAll({
+    let list = await ApplyAuthorize.findAndCountAll({
       where: {
         audit_id: user.id,
         is_delete: 0,
         type: 0,
+      },
+      include: [
+        {
+          model: Lock,
+          as: 'lock',
+          attributes: [],
+          include: [
+            {
+              model: Region,
+              as: 'area',
+              attributes: []
+            }
+          ],
+        },
+        {
+          model: User,
+          as: 'user',
+          attributes: []
+        }
+      ],
+      attributes: ['id', 'addtime','status',[app.Sequelize.col('lock.name'), 'lock_name'], [app.Sequelize.col('user.name'), 'user_name'], [app.Sequelize.col('lock.area.name'), 'region_name']],
+      limit: page_size,
+      offset: (page - 1)*page_size,
+      raw: true
+    });
+
+
+    for (let row in list.rows){
+      list.rows[row].addtime = sd.format(new Date(list.rows[row].addtime),'YYYY-MM-DD HH:mm')
+    }
+    list.pageSize = page_size;
+    list.currentPage = page;
+    return list;
+  }
+
+  async review() {
+    const { app } = this;
+    const { ApplyAuthorize } = app.model;
+    const { id, status } = this.ctx.request.body;
+    const user = app.userInfo;
+
+    const res = await ApplyAuthorize.update({ status },{ where: { id, audit_id: user.id} });
+
+    if (!res || res[0] === 0){
+      return {
+        code: 1,
+        msg: '操作失败'
       }
-    })
+    }
+    return {
+      code: 0,
+      msg: '操作成功'
+    }
+
   }
 
 }

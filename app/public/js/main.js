@@ -58,3 +58,24 @@ $(document).on('click','.save',function(){
     }
   });
 });
+
+// 提交数据
+function submit(url,method,data){
+  $.ajax({
+    url,
+    method,
+    data,
+    success: function(res){
+      if (res.code === 0){
+        layer.msg(res.msg,{ time: 1000 },function() {
+          window.location.reload();
+        });
+      }else{
+        layer.msg(res.msg);
+      }
+    },
+    error: function() {
+      layer.msg('服务器异常');
+    }
+  });
+}

@@ -8,36 +8,35 @@
             <!-- 检索 -->
 
             <!-- table -->
+            <template>
             <table>
                 <thead>
                 <th class="tb-col-6">区域</th>
                 <th class="tb-col-5">锁名称</th>
-                <th class="tb-col-3">申请时间</th>
+                <th class="tb-col-4">申请时间</th>
                 <th class="tb-col-2 text-center">申请人</th>
                 <th class="tb-col-3 text-center">操作</th>
                 </thead>
                 <tbody>
-                <tr>
-                    <td class="tb-col-6">一级区域名称/二级区域名称</td>
-                    <td class="tb-col-5">XXXXXXXXXX锁名称</td>
-                    <td class="tb-col-3">2019-12-10 12:10</td>
-                    <td class="tb-col-2 text-center">刘燕家</td>
+                <tr v-for="(apply,index) in data.rows">
+                    <td class="tb-col-6">{{apply.region_name}}</td>
+                    <td class="tb-col-5">{{apply.lock_name}}</td>
+                    <td class="tb-col-4">{{apply.addtime}}</td>
+                    <td class="tb-col-2 text-center">{{apply.user_name}}</td>
                     <td class="tb-col-3 text-center">
-                        <button class="tb-btn tb-btn-auth">通过</button>
-                        <button class="tb-btn tb-btn-del">拒绝</button>
+                        <span class="text-secondary" v-if="apply.status == -1">已拒绝</span>
+                        <div v-else-if="apply.status == 0">
+                            <button class="tb-btn tb-btn-auth" @click="review(apply.id,1)">通过</button>
+                            <button class="tb-btn tb-btn-del" @click="review(apply.id,-1)">拒绝</button>
+                        </div>
+                        <span class="text-success" v-else>已处理</span>
                     </td>
                 </tr>
                 </tbody>
             </table>
-
+            </template>
             <!-- 分页 -->
-            <div class="paginate">
-                <div class="page-link">上一页</div>
-                <div class="page-link">1</div>
-                <div class="page-link">2</div>
-                <div class="page-link">3</div>
-                <div class="page-link">下一页</div>
-            </div>
+            <div id="paginate"></div>
         </div>
     </div>
 </div>
@@ -48,34 +47,55 @@
   let page = new Vue({
     el: '#page',
     data: {
-      list_agent: [
-        {
-          name: '一级区域',
-          is_open: false,
-          children: [
-            {
-              name: '二级区域',
-              is_open: false
-            }
-          ],
-        },
-        {
-          name: '一级区域',
-          is_open: false,
-          children: [],
-        },
-      ]
+      data: JSON.parse(`<$ list | safe $>`)
     },
     methods: {
-      getAgentClass: function(agent){
-        if (agent.children != null && agent.children.length > 0){
-          if (!agent.is_open){
-            return 'icon-triangle-right';
-          }else{
-            return 'icon-triangle-copy-copy-copy';
-          }
-        }
-        return '';
+      review: function(id,status){
+        let text = status === 1?'同意授权?':'拒绝授权?';
+        layer.confirm(text, function(index){
+          $.ajax({
+            url: `<$ helper.getHost() $>/web/review_apply`,
+            type: 'post',
+            data: {
+              id,
+              status,
+              _csrf,
+            },
+            success: function(res){
+              if (res.code === 0){
+                layer.msg(res.msg,{ time: 1000 },function() {
+                  window.location.reload();
+                });
+              }else{
+                layer.msg(res.msg);
+              }
+            },
+            error: function() {
+              layer.msg('服务器异常');
+            }
+          });
+
+          layer.close(index);
+        });
+      }
+    }
+  });
+
+  laypage.render({
+    elem: 'paginate'
+    ,count: page.data.count
+    ,limit: page.data.page_size
+    ,theme: '#1E9FFF'
+    ,jump: function(obj, first){
+      //obj包含了当前分页的所有参数，比如：
+      console.log(first);
+      console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+      console.log(obj.limit); //得到每页显示的条数
+      const href = window.location.href;
+      let url = href.substr(0,href.indexOf('?'));
+      //首次不执行
+      if(!first){
+
       }
     }
   });

@@ -108,8 +108,27 @@ module.exports = {
     return result;
   },
 
+  /**
+   * 获取域名地址
+   * @returns {string}
+   */
   getHost() {
     const { ctx } = this;
     return ctx.request.protocol + '://' + ctx.request.host;
+  },
+
+  renderUrl(page) {
+    const { ctx } = this;
+    let params = ctx.query;
+    params.page = page;
+    let querys = [];
+    for (let key in params){
+      querys.push(`${key}=${params[key]}`);
+    }
+    querys = querys.join('&');
+    querys = querys?'?' + querys:'';
+    return this.getHost() + ctx.path + querys;
+
   }
+
 };

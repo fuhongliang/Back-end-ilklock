@@ -49,10 +49,16 @@ module.exports = app => {
   // 用户
   router.get('/web/users', controller.website.user.index);
 
-
+  // 开锁申请记录
   router.get('/web/list_apply', controller.website.apply.list);
-  router.get('/web/role/list', controller.website.role.list);
-  router.get('/web/operate-list', controller.website.record.operateList);
+  router.post('/web/review_apply', controller.website.apply.review);
+
+
+  router.get('/web/roles', controller.website.role.list);
+  router.post('/web/del_role',controller.website.role.del);
+
+  // 开锁操作记录
+  router.get('/web/operate_list', controller.website.record.operateList);
 
   //
   router.get('/', controller.home.index);

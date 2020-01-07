@@ -39,7 +39,10 @@ module.exports = app => {
     tableName: 'ilock_role'
   });
 
-  Role.associate = function(){};
+  Role.associate = ()=>{
+    Role.belongsToMany(app.model.Permission,{as: 'perms', through: app.model.PermissionRole, foreignKey: 'roleid'});
+    app.model.Permission.belongsToMany(Role,{as: 'role', through: app.model.PermissionRole, foreignKey: 'permissionid'});
+  };
 
   return Role;
 
