@@ -73,12 +73,13 @@ module.exports = app => {
       },
       is_delete: {
         type: INTEGER(1),
-        allowNull: false
+        allowNull: false,
+        defaultValue: 0
       },
       is_check: {
         type: INTEGER(1),
         allowNull: false,
-        defaultValue: '0'
+        defaultValue: 0
       }
     },
     {

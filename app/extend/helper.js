@@ -126,4 +126,29 @@ module.exports = {
     return ctx.request.protocol + '://' + ctx.request.host;
   },
 
+  /**
+   * 默认头像
+   * @returns {string}
+   */
+  getDefaultAvatar() {
+    const host = this.getHost();
+    return `${host}/static/images/avatar/avatar-0${Math.ceil(Math.random() * 9)}.jpg`;
+  },
+
+  createUrl(path = '',options = {}) {
+    let param = '';
+    for (let key in options){
+      param += `${key}=${options[key]}&`
+    }
+    param = param.slice(0,-1);
+    if (!/^\//.test(path)){
+      path = '/' + path;
+    }
+    if (param){
+      path += `?${param}`;
+    }
+    const { ctx } = this;
+    return ctx.request.protocol + '://' + ctx.request.host + path;
+  }
+
 };

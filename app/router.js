@@ -29,6 +29,7 @@ module.exports = app => {
   router.get('/web/get_captcha', controller.website.passport.captcha);
   router.get('/web/home', controller.website.home.index);
   router.get('/web/list_region', controller.website.region.list);
+  router.post('/web/upload_file', controller.website.upload.uploadFile);
 
   // 锁 区域管理权限
   router.get('/web/locks', controller.website.region.locks);
@@ -46,14 +47,17 @@ module.exports = app => {
 
 
 
-  // 用户
+  // 用户管理权限
   router.get('/web/users', controller.website.user.index);
+  router.post('/web/del_user', controller.website.user.del);
+  router.post('/web/edit_user', controller.website.user.edit);
+  router.post('/web/auth_patch', controller.website.user.authPatch);
 
   // 开锁申请记录
   router.get('/web/list_apply', controller.website.apply.list);
   router.post('/web/review_apply', controller.website.apply.review);
 
-
+  // 超级管理员权限
   router.get('/web/roles', controller.website.role.list);
   router.post('/web/del_role',controller.website.role.del);
   router.post('/web/edit_role',controller.website.role.edit);

@@ -19,9 +19,9 @@
                     </form>
                 </div>
                 <div class="util-btn">
-                    <button class="tb-btn tb-btn-auth">导入</button>
-                    <button class="tb-btn tb-btn-auth">批量授权</button>
-                    <button class="tb-btn tb-btn-auth">添加</button>
+                    <button class="tb-btn tb-btn-auth" @click="importUser()">导入</button>
+                    <button class="tb-btn tb-btn-auth" @click="auth()">批量授权</button>
+                    <button class="tb-btn tb-btn-auth" @click="add()">添加</button>
                 </div>
             </div>
             <!-- table -->
@@ -40,26 +40,28 @@
                     <th class="tb-col-2">所属角色</th>
                     <th class="tb-col-6 text-center">操作</th>
                 </thead>
+                <template>
                 <tbody>
-                    <tr>
+                    <tr v-for="(user,index) in list">
                         <td class="tb-col-1 text-center">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" class="ck-item" id="ck-item">
-                                <label class="custom-control-label" for="ck-item"></label>
+                                <input type="checkbox" :value="user.id" class="custom-control-input ck-item" :id="'ck-item' + index">
+                                <label class="custom-control-label" :for="'ck-item' + index"></label>
                             </div>
                         </td>
-                        <td class="tb-col-4">534353187482462</td>
-                        <td class="tb-col-2">刘燕家</td>
-                        <td class="tb-col-2">刘燕家</td>
-                        <td class="tb-col-3">13728202087</td>
-                        <td class="tb-col-2">科长</td>
+                        <td class="tb-col-4">{{user.job_no}}</td>
+                        <td class="tb-col-2">{{user.name}}</td>
+                        <td class="tb-col-2">{{user.pinyin}}</td>
+                        <td class="tb-col-3">{{user.phone}}</td>
+                        <td class="tb-col-2">{{user.role_name}}</td>
                         <td class="tb-col-6 text-center">
-<!--                            <button class="tb-btn tb-btn-auth">审批</button>-->
-                            <button class="tb-btn tb-btn-edit">修改</button>
-                            <button class="tb-btn tb-btn-del">删除</button>
+                            <button class="tb-btn tb-btn-auth" v-if="user.is_check == 0">审批</button>
+                            <button class="tb-btn tb-btn-edit" @click="edit(user)">修改</button>
+                            <button class="tb-btn tb-btn-del del" data-url="<$ helper.getHost() $>/web/del_user" :data-id="user.id">删除</button>
                         </td>
                     </tr>
                 </tbody>
+                </template>
             </table>
 
             <!-- 分页 -->
@@ -73,6 +75,112 @@
         </div>
     </div>
 </div>
+
+<!-- 弹出层 -->
+<!-- 编辑用户 -->
+<div id="edit-user" class="layer-pop">
+    <form action="<$ helper.getHost()$>/web/edit_user" method="post">
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label text-right">工号</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" v-model="job_no" name="job_no">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label text-right">姓名</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" v-model="name" name="name">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label text-right">姓名拼音</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" v-model="pinyin" name="pinyin">
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label text-right">手机号码</label>
+            <div class="col-sm-9">
+                <input type="number" class="form-control" v-model="phone" name="phone" maxlength="11" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label text-right">选择角色</label>
+            <div class="col-sm-9">
+                <div class="input-group">
+                    <input type="text" readonly class="form-control sel" @click.stop="listRole($event)" v-model="role">
+                    <input type="hidden" name="role_id" v-model="role_id">
+                    <icon class="sel-icon"></icon>
+                </div>
+                <div class="dropdown sel-item myscroll">
+                    <div class="item" v-for="role in role_list" @click="selectRole(role)">{{role.name}}</div>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" name="user_id" v-model="user_id" />
+        <input type="hidden" name="_csrf" value="<$ ctx.csrf $>" />
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label text-right"></label>
+            <div class="col-sm-9">
+                <button type="button" class="layer-btn layer-btn-cancel">取消</button>
+                <button type="button" class="layer-btn layer-btn-success save">确定</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- 批量授权 -->
+<div id="auth-patch" class="layer-pop">
+    <form>
+        <div class="form-group row"></div>
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label text-right">选择角色</label>
+            <div class="col-sm-9">
+                <div class="input-group">
+                    <input type="text" readonly class="form-control sel" @click.stop="listRole($event)" v-model="role">
+                    <input type="hidden" name="role_id" v-model="role_id">
+                    <icon class="sel-icon"></icon>
+                </div>
+                <div class="dropdown sel-item myscroll">
+                    <div class="item" v-for="role in role_list" @click="selectRole(role)">{{role.name}}</div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-3 col-form-label text-right"></label>
+            <div class="col-sm-9">
+                <button type="button" class="layer-btn layer-btn-cancel">取消</button>
+                <button type="button" class="layer-btn layer-btn-success" @click="auth()">确定</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- 导入用户 -->
+<div id="import-user" class="layer-pop">
+    <div class="form-group row">
+        <label class="col-sm-3 col-form-label text-right">
+            <button type="button" class="layui-btn" id="upload">
+                <i class="layui-icon">&#xe67c;</i>上传文件
+            </button>
+        </label>
+        <div class="col-sm-9">
+            <div style="padding-top: calc(.375rem + 1px);height: 38px;line-height: 38px;">
+                <input type="text" name="filename" placeholder="请上传xlsx文件" class="form-control-plaintext" readonly />
+            </div>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-3 col-form-label text-right">点击<a href="" style="color: #009688;">下载</a>模板</label>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-3 col-form-label text-right"></label>
+        <div class="col-sm-9">
+            <button type="button" class="layer-btn layer-btn-cancel">取消</button>
+            <button type="button" class="layer-btn layer-btn-success">导入</button>
+        </div>
+    </div>
+</div>
 <% endblock %>
 
 <% block script %>
@@ -80,36 +188,163 @@
   let page = new Vue({
     el: '#page',
     data: {
-      list_agent: [
-        {
-          name: '一级区域',
-          is_open: false,
-          children: [
-            {
-              name: '二级区域',
-              is_open: false
-            }
-          ],
-        },
-        {
-          name: '一级区域',
-          is_open: false,
-          children: [],
-        },
-      ]
+      list: JSON.parse(`<$ list | safe $>`)
     },
     methods: {
-      getAgentClass: function(agent){
-        if (agent.children != null && agent.children.length > 0){
-          if (!agent.is_open){
-            return 'icon-triangle-right';
-          }else{
-            return 'icon-triangle-copy-copy-copy';
+      edit: function(user) {
+        edit.user_id = user.id;
+        edit.job_no = user.job_no;
+        edit.name = user.name;
+        edit.pinyin = user.pinyin;
+        edit.phone = user.phone;
+        edit.role = user.role_name;
+        edit.role_id = user.role_id;
+        editPop();
+      },
+      add: function() {
+        editPop();
+      },
+      auth: function(){
+        let check_ids = [];
+        $('.ck-item').each(function() {
+          if ($(this).prop('checked')){
+            check_ids.push($(this).val());
           }
+        });
+        if (check_ids.length === 0){
+          layer.msg('请先选择用户');
+        }else{
+          auth.ck_users = check_ids;
+          let layerAuth = layer.open({
+            type: 1,
+            title: '批量授权用户',
+            content: $('#auth-patch'),
+            area: ['500px', 'auto'],
+            skin: 'ilock',
+          });
+          $('#auth-patch').find('.layer-btn-cancel').attr('layer-index',layerAuth);
         }
-        return '';
+      },
+      importUser: function() {
+        let layerImport = layer.open({
+          type: 1,
+          title: '导入用户',
+          content: $('#import-user'),
+          area: ['500px', 'auto'],
+          skin: 'ilock',
+        });
+        $('#import-user').find('.layer-btn-cancel').attr('layer-index',layerImport);
       }
     }
+  });
+
+  // 编辑用户弹窗
+    function editPop(){
+      let layerEdit = layer.open({
+        type: 1,
+        title: '编辑用户',
+        content: $('#edit-user'),
+        area: ['500px', 'auto'],
+        skin: 'ilock',
+      });
+      $('#dit-user').find('.layer-btn-cancel').attr('layer-index',layerEdit);
+    }
+</script>
+
+<!-- 用户编辑 -->
+<script type="text/javascript">
+  let edit = new Vue({
+    el: '#edit-user',
+    data: {
+      user_id: '',
+      job_no: '',
+      name: '',
+      pinyin: '',
+      phone: '',
+      role: '',
+      role_id: '',
+      role_list: JSON.parse(`<$ list_role | safe $>`),
+    },
+    methods: {
+      listRole: function(e) {
+        $(e.currentTarget).closest('.form-group').find('.dropdown').show();
+      },
+      selectRole: function(role) {
+        this.role = role.name;
+        this.role_id = role.id;
+      }
+    }
+  });
+
+</script>
+
+<!-- 批量授权 -->
+<script type="text/javascript">
+    let auth = new Vue({
+      el: '#auth-patch',
+      data: {
+        ck_users: [],
+        role: '',
+        role_id: '',
+        role_list: JSON.parse(`<$ list_role | safe $>`),
+      },
+      methods: {
+        listRole: function(e) {
+          $(e.currentTarget).closest('.form-group').find('.dropdown').show();
+        },
+        selectRole: function(role) {
+          this.role = role.name;
+          this.role_id = role.id;
+        },
+        auth: function() {
+          if (!this.role_id){
+            layer.msg('请先选择角色');
+          }else{
+            $.ajax({
+              url: `<$ helper.getHost() $>/web/auth_patch`,
+              type: 'post',
+              data: {
+                user_ids: auth.ck_users,
+                role_id: auth.role_id,
+                _csrf
+              },
+              success: function(res) {
+                if (res.code === 0){
+                  layer.msg('操作成功',{ time: 1500 },function(){
+                    window.location.reload();
+                  });
+                }else{
+                  layer.msg(res.msg);
+                }
+              },
+              error: function() {
+                layer.msg('授权失败');
+              }
+            });
+          }
+        }
+      }
+    });
+</script>
+
+<!-- 上传文件 -->
+<script type="text/javascript">
+
+  // 渲染上传插件
+  const uploadInst = upload.render({
+    elem: '#upload' //绑定元素
+    ,url: `<$ helper.createUrl('/web/upload_file',{ _csrf: ctx.csrf }) $>` //上传接口
+    ,done: function(res){
+      //上传完毕回调
+    }
+    ,error: function(){
+      //请求异常回调
+    }
+    ,accept: 'file'
+    ,acceptMime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    ,exts: 'xlsx'
+    ,size: 50
+    ,field: 'file'
   });
 </script>
 <% endblock %>

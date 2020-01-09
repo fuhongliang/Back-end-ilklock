@@ -288,37 +288,29 @@ input[type="number"]{
 }
 
 /*下拉框*/
-.sel-duration{
+.dropdown{
     display: none;
     position: absolute;
-    right: 15px;
     background: #FFFFFF;
     z-index: 19891015;
     box-shadow: 0 0 3px #000000;
     min-width: 120px;
     max-height: 300px;
     overflow: auto;
+    right: 15px;
 }
-.sel-user .user,.sel-duration .time{
+.sel-item .item{
     padding: .5rem 0;
     text-align: center;
     cursor: pointer;
 }
-.sel-duration .time:hover{
+.sel-item .time:hover{
     background: #F3F3F3;
 }
 .sel-user{
-    display: none;
-    position: absolute;
     left: 15px;
-    background: #FFFFFF;
-    z-index: 19891015;
-    box-shadow: 0 0 3px #000000;
-    min-width: 120px;
-    max-height: 300px;
-    overflow: auto;
 }
-.sel-user .user:hover{
+.sel-item .item:hover{
     color: #00CA7C;
 }
 

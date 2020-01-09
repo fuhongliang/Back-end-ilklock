@@ -79,3 +79,23 @@ function submit(url,method,data){
     }
   });
 }
+
+// 点击关闭下拉框
+$(document).on('click','body',function(){
+  $('.dropdown').hide();
+});
+
+// 全选/全不选
+$(document).on('click','#ck-all',function(){
+
+  if ($(this).prop('checked')){
+    $('.ck-item').prop('checked',true);
+  }else{
+    $('.ck-item').prop('checked',false);
+  }
+});
+$(document).on('click','.ck-item',function() {
+  if (!$(this).prop('checked')){
+    $('#ck-all').prop('checked',false);
+  }
+});

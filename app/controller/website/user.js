@@ -6,32 +6,17 @@ const BaseController = require(path.join(process.cwd(),'app/controller/baseContr
 class UserController extends BaseController {
   async index() {
     const { ctx } = this;
-    await ctx.render('user/index');
+    const { user, role } = ctx.service;
+    const list = await user.listUser();
+    const list_role = await role.listRole();
+    await ctx.render('user/index',{ list: JSON.stringify(list), list_role: JSON.stringify(list_role)});
   }
 
   async listUser() {
-    const { ctx, app } = this;
-    const { User, Role } = app.model;
-    const user = app.userInfo;
-    const list = await User.findAll({
-      where: {
-        com_id: user.com_id,
-        id: {
-          [app.Sequelize.Op.ne]: user.id
-        },
-        is_delete: 0,
-        is_check: 1,
-        level: 1
-      },
-      include: [
-        {
-          model: Role,
-          as: 'role',
-          attributes: []
-        }
-      ],
-      attributes: ['id', 'name', 'avatar', [app.Sequelize.col('role.name'), 'role_name']],
-    });
+    const { ctx } = this;
+    const { user } = ctx.service;
+    const list = await user.listUser({ is_check: 1 });
+
     ctx.body = {
       code: 0,
       msg: 'success',
@@ -39,6 +24,42 @@ class UserController extends BaseController {
         list
       }
     }
+  }
+
+  async edit() {
+    const { ctx } = this;
+    const { user } = ctx.service;
+
+    const validateResult = await ctx.validate('user.edit',ctx.request.body);
+    if (!validateResult){
+      return ;
+    }
+
+    ctx.body = await user.edit();
+  }
+
+  async del() {
+    const { ctx, app } = this;
+    const { id } = ctx.request.body;
+    const { User } = app.model;
+    const user = app.userInfo;
+    await User.update({ is_delete: 1},{ where: { id, com_id: user.com_id }});
+    ctx.body = {
+      code: 0,
+      msg: 'success'
+    }
+  }
+
+  async authPatch() {
+    const { ctx } = this;
+    const { user } = ctx.service;
+
+    const validateResult = await ctx.validate('user.patch',ctx.request.body);
+    if (!validateResult){
+      return ;
+    }
+    ctx.body = await user.authPatch();
+
   }
 }
 

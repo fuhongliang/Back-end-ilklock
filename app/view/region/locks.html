@@ -92,8 +92,8 @@
                     <input type="text" readonly class="form-control sel" id="user" />
                     <icon class="sel-icon"></icon>
                 </div>
-                <div class="sel-user myscroll">
-                    <div class="user" v-for="user in list_user" @click="chosenUser(user)">{{user.name}}</div>
+                <div class="dropdown sel-item myscroll sel-user">
+                    <div class="item" v-for="user in list_user" @click="chosenUser(user)">{{user.name}}</div>
                 </div>
             </div>
         </div>
@@ -104,8 +104,8 @@
                     <input type="text" readonly class="form-control sel" id="duration" />
                     <icon class="sel-icon"></icon>
                 </div>
-                <div class="sel-duration myscroll">
-                    <div class="time" v-for="t in time" @click="chosenTime(t,$event)">{{t}}小时</div>
+                <div class="dropdown sel-item myscroll">
+                    <div class="item time" v-for="t in time" @click="chosenTime(t,$event)">{{t}}小时</div>
                 </div>
                 <div class="error-tips">{{error_tips}}</div>
             </div>

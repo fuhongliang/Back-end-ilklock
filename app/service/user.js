@@ -3,6 +3,7 @@
 const path = require('path');
 
 const Service = require(path.join(process.cwd(),'app/service/baseService'));
+const crypto = require('crypto');
 
 class UserService extends  Service{
 
@@ -70,20 +71,23 @@ class UserService extends  Service{
   }
    */
 
-  async listUser() {
+  async listUser(options = {}) {
     const { app } = this;
     const { User, Role } = app.model;
     const user = app.userInfo;
+
+    let where = {
+      com_id: user.com_id,
+      id: { [app.Sequelize.Op.ne]: user.id },
+      is_delete: 0,
+      level: 1,
+    };
+    for (let key in options){
+      where[key] = options[key];
+    }
+
     return User.findAll({
-      where: {
-        com_id: user.com_id,
-        id: {
-          [app.Sequelize.Op.ne]: user.id
-        },
-        is_delete: 0,
-        is_check: 1,
-        level: 1
-      },
+      where,
       include: [
         {
           model: Role,
@@ -91,8 +95,60 @@ class UserService extends  Service{
           attributes: []
         }
       ],
-      attributes: ['id', 'name', 'avatar', [app.Sequelize.col('role.name'), 'role_name']],
+      attributes: ['id', 'name', 'avatar', 'job_no', 'pinyin', 'phone', [app.Sequelize.col('role.name'), 'role_name'], [app.Sequelize.col('role.id'), 'role_id']],
     });
+  }
+
+  /**
+   * 编辑用户
+   * @returns {Promise<{msg: string, code: number}>}
+   */
+  async edit() {
+    const { ctx, app } = this;
+    const { User } = app.model;
+    const { user_id, job_no, name, pinyin, phone, role_id } = ctx.request.body;
+    const user = app.userInfo;
+
+    if (user_id){
+      await User.update({ job_no, name, pinyin, phone, roleid: role_id },{ where: { id: user_id, com_id: user.com_id } });
+    }else{
+      await User.create({
+        com_id: user.com_id,
+        name,
+        job_no,
+        pinyin,
+        phone,
+        roleid: role_id,
+        addtime: new Date().getTime(),
+        avatar: ctx.helper.getDefaultAvatar(),
+        level: 1,
+        is_check: 1,
+        username: phone,
+        password: crypto.createHash('sha1').update(pinyin).digest('hex'),
+      })
+    }
+
+    return {
+      code: 0,
+      msg: 'success'
+    }
+  }
+
+  /**
+   * 批量授权角色
+   * @returns {Promise<void>}
+   */
+  async authPatch() {
+    const { ctx, app } = this;
+    const { role_id, user_ids } = ctx.request.body;
+    const { User } = app.model;
+    const user = app.userInfo;
+
+    await User.update({ roleid: role_id },{ where: { id: { [app.Sequelize.Op.in]: user_ids } } });
+    return {
+      code: 0,
+      msg: 'success'
+    }
   }
 }
 

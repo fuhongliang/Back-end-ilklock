@@ -5,7 +5,7 @@ const Controller = require('egg').Controller;
 const wx = require('wx-minprogram');
 const assert = require('assert');
 const crypto = require('crypto');
-
+const fs = require('fs');
 
 class HomeController extends Controller {
   async index() {
@@ -32,6 +32,8 @@ class HomeController extends Controller {
       // cache: app.authCache,
       access_token,
       // computer: 4/3
+      'sj': Date.now(),
+      'wj': fs.mkdirSync(path.join(this.config.baseDir,'/run/tempfile/2020-01-09'),{ recursive: true})
 
     };
   }
