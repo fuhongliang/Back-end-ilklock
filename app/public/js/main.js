@@ -99,3 +99,4 @@ $(document).on('click','.ck-item',function() {
     $('#ck-all').prop('checked',false);
   }
 });
+

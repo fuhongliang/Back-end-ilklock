@@ -10,11 +10,31 @@
                 <div class="search">
                     <form method="get">
                         <div class="search-group">
-                            <div class="search-bar">人员 <input class="ipt-sh-text" placeholder="按人员搜索" type="text" name="ry" /></div>
-                            <div class="search-bar">锁名称 <input class="ipt-sh-text" placeholder="按锁名称搜索" type="text" name="smc" /></div>
-                            <div class="search-bar">区域 <input class="ipt-sh-text" placeholder="选择" type="number" maxlength="11" name="qu" /></div>
-                            <div class="search-bar">时间 <input class="ipt-sh-text" placeholder="选择" type="number" maxlength="11" name="sj" /></div>
-                            <div class="search-bar"><button class="tb-btn tb-btn-auth">查询</button></div>
+                            <div class="search-bar">人员
+                                <input class="ipt-sh-text" placeholder="按用户名搜索" type="text" name="user_name" />
+                            </div>
+                            <div class="search-bar">锁名称
+                                <input class="ipt-sh-text" placeholder="按锁名称搜索" type="text" name="lock_name" />
+                            </div>
+                            <div class="search-bar">区域
+                                <input class="ipt-sh-text sel" readonly id="area" placeholder="选择区域" type="text" />
+                                <input type="hidden" name="region_id" />
+                                <icon class="sel-icon" style="top: .5rem;"></icon>
+                            </div>
+                            <div class="search-bar">
+                                时间
+                                <input class="ipt-sh-text short sel" readonly id="startTime" placeholder="开始时间" type="text" name="start_time" />
+                                <icon class="sel-icon" style="top: .5rem;"></icon>
+                            </div>
+                            <div style="line-height: 1.5rem;margin: 0 -.4rem;color: #A9A9A9;">—</div>
+                            <div class="search-bar">
+                                <input class="ipt-sh-text short sel" readonly id="endTime" placeholder="结束时间" type="text" name="end_time" />
+                                <icon class="sel-icon" style="top: .5rem;"></icon>
+                            </div>
+                            <div class="search-bar">
+                                <input type="hidden" name="_csrf" value="<$ ctx.csrf $>" />
+                                <button class="tb-btn tb-btn-auth">查询</button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -29,12 +49,15 @@
                 <th class="tb-col-2 text-center">操作状态</th>
                 </thead>
                 <tbody>
-                <tr>
-                    <td class="tb-col-2">刘燕家</td>
-                    <td class="tb-col-5">某某某某某某某某锁名称</td>
-                    <td class="tb-col-6">一级区域名称/二级区域名称</td>
-                    <td class="tb-col-3 text-center">2019-12-23 11:48</td>
-                    <td class="tb-col-2 text-center">开锁</td>
+                <tr v-for="log in list">
+                    <td class="tb-col-2">{{log.user_name}}</td>
+                    <td class="tb-col-5">{{log.lock_name}}</td>
+                    <td class="tb-col-6">{{log.area_name}}</td>
+                    <td class="tb-col-3 text-center">{{log.log_time}}</td>
+                    <td class="tb-col-2 text-center">
+                        <span class="text-success" v-if="log.sensor_status == 1">开锁</span>
+                        <span class="text-success" v-else>读码</span>
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -57,36 +80,58 @@
   let page = new Vue({
     el: '#page',
     data: {
-      list_agent: [
-        {
-          name: '一级区域',
-          is_open: false,
-          children: [
-            {
-              name: '二级区域',
-              is_open: false
-            }
-          ],
-        },
-        {
-          name: '一级区域',
-          is_open: false,
-          children: [],
-        },
-      ]
+      list: JSON.parse(`<$ list | safe $>`)
     },
     methods: {
-      getAgentClass: function(agent){
-        if (agent.children != null && agent.children.length > 0){
-          if (!agent.is_open){
-            return 'icon-triangle-right';
-          }else{
-            return 'icon-triangle-copy-copy-copy';
-          }
-        }
-        return '';
-      }
+
     }
   });
+</script>
+<!-- 时间选择 -->
+<script type="text/javascript">
+  let start = laydate.render({
+    elem: '#startTime' //指定元素
+    ,type: 'date'
+    ,showBottom: false
+    ,theme: '#00CA7C'
+    ,done: function(value, date, endDate){
+      end.config.min = {
+        year:date.year,
+        month:date.month - 1, //关键
+        date: date.date,
+      };
+    }
+  });
+    console.log(start);
+  let end = laydate.render({
+    elem: '#endTime' //指定元素
+    ,btns: ['clear']
+    ,theme: '#00CA7C'
+    ,done: function(value, date, endDate){
+      start.config.max = {
+        year:date.year,
+        month:date.month - 1, //关键
+        date: date.date,
+      };
+    }
+  });
+</script>
+<!-- 选择区域 -->
+<script type="text/javascript">
+  $(document).on('click','#area',function(){
+
+    layer.open({
+      type: 2,
+      title: '选择区域',
+      content: `<$ helper.getHost() $>/web/list_region`,
+      area: ['auto','500px'],
+      offset: ['6rem', 'calc(50% + 12rem)']
+    });
+  });
+  // 子页面选中后调用
+  function selRegion(region) {
+    $('#area').val(region.name);
+    $('input[name="region_id"]').val(region.id);
+  }
 </script>
 <% endblock %>

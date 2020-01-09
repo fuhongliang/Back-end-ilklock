@@ -32,7 +32,7 @@ class HomeController extends Controller {
       // cache: app.authCache,
       access_token,
       // computer: 4/3
-      'sj': Date.now(),
+      'sj': new Date('2020-01-02'),
       'wj': fs.mkdirSync(path.join(this.config.baseDir,'/run/tempfile/2020-01-09'),{ recursive: true})
 
     };

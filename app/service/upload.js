@@ -17,8 +17,8 @@ class UploadService extends  Service{
       throw '上传目录不能为空'
     }
     const { ctx } = this;
+    const { user } = ctx.service;
     const stream = await ctx.getFileStream();
-    console.log(stream);
     if (!fs.existsSync(baseDir)){
       fs.mkdirSync(baseDir,{ recursive: true });
     }
@@ -31,11 +31,14 @@ class UploadService extends  Service{
     try {
       //异步把文件流 写入
       await awaitWriteStream(stream.pipe(writeStream));
-
+      // 导入数据
+      await user.importUser(target);
     } catch (err) {
       //如果出现错误，关闭管道
       await sendToWormhole(stream);
       throw err;
+    } finally {
+      fs.unlinkSync(target);
     }
 
   }

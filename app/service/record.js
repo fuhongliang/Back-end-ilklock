@@ -6,43 +6,62 @@ const Service = require(path.join(process.cwd(),'app/service/baseService'));
 
 class RecordService extends Service{
 
-  async getOperateRecordByUser(user_id,options){
-    const { ctx, app } = this;
-    let { page , page_size } = options;
-    const { LockLog, Lock, Region } = ctx.model;
-
+  /**
+   * 获取所有开锁日志
+   * @returns {Promise<any[]>}
+   */
+  async getListRecord(where,options) {
+    const { app } = this;
+    let { page = 1 , page_size = 10, user_name, lock_name, region_id, start_time, end_time } = options;
+    const { LockLog, Lock, Region, User } = app.model;
+    console.log(app.Sequelize.and(
+      user_name?[ 'name like %?%', user_name ]:null
+    ));return [];
+    if (start_time || end_time){
+      where.log_time = { [app.Sequelize.Op.between]: [start_time?new Date(start_time).getTime():0,end_time?new Date(end_time).getTime():Date.now()] }
+    }
+    let userWhere = {};
+    if (user_name){
+      userWhere = { name: { [app.Sequelize.Op.like]: `%${user_name}%`} };
+    }
     let data = await LockLog.findAll({
       order: [ ['log_time', 'DESC'] ],
-      where: {
-        user: user_id,
-      },
+      where,
       offset: (page - 1)*page_size,
       limit: page_size,
       include: [
         {
           model: Lock,
           attributes: [],
+          where: app.Sequelize.and(
+            lock_name?[ 'name like %?%', lock_name ]:null
+          ),
           include:[
             {
               model: Region,
               as: 'area',
-              where: {
-                is_delete: 0
-              },
+              where: app.Sequelize.and(
+                region_id?[ 'id = ?', region_id ]:null,
+              ),
               attributes: [],
             }
           ],
         },
+        {
+          model: User,
+          attributes: [],
+          where: app.Sequelize.and(
+            user_name?[ 'name like %?%', user_name ]:null
+          ),
+        }
       ],
-      attributes: ['log_time', 'key_status', 'sensor_status', 'soft_status', 'create_at', [app.Sequelize.col('Lock.name'), 'lock_name'], [app.Sequelize.col('Lock->area.name'), 'area_name'] ],
+      attributes: ['log_time', 'key_status', 'sensor_status', 'soft_status', 'create_at', [app.Sequelize.col('Lock.name'), 'lock_name'], [app.Sequelize.col('User.name'), 'user_name'], [app.Sequelize.col('Lock->area.name'), 'area_name'] ],
     });
 
     for ( let i in data){
-      data[i].log_time = sd.format(new Date(data[i].log_time),'YYYY年MM月DD日 HH:mm:ss');
+      data[i].log_time = sd.format(new Date(data[i].log_time),'YYYY-MM-DD HH:mm');
     }
-
-    return data
-
+    return data;
   }
 
   /**
@@ -73,6 +92,11 @@ class RecordService extends Service{
     return results;
   }
 
+  /**
+   * 解析数据
+   * @param data
+   * @returns {{sensorStatue: *, keyStatus: *, logCode: *, userAddition: *, logVersion: *, company: *, softStatus: *, user: *, locks: *, logOrder: *, logTime: *}}
+   */
   decrypt(data) {
     const { helper } = this.ctx;
     assert(data instanceof Buffer, 'Error');

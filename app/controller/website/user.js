@@ -5,11 +5,22 @@ const BaseController = require(path.join(process.cwd(),'app/controller/baseContr
 
 class UserController extends BaseController {
   async index() {
-    const { ctx } = this;
+    const { ctx, app } = this;
     const { user, role } = ctx.service;
-    const list = await user.listUser();
+    const query = ctx.query;
+    let where = {};
+    for (let q in query){
+      if (query.hasOwnProperty(q) && ['roleid', 'name', 'phone'].includes(q)){
+        if (q === 'phone' || q === 'name'){
+          where[q] = { [app.Sequelize.Op.like]: `%${query[q]}%` }
+        }else{
+          where[q] = query[q];
+        }
+      }
+    }
+    const list = await user.listUser(where);
     const list_role = await role.listRole();
-    await ctx.render('user/index',{ list: JSON.stringify(list), list_role: JSON.stringify(list_role)});
+    await ctx.render('user/index',{ list: JSON.stringify(list), list_role: JSON.stringify(list_role), query });
   }
 
   async listUser() {

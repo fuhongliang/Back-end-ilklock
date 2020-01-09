@@ -15,6 +15,7 @@
     "egg-validate": "^2.0.2",
     "egg-validate-plus": "^1.1.6",
     "egg-view-nunjucks": "^2.2.0",
+    "exceljs": "^3.5.0",
     "mysql2": "^2.0.2",
     "silly-datetime": "^0.1.2",
     "stream-wormhole": "^1.1.0",

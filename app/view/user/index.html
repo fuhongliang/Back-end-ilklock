@@ -10,9 +10,16 @@
                 <div class="search">
                     <form>
                         <div class="search-group">
-                            <div class="search-bar">角色 <input class="ipt-sh-text" placeholder="按角色搜索" type="text" name="js" /></div>
-                            <div class="search-bar">姓名 <input class="ipt-sh-text" placeholder="按姓名搜索" type="text" name="xm" /></div>
-                            <div class="search-bar">手机号 <input class="ipt-sh-text" placeholder="按手机号搜索" type="number" maxlength="11" name="sj" /></div>
+                            <div class="search-bar">角色
+                                <input class="ipt-sh-text sel" readonly placeholder="按角色搜索" @click.stop="listRole($event)" type="text" name="js" value="<$ query.js $>" />
+                                <input type="hidden" name="roleid" value="<$ query.roleid $>" />
+                                <icon class="sel-icon" style="top: .5rem;"></icon>
+                                <div class="dropdown sel-item myscroll">
+                                    <div class="item" v-for="role in role_list" @click="selectRole(role,$event)">{{role.name}}</div>
+                                </div>
+                            </div>
+                            <div class="search-bar">姓名 <input class="ipt-sh-text" placeholder="按姓名搜索" type="text" name="name" value="<$ query.name $>" /></div>
+                            <div class="search-bar">手机号 <input class="ipt-sh-text" placeholder="按手机号搜索" type="number" maxlength="11" name="phone" value="<$ query.phone $>" /></div>
                             <div class="search-bar"><button class="tb-btn tb-btn-auth">查询</button></div>
                         </div>
                         <input type="hidden" name="_csrf" value="<$ ctx.csrf $>">
@@ -177,7 +184,7 @@
         <label class="col-sm-3 col-form-label text-right"></label>
         <div class="col-sm-9">
             <button type="button" class="layer-btn layer-btn-cancel">取消</button>
-            <button type="button" class="layer-btn layer-btn-success">导入</button>
+            <button type="button" class="layer-btn layer-btn-success import-confirm">导入</button>
         </div>
     </div>
 </div>
@@ -188,7 +195,8 @@
   let page = new Vue({
     el: '#page',
     data: {
-      list: JSON.parse(`<$ list | safe $>`)
+      list: JSON.parse(`<$ list | safe $>`),
+      role_list: JSON.parse(`<$ list_role | safe $>`),
     },
     methods: {
       edit: function(user) {
@@ -234,7 +242,14 @@
           skin: 'ilock',
         });
         $('#import-user').find('.layer-btn-cancel').attr('layer-index',layerImport);
-      }
+      },
+      listRole: function(e) {
+        $(e.currentTarget).closest('form').find('.dropdown').show();
+      },
+      selectRole: function(role,e) {
+        $(e.currentTarget).closest('form').find('input[name="js"]').val(role.name);
+        $(e.currentTarget).closest('form').find('input[name="roleid"]').val(role.id);
+      },
     }
   });
 
@@ -335,11 +350,35 @@
     elem: '#upload' //绑定元素
     ,url: `<$ helper.createUrl('/web/upload_file',{ _csrf: ctx.csrf }) $>` //上传接口
     ,done: function(res){
-      //上传完毕回调
+      layer.closeAll();
+      if (res.code === 0){
+
+        layer.msg('上传成功',{ time: 1500 },function(){
+          window.location.reload();
+        });
+      }else{
+        layer.msg('导入数据失败~');
+      }
     }
     ,error: function(){
-      //请求异常回调
+
+      layer.msg('上传错误~');
     }
+    ,choose: function(obj){
+      //预读本地文件，如果是多文件，则会遍历。(不支持ie8/9)
+      obj.preview(function(index, file, result) {
+        // console.log(index); //得到文件索引
+        console.log(file.name); //得到文件对象
+        // console.log(result); //得到文件base64编码，比如图片
+        $('input[name="filename"]').val(file.name);
+        //obj.resetFile(index, file, '123.jpg'); //重命名文件名，layui 2.3.0 开始新增
+
+        //这里还可以做一些 append 文件列表 DOM 的操作
+
+      });
+    }
+    ,auto: false
+    ,bindAction: '.import-confirm'
     ,accept: 'file'
     ,acceptMime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     ,exts: 'xlsx'
@@ -347,4 +386,5 @@
     ,field: 'file'
   });
 </script>
+
 <% endblock %>

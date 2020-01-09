@@ -8,7 +8,7 @@ class UploadController extends BaseController {
 
   async uploadFile() {
     const { ctx } = this;
-    const { upload } = ctx.service;
+    const { upload, user } = ctx.service;
     const baseDir = path.join(this.config.baseDir, '/run/uploadFile/');
 
     try{
@@ -20,6 +20,7 @@ class UploadController extends BaseController {
       };
       return ;
     }
+
     ctx.body = {
       code: 0,
       msg: 'success'

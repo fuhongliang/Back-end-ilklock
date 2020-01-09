@@ -7,11 +7,10 @@ class RecordController extends BaseController {
 
   async operateList() {
     const { ctx, app } = this;
-    const { page = 1, page_size = 10 } = ctx.request.body;
     const { record } = ctx.service;
     const user = app.userInfo;
 
-    const data = await record.getOperateRecordByUser(user.id,{ page: page, page_size: page_size});
+    const data = await record.getListRecord({ user_id : user.id },ctx.request.body);
     ctx.body = {
       code: 0,
       msg: 'success',

@@ -4,9 +4,31 @@ const path = require('path');
 
 const Service = require(path.join(process.cwd(),'app/service/baseService'));
 const crypto = require('crypto');
+const field = ['job_no','name','pinyin','phone'];
 
 class UserService extends  Service{
 
+  async importUser(file) {
+    const { ctx, app } = this;
+    const excel = require(path.join(process.cwd(),'app/util/excel'));
+    const data = await excel.readFile(field,file);
+    console.log(data);
+    const user = app.userInfo;
+    const { User } = app.model;
+
+    for (let key in data){
+      if (data.hasOwnProperty(key)){
+        data[key].com_id = user.com_id;
+        data[key].username = data[key].phone;
+        data[key].password = crypto.createHash('sha1').update(data[key].pinyin).digest('hex');
+        data[key].avatar = ctx.helper.getDefaultAvatar();
+        data[key].level = 1;
+        data[key].is_check = 1;
+        data[key].addtime = Date.now();
+      }
+    }
+    await User.bulkCreate(data);
+  }
   /*
   async register(){
     const { ctx ,app } = this;

@@ -88,6 +88,7 @@ module.exports = app => {
   // 定义关联关系
   LockLog.associate = () => {
     LockLog.belongsTo(app.model.Lock,{foreignKey: 'locks', targetKey: 'id'});
+    LockLog.belongsTo(app.model.User,{foreignKey: 'user', targetKey: 'id'});
   };
 
 
