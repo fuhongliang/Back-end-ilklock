@@ -11,24 +11,24 @@
                     <form method="get">
                         <div class="search-group">
                             <div class="search-bar">人员
-                                <input class="ipt-sh-text" placeholder="按用户名搜索" type="text" name="user_name" />
+                                <input class="ipt-sh-text" placeholder="按用户名搜索" type="text" name="user_name" value="<$ query.user_name $>" />
                             </div>
                             <div class="search-bar">锁名称
-                                <input class="ipt-sh-text" placeholder="按锁名称搜索" type="text" name="lock_name" />
+                                <input class="ipt-sh-text" placeholder="按锁名称搜索" type="text" name="lock_name" value="<$ query.lock_name $>" />
                             </div>
                             <div class="search-bar">区域
-                                <input class="ipt-sh-text sel" readonly id="area" placeholder="选择区域" type="text" />
-                                <input type="hidden" name="region_id" />
+                                <input class="ipt-sh-text sel" readonly id="area" placeholder="选择区域" type="text" name="region" value="<$ query.region $>" />
+                                <input type="hidden" name="region_id" value="<$ query.region_id $>"/>
                                 <icon class="sel-icon" style="top: .5rem;"></icon>
                             </div>
                             <div class="search-bar">
                                 时间
-                                <input class="ipt-sh-text short sel" readonly id="startTime" placeholder="开始时间" type="text" name="start_time" />
+                                <input class="ipt-sh-text short sel" readonly id="startTime" placeholder="开始时间" type="text" name="start_time" value="<$ query.start_time $>" />
                                 <icon class="sel-icon" style="top: .5rem;"></icon>
                             </div>
                             <div style="line-height: 1.5rem;margin: 0 -.4rem;color: #A9A9A9;">—</div>
                             <div class="search-bar">
-                                <input class="ipt-sh-text short sel" readonly id="endTime" placeholder="结束时间" type="text" name="end_time" />
+                                <input class="ipt-sh-text short sel" readonly id="endTime" placeholder="结束时间" type="text" name="end_time" value="<$ query.end_time $>" />
                                 <icon class="sel-icon" style="top: .5rem;"></icon>
                             </div>
                             <div class="search-bar">
@@ -49,6 +49,7 @@
                 <th class="tb-col-2 text-center">操作状态</th>
                 </thead>
                 <tbody>
+                <template>
                 <tr v-for="log in list">
                     <td class="tb-col-2">{{log.user_name}}</td>
                     <td class="tb-col-5">{{log.lock_name}}</td>
@@ -59,17 +60,12 @@
                         <span class="text-success" v-else>读码</span>
                     </td>
                 </tr>
+                </template>
                 </tbody>
             </table>
 
             <!-- 分页 -->
-            <div class="paginate">
-                <div class="page-link">上一页</div>
-                <div class="page-link">1</div>
-                <div class="page-link">2</div>
-                <div class="page-link">3</div>
-                <div class="page-link">下一页</div>
-            </div>
+            <div id="paginate" v-if="list.length > 0"></div>
         </div>
     </div>
 </div>
@@ -81,9 +77,6 @@
     el: '#page',
     data: {
       list: JSON.parse(`<$ list | safe $>`)
-    },
-    methods: {
-
     }
   });
 </script>
@@ -123,7 +116,7 @@
     layer.open({
       type: 2,
       title: '选择区域',
-      content: `<$ helper.getHost() $>/web/list_region`,
+      content: `<$ helper.createUrl('/web/list_region',{ mode: 'onlyChild'}) $>`,
       area: ['auto','500px'],
       offset: ['6rem', 'calc(50% + 12rem)']
     });
@@ -132,6 +125,7 @@
   function selRegion(region) {
     $('#area').val(region.name);
     $('input[name="region_id"]').val(region.id);
+    layer.closeAll();
   }
 </script>
 <% endblock %>

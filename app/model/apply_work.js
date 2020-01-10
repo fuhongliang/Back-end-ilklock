@@ -2,9 +2,9 @@
 
 module.exports = app => {
 
-  const { STRING, INTEGER ,BIGINT,TEXT } = app.Sequelize;
+  const { STRING, INTEGER ,BIGINT } = app.Sequelize;
 
-  const ApplyAuthorize = app.model.define('ApplyAuthorize',
+  const ApplyWork = app.model.define('ApplyWork',
     {
       id: {
         type: INTEGER(11),
@@ -12,17 +12,12 @@ module.exports = app => {
         primaryKey: true,
         autoIncrement: true
       },
-      com_id: {
+      lock_model_id: {
         type: INTEGER(11),
         allowNull: false,
         defaultValue: 0
       },
       user_id: {
-        type: INTEGER(11),
-        allowNull: false,
-        defaultValue: 0
-      },
-      lock_id: {
         type: INTEGER(11),
         allowNull: false,
         defaultValue: 0
@@ -73,19 +68,16 @@ module.exports = app => {
       }
     },
     {
-      tableName: 'ilock_apply_authorize',
+      tableName: 'ilock_apply_work',
       // 自定义表名
       // freezeTableName: true,
     });
 
-  ApplyAuthorize.associate = () => {
-    ApplyAuthorize.belongsTo(app.model.Lock,{foreignKey: 'lock_id', targetKey: 'id', as: 'lock'});
-    ApplyAuthorize.belongsTo(app.model.User,{foreignKey: 'user_id', targetKey: 'id', as: 'user'});
-    ApplyAuthorize.belongsTo(app.model.User,{foreignKey: 'audit_id', targetKey: 'id', as: 'audit'});
-    ApplyAuthorize.belongsTo(app.model.LockSecret,{foreignKey: 'work_no', targetKey: 'work_no', as: 'secret'});
+  ApplyWork.associate = () => {
+
   };
 
-  return ApplyAuthorize;
+  return ApplyWork;
 
 };
 

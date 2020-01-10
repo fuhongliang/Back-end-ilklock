@@ -9,13 +9,15 @@ class RecordController extends BaseController {
     const { ctx, app } = this;
     const { record } = ctx.service;
     const user = app.userInfo;
-
-    const data = await record.getListRecord({ user_id : user.id },ctx.request.body);
+    let where = { user_id : user.id };
+    const data = await record.getListRecord(where,ctx.request.body);
     ctx.body = {
       code: 0,
       msg: 'success',
       data: {
-        list: data
+        count: data.count,
+        page_size: data.pageSize,
+        list: data.rows
       }
     }
   }

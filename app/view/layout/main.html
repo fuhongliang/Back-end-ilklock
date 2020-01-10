@@ -69,13 +69,13 @@
             <template>
             <div class="list-nav">
                 <div class="nav-item" v-for="(menu,index) in menu_list">
-                    <div class="item parent-item" :class="{active: menu.is_active}">
+                    <div class="item parent-item" :class="{active: menu.is_active}" @click="turnTo(menu)">
                         <icon class="icon iconfont" :class="menu.icon"></icon>
                         <sapn class="title">{{ menu.name }}</sapn>
                         <icon class="trig iconfont" :class="getActiveClass(menu)"></icon>
                     </div>
                     <div v-if="menu.children && menu.is_active">
-                        <div class="item child-item" :class="{active: child.is_active}" v-for="child in menu.children">
+                        <div class="item child-item" :class="{active: child.is_active}" v-for="child in menu.children" @click="turnTo(child)">
                             <sapn class="title">{{ child.name }}</sapn>
                         </div>
                     </div>
@@ -97,9 +97,43 @@
         methods: {
           getActiveClass: function(menu){
             return menu.children?(menu.is_active?'icon-triangle-copy-copy-copy':'icon-triangle-right'):'';
+          },
+          turnTo: function(menu){
+            window.location.href = '<$ helper.getHost() $>' + menu.url;
           }
         }
       });
+
+      <!-- 分页 使用laypage -->
+      function renderPaginate(){
+        laypage.render({
+          elem: 'paginate'
+          ,count: '<$ count $>'
+          ,limit: '<$ page_size $>'
+          ,layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip']
+          ,theme: '#1E9FFF'
+          ,jump: function(obj, first){
+            //obj包含了当前分页的所有参数，比如：
+            // console.log(first);
+            // console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+            // console.log(obj.limit); //得到每页显示的条数
+
+            let queryObject = {};
+            for (let q of decodeURI(window.location.search.substring(1)).split("&")){
+              let val = q.split("=");
+              queryObject[val[0]] = val[1];
+            }
+            queryObject.page = obj.curr;
+            queryObject.page_size = obj.limit;
+            let url = window.location.href.split('?')[0];
+            //首次不执行
+            if(!first){
+              console.log(url + josnToUrl(queryObject))
+            }
+          }
+        });
+      }
+      renderPaginate();
     </script>
     <% block script %><% endblock %>
 

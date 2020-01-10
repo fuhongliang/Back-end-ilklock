@@ -18,7 +18,7 @@
                 <th class="tb-col-3 text-center">操作</th>
                 </thead>
                 <tbody>
-                <tr v-for="(apply,index) in data.rows">
+                <tr v-for="(apply,index) in data">
                     <td class="tb-col-6">{{apply.region_name}}</td>
                     <td class="tb-col-5">{{apply.lock_name}}</td>
                     <td class="tb-col-4">{{apply.addtime}}</td>
@@ -81,23 +81,5 @@
     }
   });
 
-  laypage.render({
-    elem: 'paginate'
-    ,count: page.data.count
-    ,limit: page.data.page_size
-    ,theme: '#1E9FFF'
-    ,jump: function(obj, first){
-      //obj包含了当前分页的所有参数，比如：
-      console.log(first);
-      console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
-      console.log(obj.limit); //得到每页显示的条数
-      const href = window.location.href;
-      let url = href.substr(0,href.indexOf('?'));
-      //首次不执行
-      if(!first){
-
-      }
-    }
-  });
 </script>
 <% endblock %>

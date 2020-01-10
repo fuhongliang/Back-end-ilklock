@@ -21,6 +21,7 @@
                 <th class="tb-col-3 text-center">操作</th>
                 </thead>
                 <tbody>
+                <template>
                 <tr v-for="role in list">
                     <td class="tb-col-2">{{role.name}}</td>
                     <td class="tb-col-5">
@@ -36,17 +37,9 @@
                         <button class="tb-btn tb-btn-del del" data-url="<$ helper.getHost() $>/web/del_role" :data-id="role.id">删除</button>
                     </td>
                 </tr>
+                </template>
                 </tbody>
             </table>
-
-            <!-- 分页 -->
-            <div class="paginate">
-                <div class="page-link">上一页</div>
-                <div class="page-link">1</div>
-                <div class="page-link">2</div>
-                <div class="page-link">3</div>
-                <div class="page-link">下一页</div>
-            </div>
         </div>
     </div>
 </div>

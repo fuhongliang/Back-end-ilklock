@@ -129,7 +129,7 @@ class RegionService extends Service{
     const { parent_id, region_name } = ctx.request.body;
     const user = app.userInfo;
     let res = await Region.create({ com_id: user.com_id, name: region_name, parent_id});
-    console.log(res);
+
     if (res){
       this.moveLocks(parent_id,res.id);
       return {

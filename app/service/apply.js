@@ -12,18 +12,16 @@ class ApplyService extends Service{
    */
   async getAuthKeys(){
     const { app } = this;
-    const { access_token, user_id } = this.ctx.request.body;
     const user = app.userInfo;
-    const { ApplyAuthorize, Lock } = app.model;
+    const { ApplyAuthorize, Lock, LockSecret } = app.model;
 
     let list = await ApplyAuthorize.findAll({
       where: {
         user_id: user.id,
-        expiry_time: { [app.Sequelize.Op.gt]: new Date().getTime() },
         status: 1,
         is_delete: 0
       },
-      attributes: ['id', 'secret_key', 'expiry_time', [app.Sequelize.col('lock.name') , 'lock_name'] ],
+      attributes: ['id', 'addtime', [app.Sequelize.col('lock.name') , 'lock_name'], [app.Sequelize.col('secret.secret_key') , 'secret_key'] ],
       include: [
         {
           model: Lock,
@@ -32,8 +30,17 @@ class ApplyService extends Service{
             is_delete: 0
           },
           attributes: [],
-          required: false
         },
+        {
+          model: LockSecret,
+          as: 'secret',
+          where: {
+            start_time: { [app.Sequelize.Op.lt]: new Date().getTime() },
+            expiry_time: { [app.Sequelize.Op.gt]: new Date().getTime() },
+            is_send: 0
+          },
+          attributes: [],
+        }
       ],
     });
     return {
@@ -52,7 +59,7 @@ class ApplyService extends Service{
   async getAuditer(){
     const { ctx, app } = this;
     const { User, Role, Permission } = ctx.model;
-    const { access_token, type, user_id } = ctx.request.body;
+    const { type } = ctx.request.body;
     let permission_id = 0;
     if ( type === 'nl'){
       permission_id = 1;
@@ -67,7 +74,7 @@ class ApplyService extends Service{
         is_delete: 0,
         is_check: 1,
         id: {
-          [app.Sequelize.Op.ne]: 3
+          [app.Sequelize.Op.ne]: user.id
         },
         level: {
           [app.Sequelize.Op.gt]: 0
@@ -99,6 +106,7 @@ class ApplyService extends Service{
    *
    * @param id
    * @param type = { 0: 待处理, 1:已处理, 2:已提交 3:已批准 4:未完成}
+   * @param options = { 0: 待处理, 1:已处理, 2:已提交 3:已批准 4:未完成}
    * @returns {Bluebird<any[]>}
    */
   async getRecordByUserId(id, options){
@@ -136,7 +144,7 @@ class ApplyService extends Service{
 
     const { app, ctx } = this;
     const { Lock, ApplyAuthorize, LockMode } = app.model;
-    const { lock_id, audit_id, com_id, user_id, duration } = data;
+    const { lock_id, audit_id, com_id, user_id, duration = 0, start_time = 0, end_time = 0 } = data;
 
     let locks_open_by_one = await LockMode.findOne({
       where: { com_id, is_delete: 0, type: 0 },
@@ -152,7 +160,7 @@ class ApplyService extends Service{
       throw new Error('锁信息不存在');
     }
     let addtime = new Date().getTime();
-    await ApplyAuthorize.create({ com_id, user_id, lock_id, audit_id, duration, addtime, type: 0 });
+    await ApplyAuthorize.create({ com_id, user_id, lock_id, audit_id, duration, start_time, end_time, addtime, type: 0 });
   }
 
   /**
@@ -193,7 +201,6 @@ class ApplyService extends Service{
       attributes: ['id', 'addtime','status',[app.Sequelize.col('lock.name'), 'lock_name'], [app.Sequelize.col('user.name'), 'user_name'], [app.Sequelize.col('lock.area.name'), 'region_name']],
       limit: page_size,
       offset: (page - 1)*page_size,
-      raw: true
     });
 
 
@@ -211,6 +218,12 @@ class ApplyService extends Service{
     const { id, status } = this.ctx.request.body;
     const user = app.userInfo;
 
+    if (status == 1){
+      // 审核通过
+
+    }else{
+      // 审核拒绝
+    }
     const res = await ApplyAuthorize.update({ status },{ where: { id, audit_id: user.id} });
 
     return {

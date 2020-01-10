@@ -96,6 +96,7 @@ class UserService extends  Service{
   async listUser(options = {}) {
     const { app } = this;
     const { User, Role } = app.model;
+    const { page = 1, page_size = 10 } = this.ctx.query;
     const user = app.userInfo;
 
     let where = {
@@ -104,11 +105,9 @@ class UserService extends  Service{
       is_delete: 0,
       level: 1,
     };
-    for (let key in options){
-      where[key] = options[key];
-    }
+    where = Object.assign(where,options);
 
-    return User.findAll({
+    let list = await User.findAndCountAll({
       where,
       include: [
         {
@@ -117,8 +116,13 @@ class UserService extends  Service{
           attributes: []
         }
       ],
+      limit: page_size,
+      offset: (page - 1)*page_size,
       attributes: ['id', 'name', 'avatar', 'job_no', 'pinyin', 'phone', [app.Sequelize.col('role.name'), 'role_name'], [app.Sequelize.col('role.id'), 'role_id']],
     });
+    list.currentPage = page;
+    list.pageSize = page_size;
+    return list;
   }
 
   /**

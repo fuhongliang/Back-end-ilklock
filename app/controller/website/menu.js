@@ -4,7 +4,7 @@ const menuList = [
   {
     name: '区域管理',
     icon: 'icon-quyuguanli1',
-    url: '/locks',
+    url: '/web/locks',
     is_show: true,
     children: [
       {

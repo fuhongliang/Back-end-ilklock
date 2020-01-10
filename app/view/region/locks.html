@@ -22,27 +22,27 @@
 
         <!-- 数据展示 -->
         <div class="data-page">
-        <table>
-            <thead>
-            <th class="tb-col-1 text-center">锁状态</th>
-            <th class="tb-col-5 text-center">锁ID</th>
-            <th class="tb-col-6">锁名称</th>
-            <th class="tb-col-4 text-center">操作</th>
-            </thead>
-            <tbody>
-            <tr v-for="(lock,index) in list_lock">
-                <td class="tb-col-1 text-center">开启</td>
-                <td class="tb-col-5 text-center">{{lock.lock_no}}</td>
-                <td class="tb-col-6">{{lock.name}}</td>
-                <td class="tb-col-4 text-center">
-                    <button class="tb-btn tb-btn-auth" @click="auth(lock)">授权</button>
-                    <button class="tb-btn tb-btn-edit" @click="edit(lock)">编辑</button>
-                    <button class="tb-btn tb-btn-del del" data-url="<$ helper.getHost() $>/web/del_lock" :data-id="lock.id">删除</button>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
+            <table>
+                <thead>
+                <th class="tb-col-1 text-center">锁状态</th>
+                <th class="tb-col-5 text-center">锁ID</th>
+                <th class="tb-col-6">锁名称</th>
+                <th class="tb-col-4 text-center">操作</th>
+                </thead>
+                <tbody>
+                <tr v-for="(lock,index) in list_lock">
+                    <td class="tb-col-1 text-center">开启</td>
+                    <td class="tb-col-5 text-center">{{lock.lock_no}}</td>
+                    <td class="tb-col-6">{{lock.name}}</td>
+                    <td class="tb-col-4 text-center">
+                        <button class="tb-btn tb-btn-auth" @click="auth(lock)">授权</button>
+                        <button class="tb-btn tb-btn-edit" @click="edit(lock)">编辑</button>
+                        <button class="tb-btn tb-btn-del del" data-url="<$ helper.getHost() $>/web/del_lock" :data-id="lock.id">删除</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
     </template>
 </div>

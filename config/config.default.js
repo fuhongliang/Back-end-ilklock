@@ -19,7 +19,7 @@ module.exports = appInfo => {
   config.keys = appInfo.name + '_1576458671859_8708';
 
   // add your middleware config here
-  config.middleware = [ 'errorHandler', 'access', 'auth', 'sysLog'];
+  config.middleware = [ 'errorHandler', 'access', 'auth', 'permission', 'sysLog'];
 
   // 中间件配置
   config.errorHandler = {

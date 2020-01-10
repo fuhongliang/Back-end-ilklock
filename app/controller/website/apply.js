@@ -13,8 +13,7 @@ class ApplyController extends BaseController {
     const { ctx } = this;
     const { apply } = ctx.service;
     const list = await apply.listApply();
-
-    await ctx.render('apply/list',{ list: JSON.stringify(list) });
+    await ctx.render('apply/list',{ list: JSON.stringify(list.rows), count: list.count, page_size: list.pageSize });
   }
 
   async review() {

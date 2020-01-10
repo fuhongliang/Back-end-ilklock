@@ -25,6 +25,7 @@
       el: '#tree',
       data: {
         list_region: JSON.parse(`<$ list_region | safe $>`),
+        mode: `<$ mode $>`,
       },
       methods: {
         getAgentClass: function(region){
@@ -57,13 +58,39 @@
           }
         },
         selRegion: function(region,e) {
-          $('#tree .region-name').removeClass('active');
-          if (!$(e.currentTarget).hasClass('active')){
-            $(e.currentTarget).addClass('active');
-          }
+          /**
+           * 只选择子区域
+           */
+          if (this.mode === 'onlyChild'){
+            if (Array.isArray(this.list_region[region.id]) && this.list_region[region.id].length > 0){
+              let targetIcon = $(e.currentTarget).closest('.item').find('.icon');
+              if (targetIcon.hasClass('icon-triangle-right')){
+                let child_list = $(e.currentTarget).closest('.item').next('.child-list');
 
-          // 调用父页面方法
-          window.parent.selRegion(region);
+                if (child_list.children().length === 0){
+                  child_list.html($(`.tab${region.id}`));
+                }
+                targetIcon.removeClass('icon-triangle-right');
+                targetIcon.addClass('icon-triangle-copy-copy-copy');
+                $(`.tab${region.id}`).show();
+              }else if (targetIcon.hasClass('icon-triangle-copy-copy-copy')){
+                targetIcon.removeClass('icon-triangle-copy-copy-copy');
+                targetIcon.addClass('icon-triangle-right');
+                $(`.tab${region.id}`).hide();
+              }
+            }else{
+              // 调用父页面方法
+              window.parent.selRegion(region);
+            }
+          }else{
+            $('#tree .region-name').removeClass('active');
+            if (!$(e.currentTarget).hasClass('active')){
+              $(e.currentTarget).addClass('active');
+            }
+
+            // 调用父页面方法
+            window.parent.selRegion(region);
+          }
         }
       }
     });

@@ -30,6 +30,7 @@ module.exports = app => {
   router.get('/web/home', controller.website.home.index);
   router.get('/web/list_region', controller.website.region.list);
   router.post('/web/upload_file', controller.website.upload.uploadFile);
+  router.get('/web/get_users', controller.website.user.listUser);
 
   // 锁 区域管理权限
   router.get('/web/locks', controller.website.region.locks);
@@ -37,7 +38,7 @@ module.exports = app => {
   router.post('/web/edit_lock', controller.website.region.editLock);
   router.post('/web/auth_lock', controller.website.region.authLock);
   router.post('/web/del_lock', controller.website.region.delLock);
-  router.get('/web/get_users', controller.website.user.listUser);
+
 
   // 区域设置 权限
   router.get('/web/region', controller.website.region.setting);

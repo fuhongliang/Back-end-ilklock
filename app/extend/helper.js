@@ -72,7 +72,7 @@ module.exports = {
         }
       ],
     });
-
+    console.log(p);
     if (!p){
       return false;
     }
@@ -138,7 +138,10 @@ module.exports = {
   createUrl(path = '',options = {}) {
     let param = '';
     for (let key in options){
-      param += `${key}=${options[key]}&`
+      if (options.hasOwnProperty(key)){
+        param += `${key}=${options[key]}&`
+      }
+
     }
     param = param.slice(0,-1);
     if (!/^\//.test(path)){

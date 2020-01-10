@@ -33,7 +33,9 @@ class HomeController extends Controller {
       access_token,
       // computer: 4/3
       'sj': new Date('2020-01-02'),
-      'wj': fs.mkdirSync(path.join(this.config.baseDir,'/run/tempfile/2020-01-09'),{ recursive: true})
+      'wj': fs.mkdirSync(path.join(this.config.baseDir,'/run/tempfile/2020-01-09'),{ recursive: true}),
+      ym: ctx.helper.getHost(),
+      new_obj: Object.assign({ com_id: 1},{ name: 111, com_id: 2})
 
     };
   }

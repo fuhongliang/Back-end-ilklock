@@ -12,19 +12,11 @@ class RecordService extends Service{
    */
   async getListRecord(where,options) {
     const { app } = this;
-    let { page = 1 , page_size = 10, user_name, lock_name, region_id, start_time, end_time } = options;
+    let { page = 1 , page_size = 10 } = options;
     const { LockLog, Lock, Region, User } = app.model;
-    console.log(app.Sequelize.and(
-      user_name?[ 'name like %?%', user_name ]:null
-    ));return [];
-    if (start_time || end_time){
-      where.log_time = { [app.Sequelize.Op.between]: [start_time?new Date(start_time).getTime():0,end_time?new Date(end_time).getTime():Date.now()] }
-    }
-    let userWhere = {};
-    if (user_name){
-      userWhere = { name: { [app.Sequelize.Op.like]: `%${user_name}%`} };
-    }
-    let data = await LockLog.findAll({
+
+
+    let data = await LockLog.findAndCountAll({
       order: [ ['log_time', 'DESC'] ],
       where,
       offset: (page - 1)*page_size,
@@ -33,16 +25,10 @@ class RecordService extends Service{
         {
           model: Lock,
           attributes: [],
-          where: app.Sequelize.and(
-            lock_name?[ 'name like %?%', lock_name ]:null
-          ),
           include:[
             {
               model: Region,
               as: 'area',
-              where: app.Sequelize.and(
-                region_id?[ 'id = ?', region_id ]:null,
-              ),
               attributes: [],
             }
           ],
@@ -50,17 +36,16 @@ class RecordService extends Service{
         {
           model: User,
           attributes: [],
-          where: app.Sequelize.and(
-            user_name?[ 'name like %?%', user_name ]:null
-          ),
         }
       ],
       attributes: ['log_time', 'key_status', 'sensor_status', 'soft_status', 'create_at', [app.Sequelize.col('Lock.name'), 'lock_name'], [app.Sequelize.col('User.name'), 'user_name'], [app.Sequelize.col('Lock->area.name'), 'area_name'] ],
     });
 
-    for ( let i in data){
-      data[i].log_time = sd.format(new Date(data[i].log_time),'YYYY-MM-DD HH:mm');
+    for ( let i in data.rows){
+      data.rows[i].log_time = sd.format(new Date(data.rows[i].log_time),'YYYY-MM-DD HH:mm');
     }
+    data.pageSize = page_size;
+    data.currentPage = page;
     return data;
   }
 

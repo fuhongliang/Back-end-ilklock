@@ -100,3 +100,13 @@ $(document).on('click','.ck-item',function() {
   }
 });
 
+// 将对象转成query (name=123&id=1)
+function josnToUrl(obj = {}){
+  let params = '';
+  for (let key in obj){
+    if (obj.hasOwnProperty(key)){
+      params += `${key}=${obj[key]}&`;
+    }
+  }
+  return params.slice(0,-1);
+}

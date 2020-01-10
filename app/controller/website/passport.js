@@ -39,6 +39,11 @@ class PassportController extends BaseController {
     ctx.session.code = Captcha.text.toLocaleLowerCase();
     ctx.body = Captcha.data;
   }
+
+  async logout() {
+    const user = this.app.userInfo;
+    const { AuthLogin } = this.app.model;
+  }
 }
 
 module.exports = PassportController;

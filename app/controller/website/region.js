@@ -129,9 +129,10 @@ class AgentController extends BaseController {
   async list() {
     const { ctx, app } = this;
     const { region } = ctx.service;
+    const { mode } = ctx.query;
     const user = app.userInfo;
     let list_region = await region.allArea(user.com_id);
-    await ctx.render('region/region',{ list_region: JSON.stringify(list_region) });
+    await ctx.render('region/region',{ list_region: JSON.stringify(list_region), mode });
   }
 
   async add() {
