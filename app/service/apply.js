@@ -160,7 +160,8 @@ class ApplyService extends Service{
       throw new Error('锁信息不存在');
     }
     let addtime = new Date().getTime();
-    await ApplyAuthorize.create({ com_id, user_id, lock_id, audit_id, duration, start_time, end_time, addtime, type: 0 });
+    let work_no = await this.ctx.service.createWorkNo(0);
+    await ApplyAuthorize.create({ com_id, user_id, lock_id, audit_id, work_no, duration, start_time, end_time, addtime, type: 0 });
   }
 
   /**

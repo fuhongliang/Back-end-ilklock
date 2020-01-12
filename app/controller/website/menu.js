@@ -55,6 +55,12 @@ const menuList = [
     icon: 'icon-beijingjingwu_chaxun_kaisuojigongchaxun',
     url: '/web/mode_locks',
     is_show: true,
+    sub: [
+      {
+        name: '编辑模式',
+        url: '/web/mode_edit'
+      }
+    ]
   }
 ];
 

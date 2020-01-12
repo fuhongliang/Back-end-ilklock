@@ -3,7 +3,7 @@
 *edit-lock 在layer  skin定义
 */
 
-body .ilock .layui-layer-title{background:#00CA7C; color:#fff;}
+body .ilock .layui-layer-title{background:#00CA7C; color:#fff;border-radius:5px 5px 0 0;}
 body .ilock .layui-layer-ico{background: url("../images/icon/tanchuang_gb.png") no-repeat;}
 body .layui-layer{border-radius:5px;}
 body .layui-layer .layui-layer-content{overflow: visible}

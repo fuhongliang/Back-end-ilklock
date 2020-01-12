@@ -22,6 +22,15 @@ module.exports = app => {
         allowNull: false,
         defaultValue: ''
       },
+      desc: {
+        type: TEXT,
+        allowNull: true
+      },
+      addtime: {
+        type: BIGINT,
+        allowNull: false,
+        defaultValue: 0
+      },
       locks: {
         type: TEXT,
         allowNull: false

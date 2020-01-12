@@ -66,6 +66,12 @@ module.exports = app => {
   // 开锁操作记录
   router.get('/web/operate_list', controller.website.record.operateList);
 
+  // 开锁模式
+  router.get('/web/mode_locks', controller.website.lock.listMode);
+  router.post('/web/mode_auth', controller.website.lock.authMode);
+  router.all('/web/mode_edit', controller.website.lock.modeEdit);
+  router.get('/web/mode_del', controller.website.lock.modeDel);
+
   //
   router.get('/', controller.home.index);
   router.get('/test', controller.home.test);

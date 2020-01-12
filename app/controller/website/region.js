@@ -9,7 +9,7 @@ class AgentController extends BaseController {
     const { ctx, app } = this;
     const { region, user } = ctx.service;
     const list_region = await region.allArea(app.userInfo.com_id);
-    const list_user = await user.listUser();
+    const list_user = await user.getAllUser();
     await ctx.render('region/locks',{ list_region: JSON.stringify(list_region), list_user: JSON.stringify(list_user) });
   }
 

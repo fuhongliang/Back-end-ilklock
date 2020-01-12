@@ -42,7 +42,7 @@ const permissions = {
 module.exports = () => {
   return async function(ctx, next) {
     const user = ctx.app.userInfo;
-    if (user.level !== 0){
+    if (user && user.level !== 0){
       const path = ctx.path;
       let perms = '';
       for (let key in permissions){

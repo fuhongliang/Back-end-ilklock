@@ -80,19 +80,19 @@
 <div id="auth-lock" class="layer-pop">
     <form>
         <div class="form-group row">
-            <label class="col-sm-3 col-form-label text-right">锁的名称</label>
-            <div class="col-sm-9">
+            <label class="col-sm-4 col-form-label text-right">锁的名称</label>
+            <div class="col-sm-4">
                 <input type="text" readonly class="form-control-plaintext" :value="lock">
             </div>
         </div>
         <div class="form-group row">
             <label for="user" class="col-sm-3 col-form-label text-right">授权用户</label>
             <div class="col-sm-9">
-                <div class="input-group" @click="chosenUser();">
-                    <input type="text" readonly class="form-control sel" id="user" />
+                <div class="input-group" @click.stop="dropdown($event)">
+                    <input type="text" readonly class="form-control sel" id="user"/>
                     <icon class="sel-icon"></icon>
                 </div>
-                <div class="dropdown sel-item myscroll sel-user">
+                <div class="dropdown sel-item myscroll">
                     <div class="item" v-for="user in list_user" @click="chosenUser(user)">{{user.name}}</div>
                 </div>
             </div>
@@ -100,11 +100,11 @@
         <div class="form-group row">
             <label for="duration" class="col-sm-3 col-form-label text-right">选择时长</label>
             <div class="col-sm-9">
-                <div class="input-group">
+                <div class="input-group" @click.stop="dropdown($event)">
                     <input type="text" readonly class="form-control sel" id="duration" />
                     <icon class="sel-icon"></icon>
                 </div>
-                <div class="dropdown sel-item myscroll">
+                <div class="dropdown sel-item sel-duration myscroll">
                     <div class="item time" v-for="t in time" @click="chosenTime(t,$event)">{{t}}小时</div>
                 </div>
                 <div class="error-tips">{{error_tips}}</div>
@@ -289,13 +289,17 @@
         duration: ''
       },
       methods: {
+        dropdown: function(e) {
+          $('.dropdown').hide();
+          $(e.currentTarget).closest('.form-group').find('.dropdown').show();
+        },
         chosenUser: function(user){
-          $('.sel-user').hide();
+          $('.dropdown').hide();
           $('#user').val(user.name);
           this.user_id = user.id;
         },
         chosenTime: function(t,e){
-          $('.sel-duration').hide();
+          $('.dropdown').hide();
           this.duration = t;
           $('#duration').val($(e.currentTarget).html());
         },
@@ -324,13 +328,6 @@
           });
         }
       }
-    });
-
-    $(document).on('click','#duration',function(){
-      $('.sel-duration').show();
-    });
-    $(document).on('click','#user',function(){
-      $('.sel-user').show();
     });
 </script>
 

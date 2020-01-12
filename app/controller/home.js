@@ -28,7 +28,7 @@ class HomeController extends Controller {
       arr: [...new Set(arr)],
       str: JSON.stringify("sss"),
       // userInfo: ctx.app.userInfo,
-      json: JSON.parse(JSON.stringify("sss")),
+      json: JSON.parse(null),
       // cache: app.authCache,
       access_token,
       // computer: 4/3

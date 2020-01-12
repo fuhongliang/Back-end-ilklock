@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "1256457",
+      "name": "删除",
+      "font_class": "shanchu",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
       "icon_id": "1825236",
       "name": "三角形",
       "font_class": "triangle-copy-copy-copy",
@@ -25,6 +32,13 @@
       "font_class": "triangle-right",
       "unicode": "e600",
       "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "6047788",
+      "name": "添加",
+      "font_class": "tianjia",
+      "unicode": "e64f",
+      "unicode_decimal": 58959
     },
     {
       "icon_id": "6821753",

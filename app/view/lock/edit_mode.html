@@ -1,0 +1,229 @@
+<% extends "layout/main.html" %>
+
+<% block content %>
+<div id="page">
+  <div  class="content">
+    <form class="data-page" action="<$ helper.getHost() $>/web/mode_edit" method="post"
+          return-url="<$ helper.getHost() $>/web/mode_locks">
+      <div class="form-group row">
+        <label class="col-sm-1 col-form-label text-right">名称</label>
+        <div class="col-sm-8">
+          <div class="input-group">
+            <input type="text" class="form-control" name="name" placeholder="请输入开锁模式名称" :value="mode.name" />
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-1 col-form-label text-right">描述</label>
+        <div class="col-sm-8">
+          <div class="input-group">
+            <textarea class="form-control" name="desc" placeholder="请描述">{{mode.desc}}</textarea>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-1 col-form-label text-right">添加锁</label>
+        <div class="col-sm-8">
+          <div class="lock-head" v-if="mode.type != 0">
+            <div class="add-order">
+              <span @click="addLockOrder()">添加开锁顺序</span>
+            </div>
+          </div>
+          <div class="lock-box" v-for="(list,index) in locks">
+            <div class="box-head">
+              <span>第{{index + 1}}开锁顺序</span>
+              <span class="iconfont del-order" @click="removeLockOrder(index)">&#xe603;</span>
+            </div>
+            <div class="list-locks">
+              <div class="item add-lock" @click="addLock(index)">
+                <span class="iconfont add">&#xe64f;</span>
+                <span>添加锁</span>
+              </div>
+              <div class="item lock" v-for="lock in list">
+                <span class="lock-name">{{lock.name}}</span>
+                <span class="iconfont delete">&#xe603;</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <div class="tips">
+
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-1 col-form-label text-right"></label>
+        <div class="col-sm-6">
+          <input type="hidden" name="_csrf" value="<$ ctx.csrf $>" />
+          <button type="button" class="layui-btn layui-btn-disabled" v-if="is_change == 0">保存</button>
+          <button type="button" class="btn btn-success save" v-else>保存</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 选择锁 -->
+<div id="pick-lock" class="layer-pop">
+  <div class="body">
+    <div class="left-area myscroll">
+      <div class="head">
+        <span style="font-weight: bold;">选择区域</span>
+      </div>
+      <div class="left-tree">
+        <div class="tree-list" id="tree">
+          <div class="tree-tab" :class="'tab' + index" v-for="(list,index) in list_region">
+            <div class="tree-item" :id="'tab' + region.id" v-for="(region,index) in list">
+              <div class="item" :data-id="region.id" @click="showData(region,$event)">
+                <span class="icon iconfont" :class="getAgentClass(region)"></span>
+                <span class="region-name">{{ region.name }}</span>
+              </div>
+              <div class="child-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="right-lock myscroll">
+      <div class="head">
+        <span style="font-weight: bold;margin-right: 2.5rem;">选择锁</span>
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox" class="custom-control-input" id="ck-all">
+          <label class="custom-control-label" for="ck-all">全选</label>
+        </div>
+      </div>
+      <div class="lock-list">
+        <div class="lock-item input-group" v-for="(lock,i) in list_lock">
+          <div class="custom-control custom-checkbox">
+            <input type="checkbox" v-model="check_ids[index]"
+                   :value="lock.id"
+                   class="custom-control-input ck-item" :id="'ck-lock' + i">
+            <label class="custom-control-label" :for="'ck-lock' + i"></label>
+          </div>
+          <div class="lock-name">{{lock.name}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <button class="layer-btn layer-btn-cancel">取消</button>
+    <button class="layer-btn layer-btn-success" @click="selLock()">确定</button>
+  </div>
+</div>
+
+<% endblock %>
+
+<% block script %>
+
+<script type="text/javascript">
+
+  let page = new Vue({
+    el: '#page',
+    data: {
+      mode: JSON.parse('<$ mode | safe $>') || {},
+      locks: JSON.parse('<$ locks | safe $>') || [],
+      is_change: 0
+    },
+    methods: {
+      addLock: function(index) {
+        lock.index = index;
+        let layerAdd = layer.open({
+          type: 1,
+          title: '添加锁',
+          content: $('#pick-lock'),
+          area: ['auto', '500px'],
+          skin: 'ilock',
+        });
+        $('#pick-lock').find('.layer-btn-cancel').attr('layer-index',layerAdd);
+      },
+      addLockOrder: function() {
+        layer.confirm('确定添加一条开锁顺序?', function(index) {
+          page.locks.push({});
+          layer.close(index);
+        });
+
+      },
+      removeLockOrder: function(index) {
+        layer.confirm('确定移除这条开锁顺序?', function(i) {
+          page.locks.splice(index);
+          layer.close(i);
+        });
+      }
+    }
+  });
+</script>
+
+<!-- 选择锁 -->
+<script type="text/javascript">
+
+  let lock = new Vue({
+    el: '#pick-lock',
+    data: {
+      list_region: JSON.parse('<$ list_region | safe $>') || [],
+      list_lock: [],
+      check_ids: JSON.parse('<$ locks_id | safe $>') || [],
+      index: 0
+    },
+    methods: {
+      getAgentClass: function(region){
+        if (Array.isArray(this.list_region[region.id]) && this.list_region[region.id].length > 0){
+          return 'icon-triangle-right';
+        }
+        return '';
+      },
+      showData: function(region,e){
+
+        /**
+         * 小图标
+         * 收起 icon-triangle-right
+         * 展开 icon-triangle-copy-copy-copy
+         */
+        if (Array.isArray(this.list_region[region.id]) && this.list_region[region.id].length > 0){
+          let targetIcon = $(e.currentTarget).find('.icon');
+          if (targetIcon.hasClass('icon-triangle-right')){
+            let child_list = $(e.currentTarget).next('.child-list');
+
+            if (child_list.children().length === 0){
+              child_list.html($(`.tab${region.id}`));
+            }
+            targetIcon.removeClass('icon-triangle-right');
+            targetIcon.addClass('icon-triangle-copy-copy-copy');
+            $(`.tab${region.id}`).show();
+          }else if (targetIcon.hasClass('icon-triangle-copy-copy-copy')){
+            targetIcon.removeClass('icon-triangle-copy-copy-copy');
+            targetIcon.addClass('icon-triangle-right');
+            $(`.tab${region.id}`).hide();
+          }
+        }else{
+          $('#tree .item').removeClass('active');
+          if (!$(e.currentTarget).hasClass('active')){
+            $(e.currentTarget).addClass('active');
+          }
+
+          // 获取区域下的锁列表
+          this.findLocksByArea(region.id);
+        }
+      },
+      findLocksByArea: function(region_id) {
+        $.ajax({
+          url: `<$ helper.getHost() $>/web/get_locks`,
+          type: 'get',
+          data: {
+            region_id
+          },
+          success: function(res){
+            if (res.code === 0){
+              lock.list_lock = res.data.list;
+            }
+          }
+        });
+      },
+      selLock: function() {
+        console.log(lock.check_ids);
+      }
+    }
+  });
+
+</script>
+<% endblock %>

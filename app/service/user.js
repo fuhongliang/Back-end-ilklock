@@ -125,6 +125,29 @@ class UserService extends  Service{
     return list;
   }
 
+  async getAllUser() {
+    const { app } = this;
+    const { User, Role } = app.model;
+    const user = app.userInfo;
+
+    return User.findAll({
+      where: {
+        com_id: user.com_id,
+        id: { [app.Sequelize.Op.ne]: user.id },
+        is_delete: 0,
+        level: 1,
+      },
+      include: [
+        {
+          model: Role,
+          as: 'role',
+          attributes: []
+        }
+      ],
+      attributes: ['id', 'name', 'avatar', 'job_no', 'pinyin', 'phone', [app.Sequelize.col('role.name'), 'role_name'], [app.Sequelize.col('role.id'), 'role_id']],
+    });
+  }
+
   /**
    * 编辑用户
    * @returns {Promise<{msg: string, code: number}>}

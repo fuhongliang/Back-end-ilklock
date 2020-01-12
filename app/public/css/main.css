@@ -311,9 +311,6 @@ input[type="number"]{
 .sel-item .time:hover{
     background: #F3F3F3;
 }
-.sel-user{
-    left: 15px;
-}
 .sel-item .item:hover{
     color: #00CA7C;
 }
@@ -350,11 +347,134 @@ input[type="number"]{
 }
 
 /*CheckBox*/
-.my-checkbox{
+.custom-checkbox{
     margin: 0 .5rem;
     line-height: 1.5rem;
 }
-.custom-control-input:checked~.ck-label:before{
+.custom-control-input:checked~.custom-control-label:before{
     border-color: #00CA7C;
     background-color: #00CA7C;
+}
+
+/*锁列表*/
+.lock-head{
+    background: #F1F1F1;
+    width: 100%;
+    font-size: .8rem;
+    display: flex;
+}
+.lock-box{
+    font-size: .8rem;
+    margin-top: 1rem;
+}
+.lock-head .add-order{
+    cursor: pointer;
+    padding: .5rem;
+    background: #00CA7C;
+    color: #ffffff;
+}
+.lock-head .add-order:hover{
+    box-shadow: 0 0 1px #000000;
+    background: #28a745;;
+}
+.lock-box .box-head{
+    position: relative;
+    background: #F1F1F1;
+    padding: .5rem;
+}
+.lock-box .box-head .del-order{
+    position: absolute;
+    right: 1rem;
+    top: .55rem;
+    cursor: pointer;
+}
+.lock-box .box-head .del-order:hover{
+    color: #00CA7C;
+}
+.lock-box .list-locks{
+    border: 1px solid #E6E6E6;
+    padding: .5rem;
+    width: 100%;
+    min-height: 200px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    align-content: flex-start;
+}
+.lock-box .item{
+    padding: .3rem .5rem;
+    margin: .5rem;
+    border-radius:5px;
+    display: flex;
+}
+.lock-box .item.add-lock{
+    border: 1px solid #E6E6E6;
+    color: #E6E6E6;
+    cursor: pointer;
+}
+.lock-box .add-lock .add{
+    color: #333333;
+    margin-right: .5rem;
+}
+.lock-box .item.lock{
+    border: 1px solid #00CA7C;
+    color: #00CA7C;
+}
+.lock-box .lock .delete{
+    color: #C4D2CD;
+    margin-left: .8rem;
+    cursor: pointer;
+}
+.lock-box .lock .delete:hover{
+    color: #00CA7C;
+}
+.lock-box .lock .lock-name{
+    max-width: 8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow:ellipsis;
+}
+
+
+/*选择锁*/
+#pick-lock{
+    padding: 0;
+}
+#pick-lock .body{
+    /*padding: 0 .5rem;*/
+    font-size: .8rem;
+    height: 400px;
+    border-bottom: 1px solid #E6E6E6;
+    display: flex;
+}
+#pick-lock .body .head{
+    line-height: 1.5rem;
+    padding-top: .5rem;
+    padding-left: .73rem;
+    display: flex;
+    min-width: 240px;
+}
+#pick-lock .body .left-area{
+    height: 100%;
+    overflow-y: scroll;
+}
+#pick-lock .body .left-tree .tree-list{
+    font-size: .8rem;
+}
+#pick-lock .footer{
+    text-align: center;
+}
+#pick-lock .right-lock{
+    height: 100%;
+    overflow-y: scroll;
+}
+#pick-lock .right-lock .lock-list{
+    padding: .73rem 1.5rem .73rem .73rem;
+}
+#pick-lock .right-lock .lock-name{
+    line-height: 1.5rem;
+    max-width: 12rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow:ellipsis;
 }
