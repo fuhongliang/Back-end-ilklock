@@ -95,13 +95,17 @@
       </div>
       <div class="lock-list">
         <div class="lock-item input-group" v-for="(lock,i) in list_lock">
-          <div class="custom-control custom-checkbox">
-            <input type="checkbox" v-model="check_ids[index]"
-                   :value="lock.id"
-                   class="custom-control-input ck-item" :id="'ck-lock' + i">
-            <label class="custom-control-label" :for="'ck-lock' + i"></label>
+          <div class="custom-control custom-checkbox" v-if="isChecked(lock.id)">
+            <input type="checkbox"  class="custom-control-input" disabled />
+            <label class="custom-control-label"></label>
           </div>
-          <div class="lock-name">{{lock.name}}</div>
+          <div class="custom-control custom-checkbox" v-else>
+            <input type="checkbox" class="custom-control-input ck-item"
+                   :value="lock.id" v-model="check_ids" :id="'ck' + i" />
+            <label class="custom-control-label" :for="'ck' + i"></label>
+          </div>
+          <div class="lock-name" v-if="isChecked(lock.id)">{{lock.name}}</div>
+          <div class="lock-name" v-else style="color: #E6E6E6;">{{lock.name}}</div>
         </div>
       </div>
     </div>
@@ -123,11 +127,13 @@
     data: {
       mode: JSON.parse('<$ mode | safe $>') || {},
       locks: JSON.parse('<$ locks | safe $>') || [],
+      ck_ids: [],
       is_change: 0
     },
     methods: {
       addLock: function(index) {
         lock.index = index;
+        lock.check_ids = [];
         let layerAdd = layer.open({
           type: 1,
           title: '添加锁',
@@ -162,7 +168,8 @@
     data: {
       list_region: JSON.parse('<$ list_region | safe $>') || [],
       list_lock: [],
-      check_ids: JSON.parse('<$ locks_id | safe $>') || [],
+      locks: [],
+      check_ids: [],
       index: 0
     },
     methods: {
@@ -202,7 +209,11 @@
           }
 
           // 获取区域下的锁列表
-          this.findLocksByArea(region.id);
+          if (lock.locks[region.id]){
+            lock.list_lock = lock.locks[region.id];
+          }else{
+            this.findLocksByArea(region.id);
+          }
         }
       },
       findLocksByArea: function(region_id) {
@@ -215,12 +226,41 @@
           success: function(res){
             if (res.code === 0){
               lock.list_lock = res.data.list;
+              lock.locks[region_id] = res.data.list;
             }
           }
         });
       },
+      isChecked: function(lock_id) {
+        for (let id of page.ck_ids){
+          if (lock_id == id){
+            return true;
+          }
+        }
+        return false;
+      },
       selLock: function() {
-        console.log(lock.check_ids);
+        layer.closeAll();
+        let selLocks = [];
+        for (let id of this.check_ids){
+          let lock = {
+            id: id,
+            name: this.getLockName(id)
+          };
+          selLocks.push(lock);
+        }
+        page.locks[this.index] = page.locks[this.index].concat(selLocks);
+        page.ck_ids = page.ck_ids.concat(this.check_ids);
+      },
+      getLockName: function(id) {
+        for (let locks of this.locks){
+          for (let lock of locks){
+            if (lock.id === id){
+              return lock.name;
+            }
+          }
+        }
+        return '';
       }
     }
   });

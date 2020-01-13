@@ -9,12 +9,17 @@ body .layui-layer{border-radius:5px;}
 body .layui-layer .layui-layer-content{overflow: visible}
 
 /*滚动条*/
-.layui-layer-content::-webkit-scrollbar-track,.myscroll::-webkit-scrollbar {
+
+.myscroll{
+    scrollbar-color: #E6E6E6 #F3F3F3;
+    scrollbar-width: thin;
+}
+.layui-layer-content::-webkit-scrollbar,.myscroll::-webkit-scrollbar {
     /*滚动条整体样式*/
     width : 5px;  /*高宽分别对应横竖滚动条的尺寸*/
     height: 1px;
 }
-.layui-layer-content::-webkit-scrollbar-track,.myscroll::-webkit-scrollbar-thumb {
+.layui-layer-content::-webkit-scrollbar-thumb,.myscroll::-webkit-scrollbar-thumb {
     /*滚动条里面小方块*/
     border-radius: 10px;
     box-shadow   : inset 0 0 1px rgba(0, 0, 0, 0.2);

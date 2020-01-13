@@ -367,7 +367,7 @@ class LockService extends Service{
     }
 
     mode.locks = new_locks;
-    mode.locks_id = locks;
+    mode.locks_id = locks_id;
     return mode;
   }
 
