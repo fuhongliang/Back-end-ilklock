@@ -11,6 +11,43 @@ class ApplyController extends BaseController {
     ctx.body = await ctx.service.apply.getAuthKeys();
   }
 
+  async renewStatus() {
+    const { ctx, app } = this;
+    const { locks } = ctx.request.body;
+    const { apply } = ctx.service;
+    if (Array.isArray(locks)){
+      let trans;
+      try {
+        // 建立事务对象
+        trans = await this.ctx.model.transaction();
+
+        for (let lock of locks) {
+          await apply.renewStatus(lock);
+        }
+
+        // 提交事务
+        await trans.commit();
+      } catch (err) {
+        // 事务回滚
+        await trans.rollback();
+        ctx.body = {
+          code: 1,
+          msg: err
+        };
+        return ;
+      }
+      ctx.body = {
+        code: 0,
+        msg: 'success'
+      };
+      return ;
+    }
+    ctx.body = {
+      code: 1,
+      msg: '参数错误'
+    };
+  }
+
   /**
    * 获取审批人
    * @returns {Promise<void>}
@@ -27,20 +64,29 @@ class ApplyController extends BaseController {
     };
   }
 
+  /**
+   * 获取审批列表
+   * @returns {Promise<void>}
+   */
   async getRecords() {
     const { ctx, app } = this;
     const { apply } = ctx.service;
-    const { access_token, user_id, page = 1, page_size = 10 } = ctx.request.body;
     const user = app.userInfo;
+    const records = await apply.getRecordByUserId(user.id, ctx.request.body);
     ctx.body = {
       code: 0,
       msg: 'success',
       data: {
-        records: await apply.getRecordByUserId(user.id, { page, page_size })
+        records: records.rows,
+        total_count: records.count
       }
     }
   }
 
+  /**
+   * 申请开锁
+   * @returns {Promise<void>}
+   */
   async applyKeySecret(){
 
     const { ctx, app } = this;
@@ -51,7 +97,7 @@ class ApplyController extends BaseController {
     if (!validateResult){
       return ;
     }
-    const { locks, audit_id, duration, access_token, user_id } = ctx.request.body;
+    const { locks, audit_id, duration = 0, start_time, end_time } = ctx.request.body;
     const user = app.userInfo;
 
     const checkAudit = User.findOne({ where: { id: audit_id, com_id: user.com_id }});
@@ -68,7 +114,7 @@ class ApplyController extends BaseController {
       transaction = await this.ctx.model.transaction();
 
       for (let lock_id of locks) {
-        await apply.applyKeySecret({ lock_id, audit_id, com_id: user.com_id, user_id, duration });
+        await apply.applyKeySecret({ lock_id, audit_id, com_id: user.com_id, user_id: user.id, duration, start_time, end_time });
       }
 
       // 提交事务
@@ -76,9 +122,10 @@ class ApplyController extends BaseController {
     } catch (err) {
       // 事务回滚
       await transaction.rollback();
+      console.log(err);
       ctx.body = {
         code: 1,
-        msg: err.errorMsg,
+        msg: err
       };
       return ;
     }

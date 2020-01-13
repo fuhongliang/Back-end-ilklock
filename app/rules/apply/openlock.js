@@ -11,6 +11,13 @@ module.exports = {
   ],
   duration: [
     { pattern: /^\d+/, message: '有效时长必须为整数' },
-    { required: true, message: '有效时长不能为空'}
   ],
+  start_time: [
+    { type: 'string', message: '请选择开始时间' },
+    { required: true, message: '请选择开始时间' },
+  ],
+  end_time: [
+    { type: 'string', message: '请选择结束时间' },
+    { required: true, message: '请选择结束时间' },
+  ]
 };

@@ -22,6 +22,9 @@ module.exports = app => {
   router.post('/api/v1/get_audits', controller.wxapi.apply.getAuditer);
   router.post('/api/v1/apply_open_locks', controller.wxapi.apply.applyKeySecret);
   router.post('/api/v1/get_area', controller.wxapi.region.getArea);
+  router.post('/api/v1/list_apply', controller.wxapi.apply.getRecords);
+  router.post('/api/v1/apply_open_lock', controller.wxapi.apply.applyKeySecret);
+  router.post('/api/v1/renew_status', controller.wxapi.apply.renewStatus);
 
 
   // web

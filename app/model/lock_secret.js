@@ -39,7 +39,7 @@ module.exports = app => {
         allowNull: false,
         defaultValue: 0
       },
-      is_delete: {
+      is_send: {
         type: INTEGER(1),
         allowNull: false,
         defaultValue: 0

@@ -21,7 +21,7 @@ class ApplyService extends Service{
         status: 1,
         is_delete: 0
       },
-      attributes: ['id', 'addtime', [app.Sequelize.col('lock.name') , 'lock_name'], [app.Sequelize.col('secret.secret_key') , 'secret_key'] ],
+      attributes: ['id', 'addtime', 'work_no', [app.Sequelize.col('lock.lock_no') , 'lock_no'], [app.Sequelize.col('lock.name') , 'lock_name'], [app.Sequelize.col('secret.secret_key') , 'secret_key'] ],
       include: [
         {
           model: Lock,
@@ -35,14 +35,19 @@ class ApplyService extends Service{
           model: LockSecret,
           as: 'secret',
           where: {
-            start_time: { [app.Sequelize.Op.lt]: new Date().getTime() },
-            expiry_time: { [app.Sequelize.Op.gt]: new Date().getTime() },
+            start_time: { [app.Sequelize.Op.lt]: Date.now() },
+            expire_time: { [app.Sequelize.Op.gt]: Date.now() },
             is_send: 0
           },
           attributes: [],
         }
       ],
     });
+    for (let i in list){
+      if (list.hasOwnProperty(i)){
+        list[i].addtime = sd.format(new Date(list[i].addtime),'YYYY-MM-DD HH:mm');
+      }
+    }
     return {
       code: 0,
       msg: 'success',
@@ -50,6 +55,14 @@ class ApplyService extends Service{
         list
       }
     }
+  }
+
+  async renewStatus(options) {
+    const { app } = this;
+    const { LockSecret } = app.model;
+    const { lock_no = '', work_no = '' } = options;
+    const user = app.userInfo;
+    await LockSecret.update({ is_send: 1 }, { where: { work_no, lock_no, com_id: user.com_id } });
   }
 
   /**
@@ -111,28 +124,85 @@ class ApplyService extends Service{
    */
   async getRecordByUserId(id, options){
     const { ctx, app } = this;
-    const { ApplyAuthorize, Lock, Group } = ctx.model;
-    const { page , page_size } = options;
+    const { ApplyAuthorize, Lock, Region, User } = ctx.model;
+    const { page = 1 , page_size = 10, type = 2 } = options;
     const Op = app.Sequelize.Op;
-
-    return ApplyAuthorize.findAll({
-      where: {
-        user_id: user.id,
-        is_delete: 0,
-      },
+    let where = {
+      user_id: id,
+      is_delete: 0,
+      type: 0,
+    };
+    switch (type) {
+      case 0:
+        where.status = 0;
+        break;
+      case 1:
+        where.status = { [Op.ne] : 0 };
+        break;
+      case 2:
+        break;
+      case 3:
+        where.status = { [Op.gt]: 0 };
+        break;
+      case 4:
+        where.status = 1;
+        break;
+      default:
+        break;
+    }
+    let list = await ApplyAuthorize.findAndCountAll({
+      where,
       include: [
         {
           model: Lock,
-          attributes: [ ['id', 'lock_id'], ['name', 'lock_name'] ],
+          attributes: [],
+          as: 'lock',
           where: {
             is_delete: 0
-          }
+          },
+          include: [
+            {
+              model: Region,
+              attributes: [],
+              as: 'area'
+            }
+          ],
         },
+        {
+          model: User,
+          attributes: [],
+          as: 'user'
+        }
       ],
+      attributes: ['id', 'addtime', 'status', [app.Sequelize.col('user.name'), 'user_name'], [app.Sequelize.col('lock.name'), 'lock_name'], [app.Sequelize.col('lock.area.name'), 'region_name']],
       order: [ ['addtime', 'DESC'] ],
       offset: (page - 1)*page_size,
       limit: page_size
     });
+    for (let i in list.rows){
+      if (list.rows.hasOwnProperty(i)){
+        list.rows[i].addtime = sd.format(new Date(list.rows[i].addtime),'YYYY-MM-DD HH:mm');
+        list.rows[i].status = this.statusToText(list.rows[i].status);
+      }
+    }
+    return list;
+  }
+
+  statusToText(status){
+    switch (status) {
+      case 0:
+        return '待处理';
+      case 1:
+        return '已处理';
+      case 2:
+        return '已提交';
+      case 3:
+        return '已批准';
+      case 4:
+        return '未完成';
+      default:
+        return '';
+    }
   }
 
   /**
@@ -146,22 +216,55 @@ class ApplyService extends Service{
     const { Lock, ApplyAuthorize, LockMode } = app.model;
     const { lock_id, audit_id, com_id, user_id, duration = 0, start_time = 0, end_time = 0 } = data;
 
+    let locks_order_open = await LockMode.findAll({
+      where: { com_id, is_delete: 0, type: 1 },
+      attributes: ['locks']
+    });
+    for (let lock of locks_order_open){
+
+    }
+
     let locks_open_by_one = await LockMode.findOne({
       where: { com_id, is_delete: 0, type: 0 },
       attributes: ['locks']
     });
-    locks_open_by_one = locks_open_by_one['locks'] ? JSON.parse(locks_open_by_one['locks']):[];
 
-    if ( !ctx.helper.inArray(lock_id,locks_open_by_one) ){
-      throw new Error('锁不支持单个申请');
+    let locks_id = this.getDisableLockId(locks_order_open,locks_open_by_one);
+
+    if ( ctx.helper.inArray(lock_id,locks_id) ){
+      throw '该锁不支持申请';
     }
     const checkLock = await Lock.findOne({ where: { com_id , id: lock_id, is_delete: 0 } });
     if (!checkLock){
-      throw new Error('锁信息不存在');
+      throw '锁信息不存在';
     }
-    let addtime = new Date().getTime();
-    let work_no = await this.ctx.service.createWorkNo(0);
-    await ApplyAuthorize.create({ com_id, user_id, lock_id, audit_id, work_no, duration, start_time, end_time, addtime, type: 0 });
+    let addtime = Date.now();
+    let work_no = await this.ctx.service.lock.createWorkNo(0);
+    let start = start_time?new Date(start_time).getTime():0;
+    let end = end_time?new Date(end_time).getTime():0;
+    await ApplyAuthorize.create({ com_id, user_id, lock_id, audit_id, work_no, duration, start_time: start, end_time: end, addtime, type: 0 });
+  }
+
+  getDisableLockId(locks_order_open,locks_open_by_one) {
+
+    const { ctx } = this;
+    locks_open_by_one = locks_open_by_one?(JSON.parse(locks_open_by_one.locks) || []):[];
+    let lock_ids = [];
+    for (let lock of locks_order_open){
+      let locks = JSON.parse(lock.locks) || [];
+      for (let i in locks){
+        if (locks.hasOwnProperty(i)){
+          if (i !== 0 && Array.isArray(locks[i])){
+            for (let id of locks[i]){
+              if (!ctx.helper.inArray(id,locks_open_by_one)){
+                lock_ids.push(id);
+              }
+            }
+          }
+        }
+      }
+    }
+    return lock_ids;
   }
 
   /**
