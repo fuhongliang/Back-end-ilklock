@@ -12,7 +12,7 @@ module.exports = app => {
         primaryKey: true,
         autoIncrement: true
       },
-      lock_model_id: {
+      lock_mode_id: {
         type: INTEGER(11),
         allowNull: false,
         defaultValue: 0

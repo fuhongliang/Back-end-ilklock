@@ -129,13 +129,11 @@
     data: {
       mode: JSON.parse('<$ mode | safe $>') || {},
       locks: JSON.parse('<$ locks | safe $>') || [],
-      ck_ids: JSON.parse('<$ locks_id | safe $>') || [],
       is_change: 0
     },
     created: function() {
       if (this.locks.length === 0){
         this.locks.push([]);
-        this.ck_ids.push([]);
       }
     },
     methods: {
@@ -153,14 +151,6 @@
         $('#pick-lock').find('.layer-btn-cancel').attr('layer-index',layerAdd);
       },
       delLock: function(index,i) {
-        console.log(this.locks[index][i].id);
-        for (let ii in this.ck_ids[index]){
-          if (this.ck_ids[index].hasOwnProperty(ii)){
-            if (this.ck_ids[ii] === this.locks[index][i].id){
-              this.ck_ids[index].splice(ii,1)
-            }
-          }
-        }
         this.locks[index].splice(i,1);
         this.is_change = 1;
         // Vue.set(this.locks,index,this.locks[index]);
@@ -168,7 +158,6 @@
       addLockOrder: function() {
         layer.confirm('确定添加一条开锁顺序?', function(index) {
           page.locks.push([]);
-          page.ck_ids.push([]);
           layer.close(index);
         });
 
@@ -188,7 +177,7 @@
             _csrf,
             name: this.mode.name,
             desc: this.mode.desc,
-            locks_id: this.ck_ids
+            locks_data: this.locks
           },
           success: function(res){
             if (res.code === 0){
@@ -281,10 +270,14 @@
       },
       isChecked: function(lock_id) {
 
-        for (let id of page.ck_ids){
-          if (lock_id == id){
-            return true;
+        for (let index in page.locks){
+          if (page.locks.hasOwnProperty(index)){
+            for (let lock of page.locks[index])
+              if (lock_id == lock.id){
+                return true;
+              }
           }
+
         }
         return false;
       },
@@ -293,23 +286,24 @@
         layer.closeAll();
         let selLocks = [];
         for (let id of this.check_ids){
+          let { name, lock_no } = this.getLocks(id);
           let lock = {
-            id: id,
-            name: this.getLockName(id)
+            id,
+            name,
+            lock_no
           };
           selLocks.push(lock);
         }
 
         page.is_change = 1;
         Vue.set(page.locks,this.index,page.locks[this.index].concat(selLocks));
-        Vue.set(page.ck_ids,this.index,page.ck_ids[this.index].concat(this.check_ids));
       },
-      getLockName: function(id) {
+      getLocks: function(id) {
         for (let key in this.locks){
           if (this.locks.hasOwnProperty(key)){
             for (let lock of this.locks[key]){
               if (lock.id === id){
-                return lock.name;
+                return { name: lock.name, lock_no: lock.lock_no };
               }
             }
           }

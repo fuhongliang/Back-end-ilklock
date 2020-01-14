@@ -14,7 +14,7 @@ module.exports = {
     required: true,
     message: '描述必须1~1000字符内',
   },
-  locks_id: {
+  locks_data: {
     type: 'array',
     message: '请添加锁',
   },

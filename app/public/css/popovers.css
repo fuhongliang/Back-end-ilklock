@@ -7,7 +7,7 @@ body .ilock .layui-layer-title{background:#00CA7C; color:#fff;border-radius:5px 
 body .ilock .layui-layer-ico{background: url("../images/icon/tanchuang_gb.png") no-repeat;}
 body .layui-layer{border-radius:5px;}
 body .layui-layer .layui-layer-content{overflow: visible}
-
+body .layui-laydate-content td{font-size: .8rem;}
 /*滚动条*/
 
 .myscroll{

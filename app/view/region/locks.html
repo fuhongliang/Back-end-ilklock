@@ -78,18 +78,20 @@
 
 <!-- 授权 -->
 <div id="auth-lock" class="layer-pop">
-    <form>
+    <form action="<$ helper.createUrl('/web/auth_lock') $>" method="post">
         <div class="form-group row">
-            <label class="col-sm-4 col-form-label text-right">锁的名称</label>
-            <div class="col-sm-4">
-                <input type="text" readonly class="form-control-plaintext" :value="lock">
+            <label class="col-sm-2 col-form-label text-right">锁的名称</label>
+            <div class="col-sm-8">
+                <input type="text" readonly class="form-control-plaintext" name="lock" />
+                <input type="hidden" name="lock_id" />
             </div>
         </div>
         <div class="form-group row">
-            <label for="user" class="col-sm-3 col-form-label text-right">授权用户</label>
-            <div class="col-sm-9">
+            <label for="user" class="col-sm-2 col-form-label text-right">授权用户</label>
+            <div class="col-sm-10">
                 <div class="input-group" @click.stop="dropdown($event)">
                     <input type="text" readonly class="form-control sel" id="user"/>
+                    <input type="hidden" name="user_id" />
                     <icon class="sel-icon"></icon>
                 </div>
                 <div class="dropdown sel-item myscroll">
@@ -98,23 +100,27 @@
             </div>
         </div>
         <div class="form-group row">
-            <label for="duration" class="col-sm-3 col-form-label text-right">选择时长</label>
-            <div class="col-sm-9">
-                <div class="input-group" @click.stop="dropdown($event)">
-                    <input type="text" readonly class="form-control sel" id="duration" />
+            <label class="col-sm-2 col-form-label text-right">选择时长</label>
+            <div class="col-sm-5">
+                <div class="input-group">
+                    <input type="text" readonly placeholder="开始时间" name="start_time" class="form-control sel" id="startTime" />
                     <icon class="sel-icon"></icon>
                 </div>
-                <div class="dropdown sel-item sel-duration myscroll">
-                    <div class="item time" v-for="t in time" @click="chosenTime(t,$event)">{{t}}小时</div>
+            </div>
+
+            <div class="col-sm-5">
+                <div class="input-group">
+                    <input type="text" readonly placeholder="结束时间" name="end_time" class="form-control sel" id="endTime" />
+                    <icon class="sel-icon"></icon>
                 </div>
-                <div class="error-tips">{{error_tips}}</div>
             </div>
         </div>
         <div class="form-group row">
-            <label class="col-sm-3 col-form-label text-right"></label>
-            <div class="col-sm-9">
+            <label class="col-sm-2 col-form-label text-right"></label>
+            <div class="col-sm-10">
+                <input type="hidden" name="_csrf" value="<$ ctx.csrf $>" />
                 <button type="button" class="layer-btn layer-btn-cancel">取消</button>
-                <button type="button" class="layer-btn layer-btn-success" @click="confirm();">确定</button>
+                <button type="button" class="layer-btn layer-btn-success" @click="confirm()">确定</button>
             </div>
         </div>
     </form>
@@ -205,15 +211,15 @@
       },
       auth: function(lock) {
         // 锁名称和id
-        authLock.lock = lock.name;
-        authLock.lock_id = lock.id;
-        authLock.error_tips = '';
+        $('#auth-lock').find('input[name="lock"]').val(lock.name);
+        $('#auth-lock').find('input[name="lock_id"]').val(lock.id);
 
         let layerAuth = layer.open({
           type: 1,
           title: '授权开锁',
           content: $('#auth-lock'),
-          area: ['500px', '340px'],
+          area: ['600px', '340px'],
+          offset: '100px',
           skin: 'ilock',
         });
         $('#auth-lock').find('.layer-btn-cancel').attr('layer-index',layerAuth);
@@ -281,12 +287,6 @@
       el: '#auth-lock',
       data: {
         list_user: JSON.parse(`<$ list_user | safe $>`),
-        time: 30,
-        error_tips: '',
-        lock: '',
-        lock_id: 0,
-        user_id: '',
-        duration: ''
       },
       methods: {
         dropdown: function(e) {
@@ -296,7 +296,7 @@
         chosenUser: function(user){
           $('.dropdown').hide();
           $('#user').val(user.name);
-          this.user_id = user.id;
+          $('#auth-lock').find('input[name="user_id"]').val(user.id);
         },
         chosenTime: function(t,e){
           $('.dropdown').hide();
@@ -304,31 +304,63 @@
           $('#duration').val($(e.currentTarget).html());
         },
         confirm: function() {
+          let form = $('#auth-lock').find('form');
           $.ajax({
-            url: `<$ helper.getHost() $>/web/auth_lock`,
-            type: 'post',
-            data: {
-              lock_id: authLock.lock_id,
-              user_id: authLock.user_id,
-              duration: authLock.duration,
-              _csrf: `<$ ctx.csrf $>`
-            },
+            url: form.attr('action'),
+            type: form.attr('method'),
+            data: form.serialize(),
             success: function(res) {
               if (res.code === 0){
                 layer.msg('授权成功',{ time: 1500 },function(){
                   layer.closeAll();
                 });
               }else{
-                authLock.error_tips = res.msg;
+                layer.msg(res.msg);
               }
             },
             error: function() {
-              authLock.error_tips = '服务器异常~';
+              layer.msg('服务器异常');
             }
           });
         }
       }
     });
+</script>
+
+<!-- 时间选择 -->
+<script type="text/javascript">
+  let start = laydate.render({
+    elem: '#startTime' //指定元素
+    ,type: 'datetime'
+    ,theme: '#00CA7C'
+    ,done: function(value, date, endDate){
+      console.log(date);
+      end.config.min = {
+        year:date.year,
+        month:date.month - 1, //关键
+        date: date.date,
+        hours: date.hours,
+        minutes: date.minutes,
+        seconds: date.seconds
+      };
+    }
+  });
+
+  let end = laydate.render({
+    elem: '#endTime' //指定元素
+    ,theme: '#00CA7C'
+    ,type: 'datetime'
+    ,done: function(value, date, endDate){
+      start.config.max = {
+        year:date.year,
+        month:date.month - 1, //关键
+        date: date.date,
+        hours: date.hours,
+        minutes: date.minutes,
+        seconds: date.seconds
+      };
+    }
+  });
 </script>
 
 <% endblock %>

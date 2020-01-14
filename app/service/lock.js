@@ -171,18 +171,18 @@ class LockService extends Service{
 
       let res = await Lock.create({ lock_no, region_id, name, com_id: user.com_id });
       if (!res){
-        throw new Error('创建锁失败');
+        throw '创建锁失败';
       }
       let lockres;
-      locks.push(res.id);
+      locks.push({ id: res.id, lock_no: res.lock_no, name: res.name });
       if (locks_open_by_one){
         lockres = await LockMode.update({locks: JSON.stringify([...new Set(locks)])}, { where: {id: locks_open_by_one.id} });
       }else{
-        lockres = await LockMode.create({locks: JSON.stringify([...new Set(locks)]), com_id: user.com_id, name: '单锁模式', desc: '允许单个锁申请开锁', type: 0 });
+        lockres = await LockMode.create({locks: JSON.stringify([...new Set(locks)]), com_id: user.com_id, name: '单锁模式', desc: '允许单个锁申请开锁', addtime: Date.now(), type: 0, sort: 1 });
       }
 
       if (!lockres){
-        throw new Error('创建锁失败');
+        throw '创建锁失败';
       }
       // 提交事务
       await transaction.commit();
@@ -191,7 +191,7 @@ class LockService extends Service{
       await transaction.rollback();
       return {
         code: 1,
-        msg: err.errorMsg,
+        msg: err,
       };
     }
 
@@ -223,7 +223,7 @@ class LockService extends Service{
    */
   async auth() {
     const { app, ctx } = this;
-    const { user_id, lock_id, duration } = ctx.request.body;
+    const { user_id, lock_id, start_time = 0, end_time } = ctx.request.body;
     const { ApplyAuthorize, User, Lock } = app.model;
     const user = app.userInfo;
 
@@ -235,35 +235,49 @@ class LockService extends Service{
       }
     }
 
-    const exist_lock = await Lock.findOne({ where: { id: lock_id, com_id: user.com_id, is_delete: 0, is_check: 1 }});
-    if (!exist_lock){
+    const lock = await Lock.findOne({ where: { id: lock_id, com_id: user.com_id, is_delete: 0, is_check: 1 }});
+    if (!lock){
       return {
         code: 1,
         msg: '锁信息不存在,请刷新页面重试~'
       }
     }
     let work_no = await this.createWorkNo(0);
-    let res = await ApplyAuthorize.create({
-      com_id: user.com_id,
-      user_id,
-      lock_id,
-      work_no,
-      audit_id: user.id,
-      duration,
-      addtime: new Date().getTime(),
-      type: 1,
-      status: 1,
-    });
-    if (res){
+    let trans;
+    try {
+      trans = await this.ctx.model.transaction();
+      await this.createSecret({
+        com_id: user.com_id,
+        work_no: work_no,
+        lock_no: lock.lock_no,
+        start_time: start_time?new Date(start_time).getTime():Date.now(),
+        expire_time: end_time?new Date(end_time).getTime():Date.now(),
+      });
+      await ApplyAuthorize.create({
+        com_id: user.com_id,
+        user_id,
+        lock_id,
+        work_no,
+        audit_id: user.id,
+        start_time: start_time?new Date(start_time).getTime():0,
+        end_time: end_time?new Date(end_time).getTime():0,
+        addtime: Date.now(),
+        type: 1,
+        status: 1,
+      });
+      await trans.commit();
+    }catch(err){
+      await trans.rollback();
       return {
-        code: 0,
-        msg: 'success'
+        code: 1,
+        msg: err
       }
     }
     return {
-      code: 1,
-      msg: '授权失败'
+      code: 0,
+      msg: 'success'
     }
+
   }
 
   /**
@@ -271,7 +285,7 @@ class LockService extends Service{
    * @returns {Promise<any[]>}
    */
   async listMode() {
-    const { ctx, app } = this;
+    const { app } = this;
     const user = app.userInfo;
     const { LockMode } = app.model;
     const list = await LockMode.findAll({
@@ -279,7 +293,7 @@ class LockService extends Service{
         com_id: user.com_id,
         is_delete: 0
       },
-      order: [['addtime','desc']]
+      order: [['sort','asc'], ['addtime','desc']]
     });
     for (let i in list){
       list[i].addtime = sd.format(new Date(list[i].addtime),'YYYY-MM-DD HH:mm');
@@ -294,7 +308,7 @@ class LockService extends Service{
    */
   async authMode() {
     const { app, ctx } = this;
-    const { user_id, mode_id, duration } = ctx.request.body;
+    const { user_id, mode_id, start_time = 0, end_time } = ctx.request.body;
     const { ApplyWork, User, LockMode } = app.model;
     const user = app.userInfo;
 
@@ -306,35 +320,65 @@ class LockService extends Service{
       }
     }
 
-    const exist_lock = await LockMode.findOne({ where: { id: mode_id, com_id: user.com_id, is_delete: 0 }});
-    if (!exist_lock){
+    const lock_mode = await LockMode.findOne({ where: { id: mode_id, com_id: user.com_id, is_delete: 0 }});
+    if (!lock_mode){
       return {
         code: 1,
         msg: '开锁模式不存在,请刷新页面重试~'
       }
     }
-    let work_no = await this.createWorkNo(1);
-    let res = await ApplyWork.create({
-      com_id: user.com_id,
-      user_id,
-      lock_mode_id: mode_id,
-      audit_id: user.id,
-      work_no,
-      duration,
-      addtime: new Date().getTime(),
-      type: 1,
-      status: 1,
-    });
-    if (res){
+
+    let locks_data = JSON.parse(lock_mode.locks) || [];
+    if (!Array.isArray(locks_data) || locks_data.length === 0){
       return {
-        code: 0,
-        msg: 'success'
+        code: 1,
+        msg: '所选开锁模式下没有锁,请添加'
+      }
+    }
+
+    let work_no = await this.createWorkNo(1);
+
+    let trans;
+    try{
+      trans = await this.ctx.model.transaction();
+      for (let i in locks_data){
+        if (locks_data.hasOwnProperty(i)){
+          for (let lock of locks_data[i]){
+            await this.createSecret({
+              com_id: user.com_id,
+              work_no: work_no,
+              lock_no: lock.lock_no,
+              start_time: start_time?new Date(start_time).getTime():Date.now(),
+              expire_time: end_time?new Date(end_time).getTime():Date.now(),
+            });
+          }
+        }
+      }
+      await ApplyWork.create({
+        com_id: user.com_id,
+        user_id,
+        lock_mode_id: mode_id,
+        audit_id: user.id,
+        work_no,
+        start_time: start_time?new Date(start_time).getTime():0,
+        end_time: end_time?new Date(end_time).getTime():0,
+        addtime: Date.now(),
+        type: 1,
+        status: 1,
+      });
+      await trans.commit();
+    }catch(err){
+      await trans.rollback();
+      return {
+        code: 1,
+        msg: err
       }
     }
     return {
-      code: 1,
-      msg: '授权失败'
+      code: 0,
+      msg: 'success'
     }
+
   }
 
   /**
@@ -361,60 +405,44 @@ class LockService extends Service{
     for (let lock of locks){
       locks_id = locks_id.concat(lock);
     }
-    const list_lock = await Lock.findAll({ where: { id: { [app.Sequelize.Op.in]: locks_id} }, attributes: ['id', 'name'] });
 
-    let new_locks = [];
-    for (let key in locks){
-      if (locks.hasOwnProperty(key)){
-        new_locks[key] = [];
-        for (let i in locks[key]){
-          if (locks[key].hasOwnProperty(i)){
-            let id = locks[key][i];
-            let name = this.findLockName(list_lock,id);
-            new_locks[key][i] = { id, name };
-          }
-        }
-      }
-    }
-
-    mode.locks = new_locks;
-    mode.locks_id = locks;
+    mode.locks = locks;
     return mode;
   }
 
   async editMode(user,id) {
     const { ctx, app } = this;
     const { LockMode } = app.model;
-    let { name, desc, locks_id } = ctx.request.body;
+    let { name, desc, locks_data } = ctx.request.body;
     let lock_mode = await LockMode.findOne({ where: { id,com_id: user.com_id, is_delete: 0 }});
     if (!lock_mode){
       await LockMode.create({
         com_id: user.com_id,
         name,
         desc,
-        locks: JSON.stringify(locks_id),
+        locks: JSON.stringify(locks_data),
         addtime: Date.now(),
         type: 1,
       });
     }else{
 
       if (lock_mode.type === 0){
-        locks_id = locks_id[0];
+        locks_data = locks_data[0];
       }else{
-        const lock_one = await LockMode.find({ com_id: user.com_id, is_delete: 0, type: 0 });
-        let locks_one_id = lock_one?(JSON.parse(lock_one.locks) || []):[];
-        if (locks_id.length > 0){
-          for (let i in locks_one_id){
-            if (locks_one_id.hasOwnProperty(i) && this.inLocks(locks_id,locks_one_id[i])){
-              locks_one_id.splice(i,1);
+        const lock_one = await LockMode.findOne({ where: { com_id: user.com_id, is_delete: 0, type: 0 } });
+        let locks_one_data = lock_one?(JSON.parse(lock_one.locks) || []):[];
+        if (locks_data.length > 0){
+          for (let i in locks_one_data){
+            if (locks_one_data.hasOwnProperty(i) && this.inLocks(locks_data,locks_one_data[i])){
+              locks_one_data.splice(i,1);
             }
           }
         }
-        lock_one.locks = JSON.stringify(locks_one_id);
+        lock_one.locks = JSON.stringify(locks_one_data);
         await lock_one.save();
       }
 
-      await LockMode.update({ name, desc, locks: JSON.stringify(locks_id) }, { where: { id, com_id: user.com_id } });
+      await LockMode.update({ name, desc, locks: JSON.stringify(locks_data) }, { where: { id, com_id: user.com_id } });
     }
     return {
       code: 0,
@@ -422,11 +450,11 @@ class LockService extends Service{
     }
   }
 
-  inLocks(locks_id,id){
-    for (let index in locks_id){
-      if (locks_id.hasOwnProperty(index) && index > 0){
-        for (let _id of locks_id[index]){
-          if (_id === id){
+  inLocks(locks_data,lock_one){
+    for (let index in locks_data){
+      if (locks_data.hasOwnProperty(index) && index > 0){
+        for (let lock of locks_data[index]){
+          if (lock.id == lock_one.id){
             return true;
           }
         }
@@ -435,12 +463,29 @@ class LockService extends Service{
     return false;
   }
 
-  findLockName(locks,id) {
-    for (let lock of locks){
-      if (lock.id == id){
-        return lock.name;
-      }
-    }
+  async createSecret(data) {
+    const { app } = this;
+    const { LockSecret } = app.model;
+    const { com_id, work_no, lock_no, start_time, expire_time } = data;
+    const secret_key = await this.generateSecretKey();
+    await LockSecret.create({
+      com_id,
+      work_no,
+      lock_no,
+      secret_key,
+      start_time,
+      expire_time,
+      is_send: 0
+    });
+
+  }
+
+  /**
+   * 生成开锁指令
+   * @returns {Promise<string>}
+   */
+  async generateSecretKey(){
+    return 'secret_key';
   }
 
   /**

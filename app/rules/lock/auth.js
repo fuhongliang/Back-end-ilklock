@@ -25,16 +25,13 @@ module.exports = {
     },
     message: '请选择用户',
   },
-  duration: {
-    type: 'integer',
-    min: 1,
+  start_time: {
+    type: 'string',
+    message: '开锁开始时间格式错误',
+  },
+  end_time: {
+    type: 'string',
     required: true,
-    transform(value) {
-      if ('string' === typeof value){
-        value = parseInt(value);
-      }
-      return value;
-    },
-    message: '请选择时长',
+    message: '请选择开锁结束时间',
   },
 };

@@ -1,16 +1,16 @@
-table{
+.data-page table{
     width: 100%;
 }
-table thead{
+.data-page table thead{
     background: #F5F8F7;
     border-radius: 4px;
     height: 3.5rem;
     line-height: 3.5rem;
 }
-table thead th:first-child{
+.data-page table thead th:first-child{
     padding-left: 1rem;
 }
-table tbody td:first-child{
+.data-page table tbody td:first-child{
     padding-left: 1rem;
 }
 .tb-col-1{
@@ -59,11 +59,11 @@ a.tb-btn:hover{
     background: #F2535A;
     color: #FFFFFF;
 }
-table td{
+.data-page table td{
     border-bottom: 1px solid #F1F1F1;
     padding: .75rem .25rem;
     font-size: .88rem;
 }
-table td .region-title{
+.data-page table td .region-title{
     cursor: pointer;
 }

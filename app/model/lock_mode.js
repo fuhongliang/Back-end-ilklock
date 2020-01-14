@@ -44,6 +44,11 @@ module.exports = app => {
         type: INTEGER(1),
         allowNull: false,
         defaultValue: 0
+      },
+      sort: {
+        type: INTEGER(11),
+        allowNull: false,
+        defaultValue: 100
       }
     },
     {

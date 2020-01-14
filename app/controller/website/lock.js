@@ -39,7 +39,7 @@ class LockController extends BaseController {
     assert(/^\d+$/.test(id),'删除失败');
     const { LockMode } = app.model;
     const user = app.userInfo;
-    await LockMode.update({ is_delete: 1},{ where: { id, com_id: user.com_id } });
+    await LockMode.update({ is_delete: 1},{ where: { id, com_id: user.com_id, type: 1 } });
     ctx.body = {
       code: 0,
       msg: '删除成功'
@@ -64,8 +64,8 @@ class LockController extends BaseController {
       let mode = await lock.getMode(user,id);
       let list_region = await region.allArea(user.com_id);
 
-      const { locks = [], locks_id = [] } = mode;
-      await ctx.render('/lock/edit_mode', { mode: JSON.stringify(mode), locks: JSON.stringify(locks), locks_id: JSON.stringify(locks_id), list_region: JSON.stringify(list_region) });
+      const { locks = [] } = mode;
+      await ctx.render('/lock/edit_mode', { mode: JSON.stringify(mode), locks: JSON.stringify(locks), list_region: JSON.stringify(list_region) });
     }
 
   }
