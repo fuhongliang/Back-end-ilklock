@@ -73,7 +73,7 @@ module.exports = app => {
   router.get('/web/mode_locks', controller.website.lock.listMode);
   router.post('/web/mode_auth', controller.website.lock.authMode);
   router.all('/web/mode_edit', controller.website.lock.modeEdit);
-  router.get('/web/mode_del', controller.website.lock.modeDel);
+  router.post('/web/mode_del', controller.website.lock.modeDel);
 
   //
   router.get('/', controller.home.index);

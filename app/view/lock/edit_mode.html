@@ -193,7 +193,7 @@
           success: function(res){
             if (res.code === 0){
                 layer.msg('保存成功',{ time: 1500 },function(){
-                  // window.location.href = `<$ helper.getHost() $>/web/mode_locks`;
+                  window.location.href = `<$ helper.getHost() $>/web/mode_locks`;
                 });
             }else{
               layer.msg(res.msg)
