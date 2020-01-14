@@ -19,9 +19,8 @@ class HomeController extends Controller {
     const user = await User.findOne({ where: {id: 1}});
     // await app.cache.set('test',{hh: '哈哈', test: '测试'});
     arr.push('3');
-    const role = await Role.findOrCreate({ where: { id: 16, com_id: 1 } , defaults:{ id: '',name: '普通用户', desc: '哈哈哈', addtime: new Date().getTime()} });
-    console.log(role);
 
+    let a = [123];
     ctx.body = {
       test: await this.test2('ddd'),
       a: ctx.helper.inArray(1,['1', 2]),
@@ -35,7 +34,9 @@ class HomeController extends Controller {
       'sj': new Date('2020-01-02'),
       'wj': fs.mkdirSync(path.join(this.config.baseDir,'/run/tempfile/2020-01-09'),{ recursive: true}),
       ym: ctx.helper.getHost(),
-      new_obj: Object.assign({ com_id: 1},{ name: 111, com_id: 2})
+      new_obj: Object.assign({ com_id: 1},{ name: 111, com_id: 2}),
+      hb: [1,2,3].concat([1,2,4]),
+      yx: Array.isArray(a)?Array.isArray(a[0])?a:[a]:[[a]],
 
     };
   }

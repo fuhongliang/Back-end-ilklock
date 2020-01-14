@@ -12,6 +12,8 @@ input {  filter: none !important; -webkit-filter: none !important }
     width: 100%;
     height: 100%;
     background-image: url("../images/login/login.png");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
 }
 .tab-login-title{
     color: #FFFFFF;

@@ -93,6 +93,10 @@ $(document).on('click','#ck-all',function(){
   }else{
     $('.ck-item').prop('checked',false);
   }
+  // document.getElementsByClassName('.ck-item').dispatchEvent(new Event('onclick'));
+  $('.ck-item').each(function(){
+    $(this)[0].dispatchEvent(new Event('change'));
+  });
 });
 $(document).on('click','.ck-item',function() {
   if (!$(this).prop('checked')){

@@ -21,7 +21,7 @@ class LockController extends BaseController {
     const { ctx } = this;
     const { lock } = ctx.service;
 
-    const validateResult = await ctx.validate('lock.auth_mode',ctx.request.body);
+    const validateResult = await ctx.validate('lock.authMode',ctx.request.body);
     if (!validateResult){
       return ;
     }
@@ -48,17 +48,23 @@ class LockController extends BaseController {
 
   async modeEdit() {
     const { ctx, app } = this;
+    const { id = 0 } = ctx.query;
+    const { lock, region } = ctx.service;
+    const user = app.userInfo;
+
     if (ctx.method === 'POST'){
+      const { lock } = ctx.service;
+      const validateResult = await ctx.validate('lock.editMode',ctx.request.body);
+      if (!validateResult){
+        return ;
+      }
+      ctx.body = await lock.editMode(user,id);
 
     }else{
-      const { lock, region } = ctx.service;
-      const { id = 0 } = ctx.query;
-      const user = app.userInfo;
+      let mode = await lock.getMode(user,id);
       let list_region = await region.allArea(user.com_id);
-      let mode = await lock.getMode(id);
 
       const { locks = [], locks_id = [] } = mode;
-
       await ctx.render('/lock/edit_mode', { mode: JSON.stringify(mode), locks: JSON.stringify(locks), locks_id: JSON.stringify(locks_id), list_region: JSON.stringify(list_region) });
     }
 

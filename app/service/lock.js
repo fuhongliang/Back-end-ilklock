@@ -78,7 +78,11 @@ class LockService extends Service{
       attributes: ['locks']
     });
 
-    locks_open_by_one = locks_open_by_one ? JSON.parse(`${locks_open_by_one['locks']}`):[];
+    locks_open_by_one = locks_open_by_one ? (JSON.parse(locks_open_by_one['locks']) || []):[];
+
+    if (!Array.isArray(locks_open_by_one)){
+      locks_open_by_one = [ locks_open_by_one ];
+    }
 
     let list = await Lock.findAll({
       where: {
@@ -333,19 +337,25 @@ class LockService extends Service{
     }
   }
 
-  async getMode(id) {
+  /**
+   * 获取开锁模式
+   * @param user
+   * @param id
+   * @returns {Promise<{}|any>}
+   */
+  async getMode(user,id) {
     const { app } = this;
     const{ LockMode, Lock } = app.model;
-    const user = app.userInfo;
-    let mode = await LockMode.findOne({ where: { id, com_id: user.com_id, is_delete: 0 }, raw: true });
+    let mode = await LockMode.findOne({ where: { id, com_id: user.com_id, is_delete: 0 } });
 
     if (!mode){
       return {};
     }
 
-    let locks = JSON.parse(mode.locks) || [];
+    let locks = JSON.parse(mode.locks);
+    locks = Array.isArray(locks)?Array.isArray(locks[0])?locks:[locks]:[[locks]];
     if (!Array.isArray(locks[0])) {
-      locks[0] = locks;
+      locks = [ locks ];
     }
     let locks_id = [];
     for (let lock of locks){
@@ -356,6 +366,7 @@ class LockService extends Service{
     let new_locks = [];
     for (let key in locks){
       if (locks.hasOwnProperty(key)){
+        new_locks[key] = [];
         for (let i in locks[key]){
           if (locks[key].hasOwnProperty(i)){
             let id = locks[key][i];
@@ -367,12 +378,65 @@ class LockService extends Service{
     }
 
     mode.locks = new_locks;
-    mode.locks_id = locks_id;
+    mode.locks_id = locks;
     return mode;
   }
 
+  async editMode(user,id) {
+    const { ctx, app } = this;
+    const { LockMode } = app.model;
+    let { name, desc, locks_id } = ctx.request.body;
+    let lock_mode = await LockMode.findOne({ where: { id,com_id: user.com_id, is_delete: 0 }});
+    if (!lock_mode){
+      await LockMode.create({
+        com_id: user.com_id,
+        name,
+        desc,
+        locks: JSON.stringify(locks_id),
+        addtime: Date.now(),
+        type: 1,
+      });
+    }else{
+
+      if (lock_mode.type === 0){
+        locks_id = locks_id[0];
+      }else{
+        const lock_one = await LockMode.find({ com_id: user.com_id, is_delete: 0, type: 0 });
+        let locks_one_id = lock_one?(JSON.parse(lock_one.locks) || []):[];
+        if (locks_id.length > 0){
+          for (let i in locks_one_id){
+            if (locks_one_id.hasOwnProperty(i) && this.inLocks(locks_id,locks_one_id[i])){
+              locks_one_id.splice(i,1);
+            }
+          }
+        }
+        lock_one.locks = JSON.stringify(locks_one_id);
+        await lock_one.save();
+      }
+
+      await LockMode.update({ name, desc, locks: JSON.stringify(locks_id) }, { where: { id, com_id: user.com_id } });
+    }
+    return {
+      code: 0,
+      msg: 'success'
+    }
+  }
+
+  inLocks(locks_id,id){
+    for (let index in locks_id){
+      if (locks_id.hasOwnProperty(index) && index > 0){
+        for (let _id of locks_id[index]){
+          if (_id === id){
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
   findLockName(locks,id) {
-    for (lock of locks){
+    for (let lock of locks){
       if (lock.id == id){
         return lock.name;
       }

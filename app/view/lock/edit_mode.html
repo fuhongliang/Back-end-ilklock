@@ -3,64 +3,65 @@
 <% block content %>
 <div id="page">
   <div  class="content">
-    <form class="data-page" action="<$ helper.getHost() $>/web/mode_edit" method="post"
-          return-url="<$ helper.getHost() $>/web/mode_locks">
-      <div class="form-group row">
-        <label class="col-sm-1 col-form-label text-right">名称</label>
-        <div class="col-sm-8">
-          <div class="input-group">
-            <input type="text" class="form-control" name="name" placeholder="请输入开锁模式名称" :value="mode.name" />
-          </div>
-        </div>
-      </div>
-      <div class="form-group row">
-        <label class="col-sm-1 col-form-label text-right">描述</label>
-        <div class="col-sm-8">
-          <div class="input-group">
-            <textarea class="form-control" name="desc" placeholder="请描述">{{mode.desc}}</textarea>
-          </div>
-        </div>
-      </div>
-      <div class="form-group row">
-        <label class="col-sm-1 col-form-label text-right">添加锁</label>
-        <div class="col-sm-8">
-          <div class="lock-head" v-if="mode.type != 0">
-            <div class="add-order">
-              <span @click="addLockOrder()">添加开锁顺序</span>
-            </div>
-          </div>
-          <div class="lock-box" v-for="(list,index) in locks">
-            <div class="box-head">
-              <span>第{{index + 1}}开锁顺序</span>
-              <span class="iconfont del-order" @click="removeLockOrder(index)">&#xe603;</span>
-            </div>
-            <div class="list-locks">
-              <div class="item add-lock" @click="addLock(index)">
-                <span class="iconfont add">&#xe64f;</span>
-                <span>添加锁</span>
-              </div>
-              <div class="item lock" v-for="lock in list">
-                <span class="lock-name">{{lock.name}}</span>
-                <span class="iconfont delete">&#xe603;</span>
+      <template>
+        <form class="data-page" action="" method="post">
+          <div class="form-group row">
+            <label class="col-sm-1 col-form-label text-right">名称</label>
+            <div class="col-sm-8">
+              <div class="input-group">
+                <input type="text" class="form-control" name="name" placeholder="请输入开锁模式名称" v-model="mode.name" />
               </div>
             </div>
           </div>
-        </div>
-        <div class="col-sm-3">
-          <div class="tips">
+          <div class="form-group row">
+            <label class="col-sm-1 col-form-label text-right">描述</label>
+            <div class="col-sm-8">
+              <div class="input-group">
+                <textarea class="form-control" name="desc" placeholder="请描述" v-model="mode.desc"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-1 col-form-label text-right">添加锁</label>
+            <div class="col-sm-8">
+              <div class="lock-head" v-if="mode.type != 0">
+                <div class="add-order">
+                  <span @click="addLockOrder()">添加开锁顺序</span>
+                </div>
+              </div>
+              <div class="lock-box" v-for="(list,index) in locks">
+                <div class="box-head" v-if="mode.type != 0">
+                  <span>第{{index + 1}}开锁顺序</span>
+                  <span class="iconfont del-order" @click="removeLockOrder(index)">&#xe603;</span>
+                </div>
+                <div class="list-locks">
+                  <div class="item add-lock" @click="addLock(index)">
+                    <span class="iconfont add">&#xe64f;</span>
+                    <span>添加锁</span>
+                  </div>
+                  <div class="item lock" v-for="(lock,i) in list">
+                    <span class="lock-name">{{lock.name}}</span>
+                    <span class="iconfont delete" @click="delLock(index,i)">&#xe603;</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-3">
+              <div class="tips">
 
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <div class="form-group row">
-        <label class="col-sm-1 col-form-label text-right"></label>
-        <div class="col-sm-6">
-          <input type="hidden" name="_csrf" value="<$ ctx.csrf $>" />
-          <button type="button" class="layui-btn layui-btn-disabled" v-if="is_change == 0">保存</button>
-          <button type="button" class="btn btn-success save" v-else>保存</button>
-        </div>
-      </div>
-    </form>
+          <div class="form-group row">
+            <label class="col-sm-1 col-form-label text-right"></label>
+            <div class="col-sm-6">
+              <input type="hidden" name="_csrf" value="<$ ctx.csrf $>" />
+              <button type="button" class="layui-btn layui-btn-disabled" v-if="is_change == 0">保存</button>
+              <button type="button" class="btn btn-success" v-else @click="save()">保存</button>
+            </div>
+          </div>
+        </form>
+      </template>
   </div>
 </div>
 
@@ -104,8 +105,8 @@
                    :value="lock.id" v-model="check_ids" :id="'ck' + i" />
             <label class="custom-control-label" :for="'ck' + i"></label>
           </div>
-          <div class="lock-name" v-if="isChecked(lock.id)">{{lock.name}}</div>
-          <div class="lock-name" v-else style="color: #E6E6E6;">{{lock.name}}</div>
+          <div class="lock-name" v-if="isChecked(lock.id)" style="color: #E6E6E6;">{{lock.name}}</div>
+          <div class="lock-name" v-else>{{lock.name}}</div>
         </div>
       </div>
     </div>
@@ -121,19 +122,27 @@
 <% block script %>
 
 <script type="text/javascript">
-
+  console.log(JSON.parse('<$ locks_id | safe $>'));
+  console.log(JSON.parse('<$ locks | safe $>'));
   let page = new Vue({
     el: '#page',
     data: {
       mode: JSON.parse('<$ mode | safe $>') || {},
       locks: JSON.parse('<$ locks | safe $>') || [],
-      ck_ids: [],
+      ck_ids: JSON.parse('<$ locks_id | safe $>') || [],
       is_change: 0
+    },
+    created: function() {
+      if (this.locks.length === 0){
+        this.locks.push([]);
+        this.ck_ids.push([]);
+      }
     },
     methods: {
       addLock: function(index) {
         lock.index = index;
         lock.check_ids = [];
+        $('#ck-all').prop('checked',false);
         let layerAdd = layer.open({
           type: 1,
           title: '添加锁',
@@ -143,9 +152,23 @@
         });
         $('#pick-lock').find('.layer-btn-cancel').attr('layer-index',layerAdd);
       },
+      delLock: function(index,i) {
+        console.log(this.locks[index][i].id);
+        for (let ii in this.ck_ids[index]){
+          if (this.ck_ids[index].hasOwnProperty(ii)){
+            if (this.ck_ids[ii] === this.locks[index][i].id){
+              this.ck_ids[index].splice(ii,1)
+            }
+          }
+        }
+        this.locks[index].splice(i,1);
+        this.is_change = 1;
+        // Vue.set(this.locks,index,this.locks[index]);
+      },
       addLockOrder: function() {
         layer.confirm('确定添加一条开锁顺序?', function(index) {
-          page.locks.push({});
+          page.locks.push([]);
+          page.ck_ids.push([]);
           layer.close(index);
         });
 
@@ -153,7 +176,32 @@
       removeLockOrder: function(index) {
         layer.confirm('确定移除这条开锁顺序?', function(i) {
           page.locks.splice(index);
+          page.ck_ids.splice(index);
           layer.close(i);
+        });
+      },
+      save: function() {
+        $.ajax({
+          url: window.location.href,
+          type: $('form').attr('method'),
+          data: {
+            _csrf,
+            name: this.mode.name,
+            desc: this.mode.desc,
+            locks_id: this.ck_ids
+          },
+          success: function(res){
+            if (res.code === 0){
+                layer.msg('保存成功',{ time: 1500 },function(){
+                  // window.location.href = `<$ helper.getHost() $>/web/mode_locks`;
+                });
+            }else{
+              layer.msg(res.msg)
+            }
+          },
+          error: function(){
+            layer.msg('网络异常');
+          }
         });
       }
     }
@@ -168,7 +216,7 @@
     data: {
       list_region: JSON.parse('<$ list_region | safe $>') || [],
       list_lock: [],
-      locks: [],
+      locks: {},
       check_ids: [],
       index: 0
     },
@@ -232,6 +280,7 @@
         });
       },
       isChecked: function(lock_id) {
+
         for (let id of page.ck_ids){
           if (lock_id == id){
             return true;
@@ -240,6 +289,7 @@
         return false;
       },
       selLock: function() {
+
         layer.closeAll();
         let selLocks = [];
         for (let id of this.check_ids){
@@ -249,14 +299,18 @@
           };
           selLocks.push(lock);
         }
-        page.locks[this.index] = page.locks[this.index].concat(selLocks);
-        page.ck_ids = page.ck_ids.concat(this.check_ids);
+
+        page.is_change = 1;
+        Vue.set(page.locks,this.index,page.locks[this.index].concat(selLocks));
+        Vue.set(page.ck_ids,this.index,page.ck_ids[this.index].concat(this.check_ids));
       },
       getLockName: function(id) {
-        for (let locks of this.locks){
-          for (let lock of locks){
-            if (lock.id === id){
-              return lock.name;
+        for (let key in this.locks){
+          if (this.locks.hasOwnProperty(key)){
+            for (let lock of this.locks[key]){
+              if (lock.id === id){
+                return lock.name;
+              }
             }
           }
         }
@@ -265,5 +319,12 @@
     }
   });
 
+</script>
+
+<!-- 监听input -->
+<script type="text/javascript">
+    $(document).on('input','input,textarea',function(){
+      page.is_change = 1;
+    })
 </script>
 <% endblock %>
