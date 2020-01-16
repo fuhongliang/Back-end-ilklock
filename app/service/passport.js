@@ -25,14 +25,12 @@ class PassportService extends BaseService{
           msg: '解析用户数据失败'
         }
       }
-
       if (decrypt_data){
 
         // 获取到微信用户openid unionid,查询数据库
         let account = await WxAccount.findOne({
           where: {
-            openid: result.openid,
-            unionid: result.unionid,
+            unionid: decrypt_data.unionId
           }
         });
 
