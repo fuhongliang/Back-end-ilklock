@@ -30,7 +30,12 @@ module.exports = appInfo => {
 
   config.auth = {
     enable: true,
-    ignore: ['/api/v1/login', '/api/v1/binding', '/api/v1/get_valid_code', '/web/login', '/web/get_captcha', '/static'],
+    ignore: ['/api/v1/login', '/api/v1/binding', '/api/v1/get_valid_code', '/web/login', '/web/get_captcha', '/static', '/web/admin/login'],
+  };
+
+  config.permission = {
+    enable: true,
+    ignore: ['/web/admin'],
   };
 
   config.access = {

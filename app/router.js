@@ -75,6 +75,10 @@ module.exports = app => {
   router.all('/web/mode_edit', controller.website.lock.modeEdit);
   router.post('/web/mode_del', controller.website.lock.modeDel);
 
+  // 后台管理
+  router.all('/web/admin/login', controller.webadmin.passport.login);
+  router.get('/web/admin/list_comp', controller.webadmin.company.list);
+  router.all('/web/admin/add_comp', controller.webadmin.company.add);
   //
   router.get('/', controller.home.index);
   router.get('/test', controller.home.test);

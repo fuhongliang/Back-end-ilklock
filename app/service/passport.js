@@ -159,5 +159,42 @@ class PassportService extends BaseService{
     }
   }
 
+  /**
+   * 后台管理员登录
+   * @returns {Promise<{msg: string, code: number, err_filed: string}|{msg: string, code: number, err_field: string}|{msg: string, code: number}>}
+   */
+  async adminLogin(){
+    const { ctx } = this;
+    const { username, password, code } = ctx.request.body;
+    const { Admin } = ctx.model;
+
+    if ( code.toLocaleLowerCase() !== ctx.session.code ){
+      return {
+        code: 1,
+        err_field: 'code',
+        msg: '验证码错误'
+      }
+    }
+    const user = await Admin.findOne({
+      where: {
+        username: username.trim(),
+        password: crypto.createHash('sha1').update(password).digest('hex'),
+        is_delete: 0,
+      }
+    });
+    if (!user){
+      return {
+        code: 1,
+        err_filed: 'name_pwd',
+        msg: '用户名或密码错误'
+      }
+    }
+    ctx.session.adminInfo = user.toJSON();
+    return {
+      code: 0,
+      msg: 'success'
+    }
+  }
+
 }
 module.exports = PassportService;

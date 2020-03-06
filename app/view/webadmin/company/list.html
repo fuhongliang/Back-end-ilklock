@@ -1,0 +1,53 @@
+<% extends "layout/admin.html" %>
+
+<% block content %>
+<div id="page">
+    <div class="content">
+        <!-- 数据展示 -->
+        <div class="data-page">
+            <div class="page-nav">
+                <div class="util-btn">
+                    <a href="<$ helper.getHost() $>/web/admin/add_comp" class="tb-btn tb-btn-auth">添加企业</a>
+                </div>
+            </div>
+            <!-- 检索 -->
+
+            <!-- table -->
+            <template>
+                <table>
+                    <thead>
+                    <th class="tb-col-6">登录账号</th>
+                    <th class="tb-col-5">企业名称</th>
+                    <th class="tb-col-4">企业地址</th>
+                    <th class="tb-col-2 text-center">联系人</th>
+                    <th class="tb-col-2 text-center">联系电话</th>
+                    </thead>
+                    <tbody>
+                    <tr v-for="(com,index) in data">
+                        <td class="tb-col-6">{{com.account}}</td>
+                        <td class="tb-col-5">{{com.com_name}}</td>
+                        <td class="tb-col-4">{{com.address}}</td>
+                        <td class="tb-col-2 text-center">{{com.name}}</td>
+                        <td class="tb-col-2 text-center">{{com.phone}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </template>
+            <!-- 分页 -->
+            <div id="paginate"></div>
+        </div>
+    </div>
+</div>
+<% endblock %>
+
+<% block script %>
+<script type="text/javascript">
+  let page = new Vue({
+    el: '#page',
+    data: {
+      data: JSON.parse(`<$ list | safe $>`)
+    },
+  });
+
+</script>
+<% endblock %>

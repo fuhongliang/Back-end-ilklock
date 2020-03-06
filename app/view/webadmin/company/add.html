@@ -1,0 +1,202 @@
+<% extends "layout/admin.html" %>
+
+<% block content %>
+<style>
+    .error-tips{
+        position: absolute;
+        display: none;
+        color: #EE4000;
+        font-size: .8rem;
+        top: -1rem;
+        left: 1rem;
+    }
+</style>
+<div id="page">
+    <div class="content">
+        <form class="data-page" action="<$ helper.createUrl('/web/admin/add_comp') $>"
+              return-url="<$ helper.createUrl('/web/admin/list_comp') $>"
+              method="post">
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label text-right">登录账号</label>
+                <div class="col-sm-6">
+                    <div class="error-tips"></div>
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="account"
+                               placeholder="请输入登录账号" />
+                    </div>
+                    <div class="text-tips">账号长度6-15位</div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label text-right">登录密码</label>
+                <div class="col-sm-6">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="password"
+                               placeholder="请输入登录密码" />
+                    </div>
+                    <div class="text-tips">密码长度至少6位</div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label text-right">确认密码</label>
+                <div class="col-sm-6">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="sec_pwd"
+                               placeholder="请确认登录密码" />
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label text-right">企业名称</label>
+                <div class="col-sm-6">
+                    <div class="error-tips"></div>
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="com_name"
+                               placeholder="请输入企业名称" />
+                    </div>
+                    <div class="text-tips">企业名称长度3-25位</div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label text-right">企业地址</label>
+                <div class="col-sm-6">
+                    <div class="error-tips"></div>
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="address"
+                               placeholder="请输入企业地址" />
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label text-right">联系人</label>
+                <div class="col-sm-6">
+                    <div class="error-tips"></div>
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="name"
+                               placeholder="请输入企业联系人姓名" />
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label text-right">联系电话</label>
+                <div class="col-sm-6">
+                    <div class="error-tips"></div>
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="phone"
+                               placeholder="请输入企业联系人电话" />
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-1 col-form-label text-right"></label>
+                <div class="col-sm-6">
+                    <input type="hidden" name="_csrf" value="<$ ctx.csrf $>" />
+                    <button type="button" class="btn btn-success add">添加</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<% endblock %>
+
+<% block script %>
+
+<script type="text/javascript">
+
+    function valid(){
+      let valid = true;
+        $('input[type!="hidden"]').each(function(index){
+          let iptname = $(this).attr('name');
+          let value = $(this).val().trim();
+
+          if (value.length < 1){
+            $(this).closest('.form-group').find('.error-tips').html(iptname + '不能为空');
+            $(this).focus();
+            valid = false;
+            return false;
+          }
+
+          switch (iptname) {
+            case 'account':
+              if (value.length < 6 || value.length > 15){
+                $(this).closest('.form-group').find('.error-tips').html('账号长度必须6-15位以内');
+                $(this).focus();
+                valid = false;
+                return false;
+              }
+              break;
+            case 'password':
+              if (value.length < 6){
+                $(this).closest('.form-group').find('.error-tips').html('密码长度至少6位');
+                $(this).focus();
+                valid = false;
+                return false;
+              }
+              break;
+            case 'sec_pwd':
+              if (value !== $('input[name="password"]').val()){
+                $(this).closest('.form-group').find('.error-tips').html('密码确认失败');
+                $(this).focus();
+                valid = false;
+                return false;
+              }
+              break;
+            case 'com_name':
+              if (value.length < 3 || value.length > 25){
+                $(this).closest('.form-group').find('.error-tips').html('企业名称长度必须3-25位以内');
+                $(this).focus();
+                valid = false;
+                return false;
+              }
+              break;
+            case 'phone':
+              if (!/^(1[3|4|5|8]\d{9})$/.test(value)){
+                $(this).closest('.form-group').find('.error-tips').html('手机号格式错误');
+                $(this).focus();
+                valid = false;
+                return false;
+              }
+              break;
+            default:
+              break;
+          }
+        });
+
+        return valid;
+
+    }
+
+    $(document).on('click','.add',function(){
+      if (!valid()){
+        $('.error-tips').show();
+        return false;
+      }
+      $('.error-tips').html('');
+      $('.error-tips').hide();
+      let form = $(this).closest('form');
+      $.ajax({
+        url: form.attr('action'),
+        type: form.attr('method'),
+        data: form.serialize(),
+        success: function(res){
+          if (res.code === 0){
+            layer.msg('保存成功',{time: 1500},function(){
+              let returnUrl = form.attr('return-url');
+              if (returnUrl){
+                window.location.href = returnUrl;
+              }else{
+                window.location.reload();
+              }
+            });
+          }else{
+            layer.msg(res.msg);
+          }
+        },
+        error: function(){
+          layer.msg('服务器异常,请稍后尝试~');
+        }
+      });
+    });
+
+</script>
+<% endblock %>

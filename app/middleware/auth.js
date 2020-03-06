@@ -5,7 +5,7 @@ module.exports = () => {
 
     // 判断用户是否登录
     let url = ctx.path;
-    const { User } = ctx.model;
+    const { User, Admin } = ctx.model;
     if (/^\/api\/v1/.test(url) && ctx.method === 'POST'){
       const { access_token, user_id } = ctx.request.body;
       assert(access_token,'参数access_token不能为空');
@@ -22,6 +22,25 @@ module.exports = () => {
         return;
       }
       ctx.app.userInfo = userInfo;
+
+    } else if (/^\/web\/admin/.test(url)) {
+
+      const admin = ctx.session.adminInfo;
+      let returnUrl = `/web/admin/login?return_url=${ctx.helper.getHost()}${url}`;
+      if (ctx.querystring){
+        returnUrl += '&' + ctx.querystring
+      }
+
+      if (!admin){
+        ctx.redirect(returnUrl);
+        return;
+      }
+      let adminInfo = await Admin.findOne({ where:{ id: admin.id, is_delete: 0 } });
+      if (!adminInfo){
+        ctx.redirect(returnUrl);
+        return;
+      }
+      ctx.app.adminInfo = adminInfo;
 
     } else if (/^\/web/.test(url)) {
 

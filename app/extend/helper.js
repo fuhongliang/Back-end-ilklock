@@ -12,45 +12,7 @@ module.exports = {
     const { ctx } = this;
     const menu = require(path.join(process.cwd(), 'app/controller/website/menu'));
     let menu_list = menu.getMenuList();
-    for (let i in menu_list) {
-      if (menu_list.hasOwnProperty(i)){
-        menu_list[i].is_active = false;
-        if (menu_list[i].url === ctx.path) {
-          menu_list[i].is_active = true;
-        }
-        if (menu_list[i].children && Array.isArray(menu_list[i].children)) {
-          let children = menu_list[i].children;
-          for (let ci in children) {
-            if (children.hasOwnProperty(ci)){
-              menu_list[i].children[ci].is_active = false;
-              if (ctx.path === menu_list[i].children[ci].url) {
-                menu_list[i].children[ci].is_active = true;
-                menu_list[i].is_active = true;
-              }
-
-              if (children[ci].sub && Array.isArray(children[ci].sub)){
-                for (let sub of children[ci].sub){
-                  if (sub.url === ctx.path){
-                    menu_list[i].children[ci].is_active = true;
-                    menu_list[i].is_active = true;
-                  }
-                }
-              }
-            }
-
-          }
-        }
-
-        if (menu_list[i].sub && Array.isArray(menu_list[i].sub)){
-          for (let sub of menu_list[i].sub){
-            if (sub.url === ctx.path){
-              menu_list[i].is_active = true;
-            }
-          }
-        }
-      }
-
-    }
+    this.activeMenu(menu_list,ctx.path);
     return JSON.stringify(menu_list);
 
     // this 是 helper 对象，在其中可以调用其他 helper 方法
@@ -58,6 +20,41 @@ module.exports = {
     // this.app => application 对象
   },
 
+  getAdminMenu() {
+    const { ctx } = this;
+    let menu_list = require(path.join(process.cwd(), 'app/controller/webadmin/menu'));
+    this.activeMenu(menu_list,ctx.path,...[]);
+    return JSON.stringify(menu_list);
+
+    // this 是 helper 对象，在其中可以调用其他 helper 方法
+    // this.ctx => context 对象
+    // this.app => application 对象
+  },
+
+  activeMenu(menu_list, route, ...parents){
+    for (let i in menu_list) {
+      if (menu_list.hasOwnProperty(i)){
+        menu_list[i].is_active = false;
+        if (menu_list[i].url === route) {
+          menu_list[i].is_active = true;
+        }else if (menu_list[i].sub && Array.isArray(menu_list[i].sub)){
+          for (let sub of menu_list[i].sub){
+            if (sub.url === route){
+              menu_list[i].is_active = true;
+            }
+          }
+        }
+        if (menu_list[i].is_active){
+          for (let p of parents){
+            p.is_active = true;
+          }
+        }else if (menu_list[i].children && Array.isArray(menu_list[i].children)){
+          parents.push(menu_list[i]);
+          this.activeMenu(menu_list[i].children,route,...parents);
+        }
+      }
+    }
+  },
 
   async getAllPermisstion() {
     console.log(this.ctx.path);
@@ -165,8 +162,7 @@ module.exports = {
     if (param){
       path += `?${param}`;
     }
-    const { ctx } = this;
-    return ctx.request.protocol + '://' + ctx.request.host + path;
+    return this.getHost() + path;
   }
 
 };

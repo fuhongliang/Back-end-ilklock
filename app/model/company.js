@@ -12,6 +12,11 @@ module.exports = app => {
         primaryKey: true,
         autoIncrement: true
       },
+      account: {
+        type: STRING(25),
+        allowNull: false,
+        defaultValue: ''
+      },
       com_name: {
         type: STRING(25),
         allowNull: false,

@@ -6,32 +6,18 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "7191776",
+      "name": "企业",
+      "font_class": "qiye",
+      "unicode": "e630",
+      "unicode_decimal": 58928
+    },
+    {
       "icon_id": "1256457",
       "name": "删除",
       "font_class": "shanchu",
       "unicode": "e603",
       "unicode_decimal": 58883
-    },
-    {
-      "icon_id": "1825236",
-      "name": "三角形",
-      "font_class": "triangle-copy-copy-copy",
-      "unicode": "e60b",
-      "unicode_decimal": 58891
-    },
-    {
-      "icon_id": "4452094",
-      "name": "人员管理",
-      "font_class": "rrenyuanguanli-",
-      "unicode": "e69f",
-      "unicode_decimal": 59039
-    },
-    {
-      "icon_id": "5229818",
-      "name": "三角形",
-      "font_class": "triangle-right",
-      "unicode": "e600",
-      "unicode_decimal": 58880
     },
     {
       "icon_id": "6047788",
@@ -55,18 +41,46 @@
       "unicode_decimal": 59180
     },
     {
-      "icon_id": "7270294",
-      "name": "酒店管理后台-开锁记录",
-      "font_class": "jiudianguanlihoutai-kaisuojilu",
-      "unicode": "e626",
-      "unicode_decimal": 58918
-    },
-    {
       "icon_id": "7605590",
       "name": "退出",
       "font_class": "tuichu1",
       "unicode": "e602",
       "unicode_decimal": 58882
+    },
+    {
+      "icon_id": "1825236",
+      "name": "三角形",
+      "font_class": "triangle-copy-copy-copy",
+      "unicode": "e60b",
+      "unicode_decimal": 58891
+    },
+    {
+      "icon_id": "5229818",
+      "name": "三角形",
+      "font_class": "triangle-right",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "9923738",
+      "name": "区域管理",
+      "font_class": "quyuguanli1",
+      "unicode": "e60d",
+      "unicode_decimal": 58893
+    },
+    {
+      "icon_id": "4452094",
+      "name": "人员管理",
+      "font_class": "rrenyuanguanli-",
+      "unicode": "e69f",
+      "unicode_decimal": 59039
+    },
+    {
+      "icon_id": "7270294",
+      "name": "酒店管理后台-开锁记录",
+      "font_class": "jiudianguanlihoutai-kaisuojilu",
+      "unicode": "e626",
+      "unicode_decimal": 58918
     },
     {
       "icon_id": "8159859",
@@ -88,13 +102,6 @@
       "font_class": "beijingjingwu_chaxun_kaisuojigongchaxun",
       "unicode": "e632",
       "unicode_decimal": 58930
-    },
-    {
-      "icon_id": "9923738",
-      "name": "区域管理",
-      "font_class": "quyuguanli1",
-      "unicode": "e60d",
-      "unicode_decimal": 58893
     },
     {
       "icon_id": "10358337",

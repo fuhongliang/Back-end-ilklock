@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html lang="zh">
+<head>
+    <title>艾乐科后台</title>
+    <!-- meta -->
+    <meta charset="utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="format-detection" content="email=no"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+
+
+    <!-- css 文件-->
+    <link rel="stylesheet" href="/static/vendor/iconfont/iconfont.css" />
+    <link rel="stylesheet" href="/static/vendor/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/static/css/main.css" />
+    <link rel="stylesheet" href="/static/css/popovers.css" />
+    <link rel="stylesheet" href="/static/css/table.css" />
+    <link rel="stylesheet" href="/static/css/paginate.css" />
+    <link rel="stylesheet" href="/static/vendor/layui/css/layui.css" />
+
+
+    <!-- js文件 -->
+    <script type="text/javascript" src="/static/vendor/jquery/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/static/vendor/vue/vue.min.js"></script>
+    <script type="text/javascript" src="/static/vendor/layui/layui.all.js"></script>
+
+    <!-- 全局变量 -->
+    <script type="text/javascript">
+      const _csrf = `<$ ctx.csrf $>`,
+        layer = layui.layer,
+        upload = layui.upload,
+        laydate = layui.laydate,
+        laypage = layui.laypage;
+    </script>
+
+
+    <script type="text/javascript" src="/static/js/main.js"></script>
+</head>
+<body>
+<div class="app">
+    <!-- 顶部 -->
+    <div class="top-nav">
+
+        <div class="nav message">
+            <icon class="iconfont">&#xe72c;</icon>
+            <span style="margin-left: .05rem;">消息通知</span>
+        </div>
+
+        <div class="nav logout">
+            <icon class="iconfont">&#xe602;</icon>
+            <span style="margin-left: .05rem;">退出登录</span>
+        </div>
+
+        <div class="nav tab-info">
+            <div class="tab-avatar">
+                <img src="/static/images/avatar/avatar-01.jpg" />
+            </div>
+            <div class="tab-name">admin</div>
+        </div>
+    </div>
+
+    <!-- 左边 -->
+    <div class="left-nav" id="navLeft">
+        <div class="left-nav-head">艾乐科后台管理</div>
+        <template>
+            <div class="list-nav">
+                <div class="nav-item" v-for="(menu,index) in menu_list">
+                    <div class="item parent-item" :class="{active: menu.is_active}" @click="turnTo(menu)">
+                        <icon class="icon iconfont" :class="menu.icon"></icon>
+                        <sapn class="title">{{ menu.name }}</sapn>
+                        <icon class="trig iconfont" :class="getActiveClass(menu)"></icon>
+                    </div>
+                    <div v-if="menu.children && menu.is_active">
+                        <div class="item child-item" :class="{active: child.is_active}" v-for="child in menu.children" @click="turnTo(child)">
+                            <sapn class="title">{{ child.name }}</sapn>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+
+    <!-- 右边内容 -->
+    <% block content %><% endblock %>
+</div>
+
+<script type="text/javascript">
+  let navLeft = new Vue({
+    el: '#navLeft',
+    data: {
+      menu_list: JSON.parse(`<$ helper.getAdminMenu() | safe $>`),
+    },
+    methods: {
+      getActiveClass: function(menu){
+        return menu.children?(menu.is_active?'icon-triangle-copy-copy-copy':'icon-triangle-right'):'';
+      },
+      turnTo: function(menu){
+        window.location.href = '<$ helper.getHost() $>' + menu.url;
+      }
+    }
+  });
+
+  <!-- 分页 使用laypage -->
+  function renderPaginate(){
+    laypage.render({
+      elem: 'paginate'
+      ,count: '<$ count $>'
+      ,limit: '<$ page_size $>'
+      ,layout: ['count', 'prev', 'page', 'next', 'limit', 'refresh', 'skip']
+      ,theme: '#1E9FFF'
+      ,jump: function(obj, first){
+        //obj包含了当前分页的所有参数，比如：
+        // console.log(first);
+        // console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+        // console.log(obj.limit); //得到每页显示的条数
+
+        let queryObject = {};
+        for (let q of decodeURI(window.location.search.substring(1)).split("&")){
+          let val = q.split("=");
+          queryObject[val[0]] = val[1];
+        }
+        queryObject.page = obj.curr;
+        queryObject.page_size = obj.limit;
+        let url = window.location.href.split('?')[0];
+        //首次不执行
+        if(!first){
+          console.log(url + josnToUrl(queryObject))
+        }
+      }
+    });
+  }
+  renderPaginate();
+</script>
+<% block script %><% endblock %>
+
+</body>
+</html>
