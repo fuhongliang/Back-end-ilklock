@@ -116,8 +116,8 @@ class UserService extends  Service{
           attributes: []
         }
       ],
-      limit: page_size,
-      offset: (page - 1)*page_size,
+      limit: Number(page_size),
+      offset: (Number(page) - 1)*page_size,
       attributes: ['id', 'name', 'avatar', 'job_no', 'pinyin', 'phone', [app.Sequelize.col('role.name'), 'role_name'], [app.Sequelize.col('role.id'), 'role_id']],
     });
     list.currentPage = page;

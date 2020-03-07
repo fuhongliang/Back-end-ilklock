@@ -176,8 +176,8 @@ class ApplyService extends Service{
       ],
       attributes: ['id', 'addtime', 'status', [app.Sequelize.col('user.name'), 'user_name'], [app.Sequelize.col('lock.name'), 'lock_name'], [app.Sequelize.col('lock.area.name'), 'region_name']],
       order: [ ['addtime', 'DESC'] ],
-      offset: (page - 1)*page_size,
-      limit: page_size
+      offset: (Number(page) - 1)*page_size,
+      limit: Number(page_size)
     });
     for (let i in list.rows){
       if (list.rows.hasOwnProperty(i)){
@@ -274,7 +274,7 @@ class ApplyService extends Service{
   async listApply() {
     const { app } = this;
     const { ApplyAuthorize, Region, Lock, User } = app.model;
-    const { page = 1, page_size = 10 } = this.ctx.request.body;
+    const { page = 1, page_size = 10 } = this.ctx.query;
     const user = app.userInfo;
 
     let list = await ApplyAuthorize.findAndCountAll({
@@ -303,8 +303,8 @@ class ApplyService extends Service{
         }
       ],
       attributes: ['id', 'addtime','status',[app.Sequelize.col('lock.name'), 'lock_name'], [app.Sequelize.col('user.name'), 'user_name'], [app.Sequelize.col('lock.area.name'), 'region_name']],
-      limit: page_size,
-      offset: (page - 1)*page_size,
+      limit: Number(page_size),
+      offset: (Number(page) - 1)*page_size,
     });
 
 

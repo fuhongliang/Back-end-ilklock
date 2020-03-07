@@ -19,8 +19,8 @@ class RecordService extends Service{
     let data = await LockLog.findAndCountAll({
       order: [ ['log_time', 'DESC'] ],
       where,
-      offset: (page - 1)*page_size,
-      limit: page_size,
+      offset: (Number(page) - 1)*page_size,
+      limit: Number(page_size),
       include: [
         {
           model: Lock,

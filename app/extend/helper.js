@@ -163,6 +163,6 @@ module.exports = {
       path += `?${param}`;
     }
     return this.getHost() + path;
-  }
+  },
 
 };

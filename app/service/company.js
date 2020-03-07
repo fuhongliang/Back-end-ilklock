@@ -12,8 +12,8 @@ class CompanyService extends Service{
       where: {
         is_delete: 0,
       },
-      offset: (page - 1)*page_size,
-      limit: page_size
+      offset: (Number(page) - 1)*page_size,
+      limit: Number(page_size)
     });
   }
 
