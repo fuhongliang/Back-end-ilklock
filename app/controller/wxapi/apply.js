@@ -84,6 +84,14 @@ class ApplyController extends BaseController {
   }
 
   /**
+   * 审批开锁申请
+   * @returns {Promise<void>}
+   */
+  async authRecords() {
+    this.ctx.body = await this.ctx.service.apply.authRecords();
+  }
+
+  /**
    * 申请开锁
    * @returns {Promise<void>}
    */

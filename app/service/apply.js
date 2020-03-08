@@ -19,9 +19,10 @@ class ApplyService extends Service{
       where: {
         user_id: user.id,
         status: 1,
+        is_new: 1,
         is_delete: 0
       },
-      attributes: ['id', 'addtime', 'work_no', [app.Sequelize.col('lock.lock_no') , 'lock_no'], [app.Sequelize.col('lock.name') , 'lock_name'], [app.Sequelize.col('secret.secret_key') , 'secret_key'] ],
+      attributes: ['id', 'addtime', 'work_no', 'duration', 'start_time', 'end_time', [app.Sequelize.col('lock.lock_no') , 'lock_no'], [app.Sequelize.col('lock.name') , 'lock_name'], [app.Sequelize.col('secret.secret_key') , 'secret_key'] ],
       include: [
         {
           model: Lock,
@@ -45,6 +46,7 @@ class ApplyService extends Service{
     });
     for (let i in list){
       if (list.hasOwnProperty(i)){
+        ApplyAuthorize.update({ is_new: 0 },{ where: { id: list[i].id } });
         list[i].addtime = sd.format(new Date(list[i].addtime),'YYYY-MM-DD HH:mm');
       }
     }
@@ -54,6 +56,19 @@ class ApplyService extends Service{
       data: {
         list
       }
+    }
+  }
+
+  async authRecords() {
+
+    const user = this.app.userInfo;
+    const { ApplyAuthorize } = this.app.model;
+    const { id, status } = this.ctx.request.body;
+    console.log(id, status, user);
+    await ApplyAuthorize.update({ status },{ where: { id, com_id: user.com_id, audit_id: user.id }});
+    return {
+      code: 0,
+      msg: '审批成功'
     }
   }
 
@@ -118,8 +133,8 @@ class ApplyService extends Service{
   /**
    *
    * @param id
-   * @param type = { 0: 待处理, 1:已处理, 2:已提交 3:已批准 4:未完成}
-   * @param options = { 0: 待处理, 1:已处理, 2:已提交 3:已批准 4:未完成}
+   * @param type = { 0: 待处理, 1:已处理, 2:已提交 3:已批准 4:已拒绝}
+   * @param options = { 0: 待处理, 1:已处理, 2:已提交 3:已批准 4:已拒绝}
    * @returns {Bluebird<any[]>}
    */
   async getRecordByUserId(id, options){
@@ -128,24 +143,27 @@ class ApplyService extends Service{
     const { page = 1 , page_size = 10, type = 2 } = options;
     const Op = app.Sequelize.Op;
     let where = {
-      user_id: id,
       is_delete: 0,
       type: 0,
     };
     switch (type) {
       case 0:
         where.status = 0;
+        where.audit_id = id;
         break;
       case 1:
-        where.status = { [Op.ne] : 0 };
+        where.status = { [Op.ne]: 0 };
+        where.audit_id = id;
         break;
       case 2:
+        where.user_id = id;
         break;
       case 3:
         where.status = { [Op.gt]: 0 };
+        where.user_id = id;
         break;
       case 4:
-        where.status = 1;
+        where.status = -1;
         break;
       default:
         break;
@@ -199,7 +217,7 @@ class ApplyService extends Service{
       case 3:
         return '已批准';
       case 4:
-        return '未完成';
+        return '已拒绝';
       default:
         return '';
     }
@@ -220,9 +238,6 @@ class ApplyService extends Service{
       where: { com_id, is_delete: 0, type: 1 },
       attributes: ['locks']
     });
-    for (let lock of locks_order_open){
-
-    }
 
     let locks_open_by_one = await LockMode.findOne({
       where: { com_id, is_delete: 0, type: 0 },

@@ -22,6 +22,11 @@ module.exports = app => {
         allowNull: false,
         defaultValue: ''
       },
+      path: {
+        type: STRING(1000),
+        allowNull: false,
+        defaultValue: ''
+      },
       parent_id: {
         type: INTEGER(11),
         allowNull: false,

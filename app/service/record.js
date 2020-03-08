@@ -54,27 +54,29 @@ class RecordService extends Service{
    * @param {Number} keyId 钥匙ID
    * @param {Buffer} ciperLog 加密后的串
    */
-  async insertLogs(keyId, ciperLog) {
+  async insertLogs(keyId, ciperLogs) {
 
-    const logData = this.decrypt(ciperLog);
-    const { LockLog } = this.app.model;
-    const results = await LockLog.create({
-      key_id: keyId,
-      key_status: logData.keyStatus,
-      log_time: logData.logTime,
-      log_version: logData.logVersion,
-      log_order: logData.logOrder,
-      log_code: logData.logCode,
-      user: logData.user,
-      company: logData.company,
-      user_addition: logData.userAddition,
-      locks: logData.locks,
-      soft_status: logData.softStatus,
-      sensor_status: logData.sensorStatue,
-      create_at: new Date(),
-    });
+    let insertLog = [];
+    for (let log of ciperLogs){
+      let logData = this.decrypt(ciperLogs);
+      insertLog.push({
+        key_id: keyId,
+        key_status: logData.keyStatus,
+        log_time: logData.logTime,
+        log_version: logData.logVersion,
+        log_order: logData.logOrder,
+        log_code: logData.logCode,
+        user: logData.user,
+        company: logData.company,
+        user_addition: logData.userAddition,
+        locks: logData.locks,
+        soft_status: logData.softStatus,
+        sensor_status: logData.sensorStatue,
+        create_at: new Date(),
+      });
+    }
+    return await this.app.model.LockLog.bulkCreate(insertLog);
 
-    return results;
   }
 
   /**

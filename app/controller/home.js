@@ -25,9 +25,9 @@ class HomeController extends Controller {
       test: await this.test2('ddd'),
       a: ctx.helper.inArray(1,['1', 2]),
       arr: [...new Set(arr)],
-      str: JSON.stringify("sss"),
+      str: JSON.stringify({sss: "sss"}),
       // userInfo: ctx.app.userInfo,
-      json: JSON.parse(null),
+      json: JSON.parse('1'),
       // cache: app.authCache,
       access_token,
       // computer: 4/3

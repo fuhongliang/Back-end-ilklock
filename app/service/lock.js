@@ -71,7 +71,7 @@ class LockService extends Service{
   async getAreaLock(region_id){
     const { ctx, app } = this;
 
-    const { Lock, LockMode } = app.model;
+    const { Lock, LockMode, Region } = app.model;
     const user = app.userInfo;
     let locks_open_by_one = await LockMode.findOne({
       where: { com_id: user.com_id, is_delete: 0, type: 0 },
@@ -91,7 +91,14 @@ class LockService extends Service{
         is_delete: 0,
         is_check: 1,
       },
-      attributes: [ 'id', 'name', 'lock_no' ],
+      include: [
+        {
+          model: Region,
+          as: 'area',
+          attributes: []
+        }
+      ],
+      attributes: [ 'id', 'name', 'lock_no', [app.Sequelize.col('area.path'), 'path'] ],
     });
 
     let new_list = [];
@@ -104,7 +111,6 @@ class LockService extends Service{
       }
       new_list.push(new_item);
     }
-
     return new_list;
   }
 
@@ -169,7 +175,7 @@ class LockService extends Service{
       // 建立事务对象
       transaction = await this.ctx.model.transaction();
 
-      let res = await Lock.create({ lock_no, region_id, name, com_id: user.com_id });
+      let res = await Lock.create({ lock_no, region_id, name, com_id: user.com_id, path: exist_area.path });
       if (!res){
         throw '创建锁失败';
       }

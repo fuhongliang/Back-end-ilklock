@@ -60,10 +60,31 @@ class RegionService extends Service{
     const { Region } = app.model;
     const user = app.userInfo;
     this.moveLocks(parent_id,region_id);
-    let res = await Region.update({ name: region_name, parent_id }, { where: { id: region_id, com_id: user.com_id }});
+    const exist_parent = await Region.findOne({
+      where: {
+        id: parent_id,
+        is_delete: 0,
+        com_id: user.com_id
+      }
+    });
+
+    if (!exist_parent && parent_id > 0){
+      return {
+        code: 1,
+        msg: '父区域不存在'
+      }
+    }
+    const path = (exist_parent?exist_parent.path : '') + ' ' + region_name;
+    let res = await Region.update({ name: region_name, parent_id, path }, { where: { id: region_id, com_id: user.com_id }});
+    if (res){
+      return {
+        code: 0,
+        msg: 'success'
+      }
+    }
     return {
-      code: 0,
-      msg: 'success'
+      code: 1,
+      msg: '修改失败'
     }
   }
 
@@ -128,7 +149,22 @@ class RegionService extends Service{
     const { Region } = app.model;
     const { parent_id, region_name } = ctx.request.body;
     const user = app.userInfo;
-    let res = await Region.create({ com_id: user.com_id, name: region_name, parent_id});
+    const exist_parent = await Region.findOne({
+      where: {
+        id: parent_id,
+        is_delete: 0,
+        com_id: user.com_id
+      }
+    });
+
+    if (!exist_parent && parent_id > 0){
+      return {
+        code: 1,
+        msg: '父区域不存在'
+      }
+    }
+    const path = (exist_parent?exist_parent.path : '') + ' ' + region_name;
+    let res = await Region.create({ com_id: user.com_id, name: region_name, parent_id, path });
 
     if (res){
       this.moveLocks(parent_id,res.id);

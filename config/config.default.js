@@ -19,7 +19,7 @@ module.exports = appInfo => {
   config.keys = appInfo.name + '_1576458671859_8708';
 
   // add your middleware config here
-  config.middleware = [ 'errorHandler', 'access', 'auth', 'permission', 'sysLog'];
+  config.middleware = [ 'errorHandler', 'access', 'auth', 'permission', 'sysLog', 'web404'];
 
   // 中间件配置
   config.errorHandler = {
@@ -27,6 +27,10 @@ module.exports = appInfo => {
     match: '/api/v1',
   };
 
+  config.web404 = {
+    enable: true,
+    match: '/web',
+  };
 
   config.auth = {
     enable: true,
@@ -46,6 +50,17 @@ module.exports = appInfo => {
   config.sysLog = {
     enable: true,
     match: '/api/v1',
+  };
+
+  // socket.io
+  config.io = {
+    init: { }, // passed to engine.io
+    namespace: {
+      '/': {
+        connectionMiddleware: [],
+        packetMiddleware: [],
+      },
+    },
   };
 
   // 验证器

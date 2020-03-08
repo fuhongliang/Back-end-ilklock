@@ -21,7 +21,7 @@ module.exports = () => {
         };
         return;
       }
-      ctx.app.userInfo = userInfo;
+      ctx.app.userInfo = userInfo.toJSON();
 
     } else if (/^\/web\/admin/.test(url)) {
 

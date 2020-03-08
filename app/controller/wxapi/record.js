@@ -25,8 +25,9 @@ class RecordController extends BaseController {
   async log(){
     const { ctx } = this;
     const { record } = ctx.service;
-    const { key_id, ciper_log } = ctx.request.body;
-    await record.insertLogs(key_id, ciper_log);
+    const { key_id, ciper_logs } = ctx.request.body;
+
+    await record.insertLogs(key_id, ciper_logs);
     ctx.body = {
       code: 0,
       msg: 'success',

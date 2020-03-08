@@ -122,8 +122,7 @@
 <% block script %>
 
 <script type="text/javascript">
-  console.log(JSON.parse('<$ locks_id | safe $>'));
-  console.log(JSON.parse('<$ locks | safe $>'));
+
   let page = new Vue({
     el: '#page',
     data: {
@@ -165,7 +164,6 @@
       removeLockOrder: function(index) {
         layer.confirm('确定移除这条开锁顺序?', function(i) {
           page.locks.splice(index);
-          page.ck_ids.splice(index);
           layer.close(i);
         });
       },
@@ -255,7 +253,7 @@
       },
       findLocksByArea: function(region_id) {
         $.ajax({
-          url: `<$ helper.getHost() $>/web/get_locks`,
+          url: `<$ helper.createUrl('/web/get_locks') $>`,
           type: 'get',
           data: {
             region_id
@@ -286,10 +284,11 @@
         layer.closeAll();
         let selLocks = [];
         for (let id of this.check_ids){
-          let { name, lock_no } = this.getLocks(id);
+          let { name, lock_no, path } = this.getLocks(id);
           let lock = {
             id,
             name,
+            path,
             lock_no
           };
           selLocks.push(lock);
@@ -303,7 +302,7 @@
           if (this.locks.hasOwnProperty(key)){
             for (let lock of this.locks[key]){
               if (lock.id === id){
-                return { name: lock.name, lock_no: lock.lock_no };
+                return { name: lock.name, lock_no: lock.lock_no, path: lock.path };
               }
             }
           }

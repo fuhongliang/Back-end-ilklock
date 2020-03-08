@@ -5,8 +5,13 @@ const BaseController = require(path.join(process.cwd(),'app/controller/baseContr
 
 class WorkController extends BaseController {
 
+  // 获取开始作业
   async listWork(){
+    this.ctx.body = await this.ctx.service.work.list();
+  }
 
+  async startWork(){
+    this.ctx.body = await this.ctx.service.work.getWorkLocks();
   }
 }
 module.exports = WorkController;

@@ -19,6 +19,7 @@ class UserController extends BaseController {
       }
     }
     const list = await user.listUser(where);
+
     const list_role = await role.listRole();
     await ctx.render('user/index',{ list: JSON.stringify(list.rows), count: list.count, page_size: list.pageSize, list_role: JSON.stringify(list_role), query });
   }

@@ -70,6 +70,11 @@ module.exports = app => {
         type: INTEGER(1),
         allowNull: false,
         defaultValue: 0
+      },
+      is_new: {
+        type: INTEGER(1),
+        allowNull: false,
+        defaultValue: 1
       }
     },
     {

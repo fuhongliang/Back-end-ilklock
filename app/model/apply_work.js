@@ -65,6 +65,11 @@ module.exports = app => {
         type: INTEGER(1),
         allowNull: false,
         defaultValue: 0
+      },
+      is_new: {
+        type: INTEGER(1),
+        allowNull: false,
+        defaultValue: 1
       }
     },
     {
@@ -74,7 +79,8 @@ module.exports = app => {
     });
 
   ApplyWork.associate = () => {
-
+    ApplyWork.belongsTo(app.model.User,{ foreignKey: 'audit_id', targetKey: 'id', as: 'author' });
+    ApplyWork.belongsTo(app.model.LockMode,{ foreignKey: 'lock_mode_id', targetKey: 'id', as: 'mode' });
   };
 
   return ApplyWork;

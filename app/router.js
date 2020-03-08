@@ -19,12 +19,16 @@ module.exports = app => {
   router.post('/api/v1/add_lock', controller.wxapi.lock.createLock);
   router.post('/api/v1/modify_lock_name', controller.wxapi.lock.modifyName);
   router.post('/api/v1/locks_log', controller.wxapi.record.operateList);
+  router.post('/api/v1/log', controller.wxapi.record.log);
   router.post('/api/v1/get_audits', controller.wxapi.apply.getAuditer);
   router.post('/api/v1/apply_open_locks', controller.wxapi.apply.applyKeySecret);
   router.post('/api/v1/get_area', controller.wxapi.region.getArea);
   router.post('/api/v1/list_apply', controller.wxapi.apply.getRecords);
   router.post('/api/v1/apply_open_lock', controller.wxapi.apply.applyKeySecret);
   router.post('/api/v1/renew_status', controller.wxapi.apply.renewStatus);
+  router.post('/api/v1/list_work', controller.wxapi.work.listWork);
+  router.post('/api/v1/start_work', controller.wxapi.work.startWork);
+  router.post('/api/v1/auth_open_lock', controller.wxapi.apply.authRecords);
 
 
   // web
