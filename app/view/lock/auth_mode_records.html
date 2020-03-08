@@ -23,7 +23,10 @@
                             <span>{{mode.user_name}}</span>
                         </td>
                         <td class="tb-col-3 text-center">{{mode.addtime}}</td>
-                        <td class="tb-col-3 text-center"></td>
+                        <td class="tb-col-3 text-center">
+                            <span class="text-secondary" v-if="mode.work_status == 0">未开始</span>
+                            <span class="text-success" v-else>已完成</span>
+                        </td>
                     </tr>
                 </template>
                 </tbody>

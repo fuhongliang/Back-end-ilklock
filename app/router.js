@@ -30,6 +30,7 @@ module.exports = app => {
   router.post('/api/v1/start_work', controller.wxapi.work.startWork);
   router.post('/api/v1/auth_open_lock', controller.wxapi.apply.authRecords);
   router.post('/api/v1/get_all_lock', controller.wxapi.lock.getAllLock);
+  router.post('/api/v1/finish_work', controller.wxapi.work.finish);
 
 
   // web

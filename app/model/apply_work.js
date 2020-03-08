@@ -66,10 +66,10 @@ module.exports = app => {
         allowNull: false,
         defaultValue: 0
       },
-      is_new: {
+      work_status: {
         type: INTEGER(1),
         allowNull: false,
-        defaultValue: 1
+        defaultValue: 0
       }
     },
     {

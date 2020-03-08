@@ -10,6 +10,10 @@ class WorkController extends BaseController {
     this.ctx.body = await this.ctx.service.work.list();
   }
 
+  async finish() {
+    this.ctx.body = await this.ctx.service.work.finish();
+  }
+
   async startWork(){
     this.ctx.body = await this.ctx.service.work.getWorkLocks();
   }

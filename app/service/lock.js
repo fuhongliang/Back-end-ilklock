@@ -483,6 +483,7 @@ class LockService extends Service{
     }
   }
 
+  // 授权作业记录
   async authModeRecords() {
     const { ApplyWork, User, LockMode } = this.app.model;
     const { page = 1, page_size = 10 } = this.ctx.query;
@@ -491,7 +492,7 @@ class LockService extends Service{
       is_delete: 0,
       type: 1
     };
-    if (user.level !== 0 && user.role_id != 1){
+    if (user.level !== 0 && user.role_id !== 1){
       where.audit_id = user.id;
     }
     let list = await ApplyWork.findAndCountAll({
@@ -508,7 +509,7 @@ class LockService extends Service{
           attributes: []
         }
       ],
-      attributes: ['id','addtime', [this.app.Sequelize.col('mode.name'), 'mode_name'], [this.app.Sequelize.col('user.name'), 'user_name']],
+      attributes: ['id','addtime', 'work_status', [this.app.Sequelize.col('mode.name'), 'mode_name'], [this.app.Sequelize.col('user.name'), 'user_name']],
       limit: Number(page_size),
       offset: (Number(page) - 1)*page_size
     });

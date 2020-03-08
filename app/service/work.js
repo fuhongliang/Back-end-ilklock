@@ -6,6 +6,7 @@ const Service = require(path.join(process.cwd(),'app/service/baseService'));
 
 class WorkService extends Service{
 
+  // 作业列表
   async list() {
     const { ApplyWork, User, LockMode } = this.app.model;
     const user = this.app.userInfo;
@@ -14,7 +15,7 @@ class WorkService extends Service{
         user_id: user.id,
         status: 1,
         is_delete: 0,
-        is_new: 1
+        work_status: 0
       },
       include: [
         {
@@ -35,7 +36,6 @@ class WorkService extends Service{
       if (list.hasOwnProperty(i)){
         list[i].addtime = sd.format(new Date(list[i].addtime),'YYYY-MM-DD HH:mm');
         list[i].locks = JSON.parse(list[i].locks) || '';
-        ApplyWork.update({ is_new: 0 }, { where: { id: list[i].id } });
       }
     }
     return {
@@ -45,6 +45,18 @@ class WorkService extends Service{
         list
       }
     };
+  }
+
+  // 完成作业
+  async finish() {
+    const user = this.app.userInfo;
+    const { ApplyWork } = this.app.model;
+    const { ids } = this.ctx.request.body;
+    ApplyWork.update({ work_status: 1 },{ where: { id: { [this.app.Sequelize.Op.in]: ids }, user_id: user.id }});
+    return {
+      code: 0,
+      msg: 'success'
+    }
   }
 
   async getWorkLocks() {
