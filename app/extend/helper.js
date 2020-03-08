@@ -10,9 +10,8 @@ module.exports = {
    */
   getMenu() {
     const { ctx } = this;
-    const menu = require(path.join(process.cwd(), 'app/controller/website/menu'));
-    let menu_list = menu.getMenuList();
-    this.activeMenu(menu_list,ctx.path);
+    const menu_list = require(path.join(process.cwd(), 'app/controller/website/menu'));
+    this.activeMenu(menu_list,ctx.path,0,[]);
     return JSON.stringify(menu_list);
 
     // this 是 helper 对象，在其中可以调用其他 helper 方法
@@ -23,7 +22,7 @@ module.exports = {
   getAdminMenu() {
     const { ctx } = this;
     let menu_list = require(path.join(process.cwd(), 'app/controller/webadmin/menu'));
-    this.activeMenu(menu_list,ctx.path,...[]);
+    this.activeMenu(menu_list,ctx.path,0,[]);
     return JSON.stringify(menu_list);
 
     // this 是 helper 对象，在其中可以调用其他 helper 方法
@@ -31,7 +30,8 @@ module.exports = {
     // this.app => application 对象
   },
 
-  activeMenu(menu_list, route, ...parents){
+  activeMenu(menu_list, route,level = 0, parents){
+
     for (let i in menu_list) {
       if (menu_list.hasOwnProperty(i)){
         menu_list[i].is_active = false;
@@ -48,9 +48,15 @@ module.exports = {
           for (let p of parents){
             p.is_active = true;
           }
-        }else if (menu_list[i].children && Array.isArray(menu_list[i].children)){
-          parents.push(menu_list[i]);
-          this.activeMenu(menu_list[i].children,route,...parents);
+        }
+        if (menu_list[i].children && Array.isArray(menu_list[i].children)){
+          let p = parents;
+          if (level === 0){
+            p = [];
+          }
+          p.push(menu_list[i]);
+          level++;
+          this.activeMenu(menu_list[i].children,route,level,p);
         }
       }
     }
@@ -64,7 +70,7 @@ module.exports = {
   /**
    * 检测用户是否有权限
    * @param id
-   * @param type = { qygl: '区域管理', qysz: '区域设置', kssq: '开锁授权', ckjl: '查看记录', rygl: '人员管理', jsgl: '角色管理', kssz: '开锁设置' }
+   * @param type = { qygl: '区域管理', qysz: '区域设置', kssq: '开锁授权', ckjl: '查看记录', rygl: '人员管理', jsgl: '角色管理', kssz: '开锁设置', 'lxsq': '离线授权' }
    */
   async isPermission(id, type) {
     const { Permission, User } = this.app.model;
@@ -84,7 +90,7 @@ module.exports = {
         }
       ],
     });
-    console.log(p);
+
     if (!p){
       return false;
     }

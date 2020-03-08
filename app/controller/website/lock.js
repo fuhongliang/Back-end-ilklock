@@ -5,6 +5,7 @@ const BaseController = require(path.join(process.cwd(),'app/controller/baseContr
 const assert = require('assert');
 
 class LockController extends BaseController {
+
   async listMode() {
     const { ctx } = this;
     const { lock, user } = ctx.service;
@@ -27,6 +28,12 @@ class LockController extends BaseController {
     }
 
     ctx.body = await lock.authMode();
+  }
+
+  async authModeRecords() {
+    const list = await this.ctx.service.lock.authModeRecords();
+
+    await this.ctx.render('lock/auth_mode_records', { list: JSON.stringify(list.rows),count: list.count, page_size: list.pageSize,});
   }
 
   /**

@@ -1,6 +1,6 @@
 'use strict';
 
-const menuList = [
+module.exports = [
   {
     name: '区域管理',
     icon: 'icon-quyuguanli1',
@@ -55,17 +55,23 @@ const menuList = [
     icon: 'icon-beijingjingwu_chaxun_kaisuojigongchaxun',
     url: '/web/mode_locks',
     is_show: true,
-    sub: [
+    children: [
       {
-        name: '编辑模式',
-        url: '/web/mode_edit'
+        name: '模式管理',
+        url: '/web/mode_locks',
+        is_show: true,
+        sub: [
+          {
+            name: '编辑模式',
+            url: '/web/mode_edit'
+          }
+        ]
+      },
+      {
+        name: '授权记录',
+        url: '/web/mode_auth__records',
+        is_show: true,
       }
-    ]
+    ],
   }
 ];
-
-module.exports = {
-  getMenuList(){
-    return menuList;
-  }
-};

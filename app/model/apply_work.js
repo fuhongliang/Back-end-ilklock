@@ -80,6 +80,7 @@ module.exports = app => {
 
   ApplyWork.associate = () => {
     ApplyWork.belongsTo(app.model.User,{ foreignKey: 'audit_id', targetKey: 'id', as: 'author' });
+    ApplyWork.belongsTo(app.model.User,{ foreignKey: 'user_id', targetKey: 'id', as: 'user' });
     ApplyWork.belongsTo(app.model.LockMode,{ foreignKey: 'lock_mode_id', targetKey: 'id', as: 'mode' });
   };
 

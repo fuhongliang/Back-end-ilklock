@@ -29,6 +29,7 @@ module.exports = app => {
   router.post('/api/v1/list_work', controller.wxapi.work.listWork);
   router.post('/api/v1/start_work', controller.wxapi.work.startWork);
   router.post('/api/v1/auth_open_lock', controller.wxapi.apply.authRecords);
+  router.post('/api/v1/get_all_lock', controller.wxapi.lock.getAllLock);
 
 
   // web
@@ -78,6 +79,7 @@ module.exports = app => {
   router.post('/web/mode_auth', controller.website.lock.authMode);
   router.all('/web/mode_edit', controller.website.lock.modeEdit);
   router.post('/web/mode_del', controller.website.lock.modeDel);
+  router.get('/web/mode_auth__records', controller.website.lock.authModeRecords);
 
   // 后台管理
   router.all('/web/admin/login', controller.webadmin.passport.login);

@@ -17,7 +17,7 @@ class RoleService extends Service{
     const list = await Role.findAll({
       where: {
         com_id: user.com_id,
-        is_delete: 0,
+        is_delete: 0
       },
       include: [
         {

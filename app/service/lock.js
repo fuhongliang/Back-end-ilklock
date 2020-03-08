@@ -8,6 +8,33 @@ const random = require('string-random');
 
 class LockService extends Service{
 
+  async getAllLocks(){
+    const user = this.app.userInfo;
+    const { Lock } = this.app.model;
+    if (user.level === 0 || this.ctx.helper.isPermission(user.id)){
+      let list = await Lock.findAll({
+        where: {
+          com_id: user.com_id,
+          is_delete: 0,
+          is_check: 1
+        },
+        attributes: ['id','lock_no','name'],
+        raw: true
+      });
+      return {
+        code: 0,
+        msg: 'success',
+        data: {
+          list
+        }
+      }
+    }
+    return {
+      code: 1,
+      msg: '没有权限'
+    }
+  }
+
   /**
    * 根据锁编号获取锁
    * @param lock_no
@@ -454,6 +481,47 @@ class LockService extends Service{
       code: 0,
       msg: 'success'
     }
+  }
+
+  async authModeRecords() {
+    const { ApplyWork, User, LockMode } = this.app.model;
+    const { page = 1, page_size = 10 } = this.ctx.query;
+    const user = this.app.userInfo;
+    let where = {
+      is_delete: 0,
+      type: 1
+    };
+    if (user.level !== 0 && user.role_id != 1){
+      where.audit_id = user.id;
+    }
+    let list = await ApplyWork.findAndCountAll({
+      where,
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: []
+        },
+        {
+          model: LockMode,
+          as: 'mode',
+          attributes: []
+        }
+      ],
+      attributes: ['id','addtime', [this.app.Sequelize.col('mode.name'), 'mode_name'], [this.app.Sequelize.col('user.name'), 'user_name']],
+      limit: Number(page_size),
+      offset: (Number(page) - 1)*page_size
+    });
+
+    for (let i in list.rows){
+      if (list.rows.hasOwnProperty(i)){
+        list.rows[i].addtime = sd.format(new Date(list.rows[i].addtime),'YYYY-MM-DD HH:mm:ss');
+      }
+    }
+
+    list.currentPage = page;
+    list.pageSize = page_size;
+    return list;
   }
 
   inLocks(locks_data,lock_one){

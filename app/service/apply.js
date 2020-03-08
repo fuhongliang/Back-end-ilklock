@@ -19,10 +19,9 @@ class ApplyService extends Service{
       where: {
         user_id: user.id,
         status: 1,
-        is_new: 1,
         is_delete: 0
       },
-      attributes: ['id', 'addtime', 'work_no', 'duration', 'start_time', 'end_time', [app.Sequelize.col('lock.lock_no') , 'lock_no'], [app.Sequelize.col('lock.name') , 'lock_name'], [app.Sequelize.col('secret.secret_key') , 'secret_key'] ],
+      attributes: ['id', 'addtime', 'work_no', 'duration', 'start_time', 'end_time', [app.Sequelize.col('lock.lock_no') , 'lock_no'], [app.Sequelize.col('lock.name') , 'lock_name'], [app.Sequelize.col('secret.secret_key') , 'secret_key']],
       include: [
         {
           model: Lock,
@@ -38,15 +37,14 @@ class ApplyService extends Service{
           where: {
             start_time: { [app.Sequelize.Op.lt]: Date.now() },
             expire_time: { [app.Sequelize.Op.gt]: Date.now() },
-            is_send: 0
           },
+          required: true,
           attributes: [],
         }
       ],
     });
     for (let i in list){
       if (list.hasOwnProperty(i)){
-        ApplyAuthorize.update({ is_new: 0 },{ where: { id: list[i].id } });
         list[i].addtime = sd.format(new Date(list[i].addtime),'YYYY-MM-DD HH:mm');
       }
     }
@@ -163,6 +161,7 @@ class ApplyService extends Service{
         where.user_id = id;
         break;
       case 4:
+        where.user_id = id;
         where.status = -1;
         break;
       default:
@@ -291,13 +290,16 @@ class ApplyService extends Service{
     const { ApplyAuthorize, Region, Lock, User } = app.model;
     const { page = 1, page_size = 10 } = this.ctx.query;
     const user = app.userInfo;
+    let where = {
+      is_delete: 0,
+      type: 0
+    };
+    if (user.level !== 0 && user.role_id !== 1){
+      where.audit_id = user.id;
+    }
 
     let list = await ApplyAuthorize.findAndCountAll({
-      where: {
-        audit_id: user.id,
-        is_delete: 0,
-        type: 0,
-      },
+      where,
       include: [
         {
           model: Lock,

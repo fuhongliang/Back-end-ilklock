@@ -6,6 +6,14 @@ const assert = require('assert');
 
 class LockController extends BaseController {
 
+  /**
+   * 获取所有锁列表
+   * @returns {Promise<void>}
+   */
+  async getAllLock(){
+    this.ctx.body = await this.ctx.service.lock.getAllLocks();
+  }
+
   async getLockInfo(){
     const { ctx } = this;
     const { lock_no } = ctx.request.body;

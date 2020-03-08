@@ -1,0 +1,91 @@
+<% extends "layout/main.html" %>
+
+<% block content %>
+<div id="page">
+    <div class="content">
+        <!-- 数据展示 -->
+        <div class="data-page">
+            <!-- 检索 -->
+
+            <!-- table -->
+            <table>
+                <thead>
+                <th class="tb-col-3 text-center">模式名称</th>
+                <th class="tb-col-6 text-center">授权员工</th>
+                <th class="tb-col-3 text-center">授权时间</th>
+                <th class="tb-col-3 text-center">状态</th>
+                </thead>
+                <tbody>
+                <template>
+                    <tr v-for="mode in list">
+                        <td class="tb-col-3 text-center">{{mode.mode_name}}</td>
+                        <td class="tb-col-6 text-center">
+                            <span>{{mode.user_name}}</span>
+                        </td>
+                        <td class="tb-col-3 text-center">{{mode.addtime}}</td>
+                        <td class="tb-col-3 text-center"></td>
+                    </tr>
+                </template>
+                </tbody>
+            </table>
+
+            <!-- 分页 -->
+            <div id="paginate"></div>
+        </div>
+    </div>
+</div>
+
+<% endblock %>
+
+<% block script %>
+<script type="text/javascript">
+
+  let page = new Vue({
+    el: '#page',
+    data: {
+      list: JSON.parse(`<$ list | safe $>`) || [],
+    },
+  });
+</script>
+
+<script type="text/javascript">
+  // 渲染分页
+  fenye();
+</script>
+
+<!-- 时间选择 -->
+<script type="text/javascript">
+  let start = laydate.render({
+    elem: '#startTime' //指定元素
+    ,type: 'datetime'
+    ,theme: '#00CA7C'
+    ,done: function(value, date, endDate){
+      console.log(date);
+      end.config.min = {
+        year:date.year,
+        month:date.month - 1, //关键
+        date: date.date,
+        hours: date.hours,
+        minutes: date.minutes,
+        seconds: date.seconds
+      };
+    }
+  });
+
+  let end = laydate.render({
+    elem: '#endTime' //指定元素
+    ,theme: '#00CA7C'
+    ,type: 'datetime'
+    ,done: function(value, date, endDate){
+      start.config.max = {
+        year:date.year,
+        month:date.month - 1, //关键
+        date: date.date,
+        hours: date.hours,
+        minutes: date.minutes,
+        seconds: date.seconds
+      };
+    }
+  });
+</script>
+<% endblock %>
