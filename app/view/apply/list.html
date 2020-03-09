@@ -55,7 +55,7 @@
         let text = status === 1?'同意授权?':'拒绝授权?';
         layer.confirm(text, function(index){
           $.ajax({
-            url: `<$ helper.getHost() $>/web/review_apply`,
+            url: `<$ helper.createUrl('/web/review_apply') $>`,
             type: 'post',
             data: {
               id,

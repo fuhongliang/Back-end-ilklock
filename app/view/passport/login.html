@@ -71,7 +71,7 @@
               if (return_url){
                 window.location.href = return_url;
               }else{
-                window.location.href = `<$ helper.getHost()$>/web/locks`;
+                window.location.href = `<$ helper.createUrl('/web/locks') $>`;
               }
             }else if(res.code === 1){
               if (res.err_field === 'code' ){

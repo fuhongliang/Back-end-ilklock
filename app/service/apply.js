@@ -294,7 +294,7 @@ class ApplyService extends Service{
       is_delete: 0,
       type: 0
     };
-    if (user.level !== 0 && user.role_id !== 1){
+    if (user.level !== 0){
       where.audit_id = user.id;
     }
 
@@ -345,12 +345,24 @@ class ApplyService extends Service{
     }else{
       // 审核拒绝
     }
-    const res = await ApplyAuthorize.update({ status },{ where: { id, audit_id: user.id} });
-
-    return {
-      code: 0,
-      msg: 'success'
+    let where = { id };
+    if (user.level !== 0){
+      where.audit_id = user.id;
     }
+    const res = await ApplyAuthorize.update({ status },{ where });
+
+    if (res){
+      return {
+        code: 0,
+        msg: '操作成功'
+      }
+    }else{
+      return {
+        code: 1,
+        msg: '申请审核失败'
+      }
+    }
+
 
   }
 

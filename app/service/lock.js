@@ -492,7 +492,7 @@ class LockService extends Service{
       is_delete: 0,
       type: 1
     };
-    if (user.level !== 0 && user.role_id !== 1){
+    if (user.level !== 0){
       where.audit_id = user.id;
     }
     let list = await ApplyWork.findAndCountAll({
