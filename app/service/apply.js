@@ -57,19 +57,6 @@ class ApplyService extends Service{
     }
   }
 
-  async authRecords() {
-
-    const user = this.app.userInfo;
-    const { ApplyAuthorize } = this.app.model;
-    const { id, status } = this.ctx.request.body;
-    console.log(id, status, user);
-    await ApplyAuthorize.update({ status },{ where: { id, com_id: user.com_id, audit_id: user.id }});
-    return {
-      code: 0,
-      msg: '审批成功'
-    }
-  }
-
   async renewStatus(options) {
     const { app } = this;
     const { LockSecret } = app.model;
@@ -335,13 +322,40 @@ class ApplyService extends Service{
 
   async review() {
     const { app } = this;
-    const { ApplyAuthorize } = app.model;
+    const { ApplyAuthorize, LockSecret, Lock } = app.model;
     const { id, status } = this.ctx.request.body;
     const user = app.userInfo;
-
+    const apply = await ApplyAuthorize.findOne({
+      where: { id, com_id: user.com_id, status: 0 } ,
+      include: [
+        {
+          model: Lock,
+          as: 'lock',
+          attributes: [],
+          required: true
+        }
+      ],
+      attributes: ['work_no','duration','start_time','end_time',[ app.Sequelize.col('lock.lock_no'), 'lock_no']]
+    });
+    if (!apply){
+      return {
+        code: 1,
+        msg: '未找到申请记录,请刷新页面重试~'
+      }
+    }
     if (status == 1){
       // 审核通过
-
+      let secret_key = await this.ctx.service.lock.generateSecretKey();  // 生成开锁指令
+      let start_time = apply.duration > 0?Date.now():apply.start_time;
+      let expire_time = apply.duration > 0?(Date.now() + apply.duration*3600*1000):apply.end_time;
+      await LockSecret.create({
+        com_id: user.com_id,
+        work_no: apply.work_no,
+        lock_no: apply.work_no,
+        secret_key,
+        start_time,
+        expire_time
+      });
     }else{
       // 审核拒绝
     }

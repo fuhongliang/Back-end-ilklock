@@ -88,7 +88,7 @@ class ApplyController extends BaseController {
    * @returns {Promise<void>}
    */
   async authRecords() {
-    this.ctx.body = await this.ctx.service.apply.authRecords();
+    this.ctx.body = await this.ctx.service.apply.review();
   }
 
   /**
