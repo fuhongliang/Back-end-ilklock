@@ -41,8 +41,8 @@ class PassportController extends BaseController {
   }
 
   async logout() {
-    const user = this.app.userInfo;
-    const { AuthLogin } = this.app.model;
+    this.ctx.session.userInfo = null;
+    // this.ctx.redirect('web/login');
   }
 }
 

@@ -35,6 +35,7 @@ module.exports = app => {
 
   // web
   router.all('/web/login', controller.website.passport.login);
+  router.get('/web/logout', controller.website.passport.logout);
   router.get('/web/get_captcha', controller.website.passport.captcha);
   router.get('/web/home', controller.website.home.index);
   router.get('/web/list_region', controller.website.region.list);

@@ -114,3 +114,13 @@ function objToUrl(obj = {}){
   }
   return params.slice(0,-1);
 }
+
+// 退出登录
+$(document).on('click','.logout',function(){
+  let that = $(this);
+  layer.confirm('退出登录?',function(index){
+    //do something
+    window.location.href = that.attr('data-url');
+    layer.close(index);
+  });
+});
